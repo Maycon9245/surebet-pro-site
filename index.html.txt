@@ -1,0 +1,34 @@
+!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🔍 Surebet Finder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Surebet Finder</h1>
+    <p>Encontre apostas garantidas com lucro matemático.</p>
+
+    <div class="input-group">
+      <label>Selecione o Esporte:</label>
+      <select id="sport">
+        <option value="upcoming">Todos (Próximos)</option>
+        <option value="americanfootball_nfl">NFL</option>
+        <option value="basketball_nba">NBA</option>
+        <option value="soccer_brazil_campeonato">Campeonato Brasileiro</option>
+        <option value="tennis">Tênis</option>
+      </select>
+    </div>
+
+    <button onclick="buscarSurebets()">Buscar Surebets</button>
+    <div id="loading" style="display: none; text-align: center; margin: 20px 0;">
+      🔄 Buscando oportunidades...
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
