@@ -3,65 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🚀 Surebet PRO - Em Breve</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #0f172a;
-      color: #e0e0e0;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      text-align: center;
-    }
-    .container {
-      max-width: 600px;
-      padding: 40px;
-      background: #1e293b;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-    h1 {
-      color: #4ade80;
-      margin-bottom: 16px;
-    }
-    p {
-      color: #a1a1a1;
-      margin-bottom: 24px;
-    }
-    input, button {
-      padding: 12px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 6px;
-    }
-    input {
-      width: 100%;
-      background: #334155;
-      color: white;
-    }
-    button {
-      background: #4ade80;
-      color: #000;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-    }
-    button:hover {
-      background: #3ddc75;
-    }
-  </style>
+  <title>🔍 Surebet Finder</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🚀 Surebet PRO</h1>
-    <p>Um sistema inteligente para encontrar apostas garantidas com lucro matemático. Em breve.</p>
-    <input type="email" placeholder="Seu e-mail" />
-    <button>Notifique-me</button>
-  </div>
-</body>
+    <h1>🔍 Surebet Finder</h1>
+    <p>Encontre apostas garantidas com lucro matemático.</p>
 
+    <div class="input-group">
+      <label>Selecione o Esporte:</label>
+      <select id="sport">
+        <option value="upcoming">Todos (Próximos)</option>
+        <option value="americanfootball_nfl">NFL</option>
+        <option value="basketball_nba">NBA</option>
+        <option value="soccer_brazil_campeonato">Campeonato Brasileiro</option>
+        <option value="tennis">Tênis</option>
+      </select>
+    </div>
+
+    <button onclick="buscarSurebets()">Buscar Surebets</button>
+    <div id="loading" style="display: none; text-align: center; margin: 20px 0;">
+      🔄 Buscando oportunidades...
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
