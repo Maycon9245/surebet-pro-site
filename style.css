@@ -1,118 +1,173 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #0f172a;
-  color: #e0e0e0;
-  margin: 0;
-  padding: 0;
+:root {
+  --bg: #0d1117;
+  --card-bg: #161b22;
+  --text: #e6edf3;
+  --accent: #58a6ff;
+  --profit: #3fb950;
+  --border: #30363d;
+  --hover: #21262d;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* Cabeçalho */
+header {
+  background: var(--card-bg);
+  padding: 15px;
   text-align: center;
+  border-bottom: 2px solid var(--border);
+}
+.logo-topo {
+  height: 60px;
+}
+
+/* Conteúdo principal */
+main {
+  padding: 20px;
+  max-width: 1400px;
+  margin: auto;
 }
 
 h1 {
-  color: #4ade80;
-  margin-bottom: 16px;
+  text-align: center;
+  margin-bottom: 8px;
+  color: var(--accent);
 }
 
 p {
-  color: #a1a1a1;
-  margin-bottom: 24px;
-}
-
-.input-group {
+  text-align: center;
+  color: #8b949e;
   margin-bottom: 20px;
 }
 
-label {
-  display: block;
-  margin-bottom: 8px;
-  color: #e0e0e0;
+/* Filtros */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
 }
-
-select, button {
-  padding: 12px;
+.filtros input,
+.filtros select,
+.filtros button {
+  padding: 10px;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
+  outline: none;
+  font-size: 14px;
 }
-
-select {
-  background: #1e293b;
+.filtros input,
+.filtros select {
+  background: var(--card-bg);
   color: white;
-  width: 100%;
-  max-width: 300px;
+  width: 180px;
 }
-
-button {
-  background: #4ade80;
-  color: #000;
+.filtros button {
+  background: var(--accent);
+  color: black;
   font-weight: 600;
   cursor: pointer;
-  width: 100%;
-  max-width: 300px;
-  margin: 20px auto;
-  display: block;
+}
+.filtros button:hover {
+  background: #428ddd;
 }
 
-button:hover {
-  background: #3ddc75;
-}
-
+/* Tabela */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: var(--card-bg);
   border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-
 th, td {
   padding: 14px;
-  text-align: left;
-  border-bottom: 1px solid #334155;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
 }
-
 th {
-  background: #1e293b;
-  color: #4ade80;
+  background: var(--card-bg);
+  color: var(--accent);
   font-weight: 600;
+  text-transform: uppercase;
+  font-size: 14px;
 }
-
 tr:hover {
-  background: #1e293b;
+  background: var(--hover);
 }
-
 .surebet {
-  font-weight: 600;
-  color: #4ade80;
+  font-weight: 700;
+  color: var(--profit);
 }
-
 .bookmaker {
-  background: #334155;
+  background: var(--border);
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 14px;
+  font-weight: 500;
+}
+.bookmaker-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 6px;
+  filter: brightness(0) invert(1);
+}
+.action-btn {
+  background: var(--profit);
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+.action-btn:hover {
+  background: #359c46;
 }
 
-.profit {
-  font-weight: 700;
+/* Rodapé */
+footer {
+  background: var(--card-bg);
+  text-align: center;
+  padding: 20px;
+  border-top: 2px solid var(--border);
+  margin-top: 30px;
+}
+.logo-rodape {
+  height: 30px;
+  display: block;
+  margin: auto;
+  margin-bottom: 8px;
 }
 
+/* Responsivo */
 @media (max-width: 768px) {
-  .container {
-    padding: 20px 10px;
+  .filtros {
+    flex-direction: column;
+    align-items: center;
   }
-
-  table {
-    font-size: 14px;
+  .filtros input,
+  .filtros select,
+  .filtros button {
+    width: 100%;
   }
-
   th, td {
-    padding: 8px;
+    padding: 10px 6px;
+    font-size: 13px;
   }
 }
