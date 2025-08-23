@@ -1,5 +1,3 @@
-
-
 async function buscarSurebets() {
   const corpo = document.getElementById("linhas");
   const loading = document.getElementById("loading");
