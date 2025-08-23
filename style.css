@@ -2,10 +2,11 @@
   --bg: #0d1117;
   --card-bg: #161b22;
   --text: #e6edf3;
-  --accent: #58a6ff;
-  --profit: #3fb950;
+  --accent: #4ade80; /* 🟢 Verde do Surebet PRO */
+  --profit: #4ade80;
   --border: #30363d;
   --hover: #21262d;
+  --logo-filter: brightness(0) invert(1) saturate(3) hue-rotate(120deg);
 }
 
 * {
@@ -30,6 +31,7 @@ header {
 }
 .logo-topo {
   height: 60px;
+  filter: var(--logo-filter);
 }
 
 /* Conteúdo principal */
@@ -81,7 +83,7 @@ p {
   cursor: pointer;
 }
 .filtros button:hover {
-  background: #428ddd;
+  background: #3ddc75;
 }
 
 /* Tabela */
@@ -137,7 +139,7 @@ tr:hover {
   font-weight: 600;
 }
 .action-btn:hover {
-  background: #359c46;
+  background: #3ddc75;
 }
 
 /* Rodapé */
@@ -153,6 +155,7 @@ footer {
   display: block;
   margin: auto;
   margin-bottom: 8px;
+  filter: var(--logo-filter);
 }
 
 /* Responsivo */
