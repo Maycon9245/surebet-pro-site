@@ -97,3 +97,4 @@ setInterval(buscarSurebets, 30000);
 
 // Carrega na primeira vez
 buscarSurebets();
+
