@@ -1,3 +1,4 @@
+// Função principal: buscar surebets
 async function buscarSurebets() {
   const corpo = document.getElementById("linhas");
   const loading = document.getElementById("loading");
@@ -60,7 +61,7 @@ async function buscarSurebets() {
           <td class="surebet">${o2.odd}</td>
           <td><img src="${icon2}" class="bookmaker-icon"> <span class="bookmaker">${o2.bookmaker}</span></td>
           <td class="surebet">${surebet.profit}%</td>
-          <td><button class="action-btn" onclick="abrirCasas(${JSON.stringify(surebet).replace(/"/g, '&quot;')})">🎯 Abrir</button></td>
+          <td><button class="action-btn" onclick="abrirCasas(${JSON.stringify(surebet).replace(/"/g, '&quot;')})">🎯 Abrir Casas</button></td>
         </tr>
       `;
     });
@@ -72,6 +73,7 @@ async function buscarSurebets() {
   loading.style.display = "none";
 }
 
+// Função que envia dados para a extensão
 function abrirCasas(surebet) {
   const dados = {
     event: surebet.event,
@@ -84,6 +86,7 @@ function abrirCasas(surebet) {
     profit: surebet.profit
   };
 
+  // Envia os dados para a extensão
   chrome.storage.local.set({ surebetData: dados, ready: true }, () => {
     alert(`✅ Dados enviados para a extensão!\n\nAbra a extensão "Surebet PRO - AutoBet".`);
   });
