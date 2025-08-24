@@ -1,151 +1,83 @@
-:root {
-  --bg: #0d1117;
-  --card-bg: #161b22;
-  --text: #e6edf3;
-  --accent: #4ade80;
-  --border: #30363d;
-  --hover: #21262d;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', system-ui, Arial, sans-serif;
-}
-
 body {
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.55;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  background: #f4f4f4;
 }
 
-/* Odds sempre verdes */
-.odd {
-  color: #4ade80;
-  font-weight: 700;
-}
-
-/* Filtros */
-.filtros {
-  display: grid;
-  grid-template-columns: 1fr 240px 240px repeat(3, 160px) 120px;
-  gap: 12px;
-  align-items: start;
-  margin-bottom: 20px;
-}
-
-/* Details recolhíveis */
-details {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px;
-  margin: 8px 0;
-}
-summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--accent);
-  list-style: none;
-}
-summary::marker {
-  content: "▶️";
-  color: #8b949e;
-}
-details[open] summary::marker {
-  content: "🔽";
-}
-
-label {
-  display: block;
-  margin: 6px 0;
-  font-size: 14px;
-}
-
-/* Selects */
-select, input[type="number"] {
+header {
+  position: fixed;
+  top: 0;
   width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  background: var(--card-bg);
+  background: #1e3c72;
   color: white;
-  border: 1px solid var(--border);
-}
-
-/* Botão Atualizar */
-#btnAtualizar {
-  background: var(--accent);
-  color: #000;
-  font-weight: 700;
-  border: none;
-  border-radius: 10px;
   padding: 10px;
-  cursor: pointer;
-}
-#btnAtualizar:hover {
-  filter: brightness(1.05);
+  text-align: center;
 }
 
-/* Tabela */
+.filtros {
+  width: 250px;
+  background: #fff;
+  padding: 20px;
+  margin-top: 60px;
+  border-right: 2px solid #ccc;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.filtros h2 {
+  margin-top: 0;
+}
+
+.filtros label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.filtros select,
+.filtros input {
+  width: 100%;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+.filtros button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: #1e3c72;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+main {
+  flex: 1;
+  padding: 80px 20px 20px 20px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
-  background: var(--card-bg);
-  border-radius: 12px;
+  background: white;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
+thead {
+  background: #1e3c72;
+  color: white;
+}
+
 th, td {
   padding: 12px;
   text-align: center;
-  border-bottom: 1px solid var(--border);
-}
-th {
-  background: var(--card-bg);
-  color: var(--accent);
-  text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: .02em;
-}
-tr:hover {
-  background: var(--hover);
+  border-bottom: 1px solid #ccc;
 }
 
-/* Ações */
-.actions {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-}
-.action-btn {
-  background: var(--accent);
-  color: black;
-  border: none;
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 700;
-}
-.trash-btn {
-  background: transparent;
-  color: #ef4444;
-  border: 1px solid #ef4444;
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.action-btn:hover, .trash-btn:hover {
-  filter: brightness(1.1);
-}
-
-/* Mensagens */
-.loading, .empty {
-  text-align: center;
-  color: #8b949e;
-  padding: 12px;
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-  margin-top: 12px;
+.odd {
+  color: green;
+  font-weight: bold;
 }
