@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Topo com logo centralizado -->
+  <!-- Topo com logo -->
   <header>
     <img src="img/logo.png" alt="Surebet PRO" class="logo-topo"/>
   </header>
@@ -20,24 +20,18 @@
     <section class="filtros">
       <input type="text" id="buscar" placeholder="🔎 Buscar jogo..." />
 
-      <!-- Esportes (multi-select) -->
+      <!-- Horários -->
       <div class="filter-block">
-        <label for="sports">Esportes</label>
-        <select id="sports" multiple size="6"></select>
-        <div class="filter-actions">
-          <button id="sportsSelectAll" type="button">Marcar tudo</button>
-          <button id="sportsClear" type="button">Limpar</button>
-        </div>
-      </div>
-
-      <!-- Casas (multi-select) -->
-      <div class="filter-block">
-        <label for="bookmakers">Casas de Aposta</label>
-        <select id="bookmakers" multiple size="6"></select>
-        <div class="filter-actions">
-          <button id="bookiesSelectAll" type="button">Selecionar todas</button>
-          <button id="bookiesClear" type="button">Limpar</button>
-        </div>
+        <label for="timeFilter">Horários</label>
+        <select id="timeFilter">
+          <option value="any">Qualquer horário</option>
+          <option value="12h">12 horas</option>
+          <option value="1d">1 dia</option>
+          <option value="2d">2 dias</option>
+          <option value="7d">1 semana</option>
+          <option value="30d">4 semanas e 2 dias</option>
+          <option value="custom">Customizado...</option>
+        </select>
       </div>
 
       <!-- Lucro -->
@@ -50,17 +44,40 @@
         <input type="number" id="profitMax" min="0" step="0.1" placeholder=""/>
       </div>
 
-      <!-- Horário -->
-      <div class="filter-inline">
-        <label>Horário</label>
-        <select id="timeWindow">
-          <option value="any">Qualquer horário</option>
-          <option value="10m">A partir de 10 min</option>
-          <option value="2h">A partir de 2 horas</option>
-          <option value="12h">A partir de 12 horas</option>
-        </select>
-      </div>
+      <!-- Casas de Apostas -->
+      <details>
+        <summary>Casas de Apostas</summary>
+        <label><input type="checkbox" value="Betfair"> Betfair</label>
+        <label><input type="checkbox" value="Pinnacle"> Pinnacle</label>
+        <label><input type="checkbox" value="Bet365"> Bet365</label>
+        <label><input type="checkbox" value="Betano"> Betano</label>
+        <label><input type="checkbox" value="PixBet"> PixBet</label>
+        <label><input type="checkbox" value="1xBet"> 1xBet</label>
+        <label><input type="checkbox" value="Ivibet"> Ivibet</label>
+      </details>
 
+      <!-- Esportes -->
+      <details>
+        <summary>Esportes</summary>
+        <label><input type="checkbox" value="Futebol"> Futebol</label>
+        <label><input type="checkbox" value="Basquete"> Basquete</label>
+        <label><input type="checkbox" value="Tênis"> Tênis</label>
+        <label><input type="checkbox" value="Vôlei"> Vôlei</label>
+        <label><input type="checkbox" value="MLB"> MLB</label>
+        <label><input type="checkbox" value="NFL"> NFL</label>
+      </details>
+
+      <!-- Torneios -->
+      <details>
+        <summary>Torneios</summary>
+        <label><input type="checkbox" value="Copa do Mundo"> Copa do Mundo</label>
+        <label><input type="checkbox" value="Champions League"> Champions League</label>
+        <label><input type="checkbox" value="Brasileirão"> Brasileirão</label>
+        <label><input type="checkbox" value="NBA"> NBA</label>
+        <label><input type="checkbox" value="Wimbledon"> Wimbledon</label>
+      </details>
+
+      <!-- Botão Atualizar -->
       <button id="btnAtualizar" type="button">🔄 Atualizar</button>
     </section>
 
@@ -70,8 +87,6 @@
         <thead>
           <tr>
             <th>Evento</th>
-            <th>Sport</th>
-            <th>Horário (BR)</th>
             <th>Time 1</th>
             <th>Odd</th>
             <th>Casa</th>
@@ -84,7 +99,7 @@
           </tr>
         </thead>
         <tbody id="linhas">
-          <!-- preenchido via JS -->
+          <!-- Preenchido via JS -->
         </tbody>
       </table>
       <div id="loading" class="loading" style="display:none;">🔄 Buscando oportunidades...</div>
@@ -92,7 +107,7 @@
     </section>
   </main>
 
-  <!-- Rodapé com logo menor -->
+  <!-- Rodapé -->
   <footer>
     <img src="img/logo.png" alt="Surebet PRO" class="logo-rodape"/>
     <p>© 2025 Surebet PRO — Todos os direitos reservados</p>
@@ -101,4 +116,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
