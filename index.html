@@ -1,45 +1,68 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚀 Surebet PRO - Oportunidades em Tempo Real</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/108/108755.png" type="image/png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🚀 Surebet PRO</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Cabeçalho -->
+  <!-- Topo com logo centralizado -->
   <header>
-    <img src="img/logo.png" alt="Surebet PRO" class="logo-topo">
+    <img src="img/logo.png" alt="Surebet PRO" class="logo-topo"/>
   </header>
 
-  <!-- Conteúdo principal -->
   <main>
     <h1>🚀 Surebet PRO</h1>
     <p>Encontre apostas garantidas com lucro matemático — atualizado automaticamente</p>
 
     <!-- Filtros -->
     <section class="filtros">
-      <input type="text" id="buscar" placeholder="🔎 Buscar jogo...">
-      
-      <select id="sportFilter">
-        <option value="all">Todos os Esportes</option>
-        <option value="americanfootball_nfl">NFL</option>
-        <option value="basketball_nba">NBA</option>
-        <option value="soccer_brazil_campeonato">Campeonato Brasileiro</option>
-        <option value="tennis">Tênis</option>
-        <option value="baseball_mlb">MLB</option>
-      </select>
+      <input type="text" id="buscar" placeholder="🔎 Buscar jogo..." />
 
-      <input type="number" id="profitFilter" min="0" step="0.1" placeholder="Lucro mínimo (%)">
+      <!-- Esportes (multi-select) -->
+      <div class="filter-block">
+        <label for="sports">Esportes</label>
+        <select id="sports" multiple size="6"></select>
+        <div class="filter-actions">
+          <button id="sportsSelectAll" type="button">Marcar tudo</button>
+          <button id="sportsClear" type="button">Limpar</button>
+        </div>
+      </div>
 
-      <button onclick="buscarSurebets()">🔄 Atualizar</button>
+      <!-- Casas (multi-select) -->
+      <div class="filter-block">
+        <label for="bookmakers">Casas de Aposta</label>
+        <select id="bookmakers" multiple size="6"></select>
+        <div class="filter-actions">
+          <button id="bookiesSelectAll" type="button">Selecionar todas</button>
+          <button id="bookiesClear" type="button">Limpar</button>
+        </div>
+      </div>
+
+      <!-- Lucro -->
+      <div class="filter-inline">
+        <label>Lucro mín. (%)</label>
+        <input type="number" id="profitMin" min="0" step="0.1" placeholder="0.0"/>
+      </div>
+      <div class="filter-inline">
+        <label>Lucro máx. (%)</label>
+        <input type="number" id="profitMax" min="0" step="0.1" placeholder=""/>
+      </div>
+
+      <!-- Horário -->
+      <div class="filter-inline">
+        <label>Horário</label>
+        <select id="timeWindow">
+          <option value="any">Qualquer horário</option>
+          <option value="10m">A partir de 10 min</option>
+          <option value="2h">A partir de 2 horas</option>
+          <option value="12h">A partir de 12 horas</option>
+        </select>
+      </div>
+
+      <button id="btnAtualizar" type="button">🔄 Atualizar</button>
     </section>
-
-    <!-- Carregamento -->
-    <div id="loading" style="display: none; text-align: center; margin: 20px 0;">
-      🔄 Buscando oportunidades em tempo real...
-    </div>
 
     <!-- Tabela -->
     <section class="tabela">
@@ -47,6 +70,7 @@
         <thead>
           <tr>
             <th>Evento</th>
+            <th>Sport</th>
             <th>Horário (BR)</th>
             <th>Time 1</th>
             <th>Odd</th>
@@ -55,20 +79,23 @@
             <th>Odd</th>
             <th>Casa</th>
             <th>Lucro</th>
-            <th>Ação</th>
+            <th>Desde</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody id="linhas">
-          <!-- Preenchido pelo script -->
+          <!-- preenchido via JS -->
         </tbody>
       </table>
+      <div id="loading" class="loading" style="display:none;">🔄 Buscando oportunidades...</div>
+      <div id="empty" class="empty" style="display:none;">🔍 Nenhuma surebet encontrada</div>
     </section>
   </main>
 
-  <!-- Rodapé -->
+  <!-- Rodapé com logo menor -->
   <footer>
-    <img src="img/logo.png" alt="Surebet PRO" class="logo-rodape">
-    <p>© 2025 Surebet PRO - Todos os direitos reservados</p>
+    <img src="img/logo.png" alt="Surebet PRO" class="logo-rodape"/>
+    <p>© 2025 Surebet PRO — Todos os direitos reservados</p>
   </footer>
 
   <script src="script.js"></script>
