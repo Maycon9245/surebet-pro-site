@@ -9,57 +9,26 @@ const REFRESH_MS = 30000;
 
 /***** LISTAS (Esportes & Casas) *****/
 const SPORTS = [
-  "Artes marciais","Badminton","Bandy","Basquete","Basquete 3x3","Basquete 4x4","Beisebal","Beisebol finlandês",
-  "Boliche","Cricket","Críquete","Dardos","Esportes virtuais","Basquete (SRL)","Cricket (SRL)","Futebol (SRL)",
-  "Tênis (SRL)","Floorball","Futebol","Futebol 3x3","Futebol 4x4","Futebol 5x5","Futebol Gaélico","Futebol americano",
-  "Futebol australiano","Futebol de praia","Futebol de salão","Golfe","Handebol","Handebol de praia","Hurling",
-  "Hóquei","Hóquei 3x3","Hóquei de ar","Hóquei de ar 2x2","Hóquei em campo","Lacrosse","Netbol","O que Onde Quando",
-  "Pólo aquático","Rugby","Short hockey","Sinuca","Tênis","Tênis de mesa","Voleibol","Voleibol de praia","Xadrez",
-  "eSport","Arena of Valor","Call of Duty","Counter-Strike","Deadlock","Dota","E-Basquete","E-Futebol","E-Hóquei",
-  "E-Tênis","E-Voleibol","Famosas em dispositivos móveis","King of Glory","League of Legends","NBA2K","Overwatch",
-  "Rainbow","Rocket League","StarCraft","Valorant","Warcraft"
+  "Futebol", "Basquete", "Tênis", "Vôlei", "MLB", "NFL", "NBA", "Hóquei", "Fórmula 1", "MMA", "Tênis de Mesa"
 ];
 
 const BOOKMAKERS = [
-  "Betfair","Pinnacle","Betano","Bet365","1xBet","PixBet","KTO","Sportingbet","Betway","Betpix365","LeoVegas",
-  "Bodog","Parimatch","Betsson","22Bet","Galera.Bet","Esportes da Sorte","Rivalo","EstrelaBet","Casa de Apostas",
-  "MrJack.bet","Viebett","F12.bet","Betcris","BetWarrior","BetNational","BetMais","Marathonbet","Blaze","Ivibet","Bwin","888sport"
+  "Betfair", "Pinnacle", "Bet365", "Betano", "1xBet", "PixBet", "Ivibet", "Bwin", "888sport", "KTO", "Parimatch"
 ];
 
 // Mapa para abrir sites (botão Abrir Casas)
 const BOOKMAKER_URL = {
-  "Betfair":"https://www.betfair.com/sport",
-  "Pinnacle":"https://www.pinnacle.com/pt/",
-  "Betano":"https://www.betano.com/",
-  "Bet365":"https://www.bet365.com/",
-  "1xBet":"https://1xbet.com/",
-  "PixBet":"https://www.pixbet.com/",
-  "KTO":"https://kto.com/br/",
-  "Sportingbet":"https://sports.sportingbet.com/pt-br/sports",
-  "Betway":"https://betway.com/pt",
-  "Betpix365":"https://betpix365.com/",
-  "LeoVegas":"https://www.leovegas.com/pt-br",
-  "Bodog":"https://www.bodog.com/br",
-  "Parimatch":"https://www.parimatch.com/",
-  "Betsson":"https://www.betsson.com/br",
-  "22Bet":"https://22bet.com/",
-  "Galera.Bet":"https://www.galera.bet/",
-  "Esportes da Sorte":"https://www.esportesdasorte.com/",
-  "Rivalo":"https://www.rivalo.com/",
-  "EstrelaBet":"https://www.estrelabet.com/",
-  "Casa de Apostas":"https://casadeapostas.com/",
-  "MrJack.bet":"https://mrjack.bet/",
-  "Viebett":"https://viebett.com/",
-  "F12.bet":"https://f12.bet/",
-  "Betcris":"https://www.betcris.com/br",
-  "BetWarrior":"https://betwarrior.bet/",
-  "BetNational":"https://www.betnacional.com/",
-  "BetMais":"https://www.betmais.com/",
-  "Marathonbet":"https://www.marathonbet.com/",
-  "Blaze":"https://blaze.com/",
-  "Ivibet":"https://ivibet.com/pt",
-  "Bwin":"https://sports.bwin.com/pt-br/sports",
-  "888sport":"https://www.888sport.com/"
+  "Betfair": "https://www.betfair.com/sport",
+  "Pinnacle": "https://www.pinnacle.com/pt/",
+  "Bet365": "https://www.bet365.com/",
+  "Betano": "https://www.betano.com/",
+  "1xBet": "https://1xbet.com/",
+  "PixBet": "https://www.pixbet.com/",
+  "Ivibet": "https://ivibet.com/pt",
+  "Bwin": "https://sports.bwin.com/pt-br/sports",
+  "888sport": "https://www.888sport.com/",
+  "KTO": "https://kto.com/br/",
+  "Parimatch": "https://www.parimatch.com/"
 };
 
 /***** STATE *****/
@@ -106,7 +75,6 @@ function timeAgo(ms) {
 }
 
 function parseStart(s) {
-  // Preferir camo ISO: start_time_utc; aceitar start_time_br (HH:MM) como fallback (assumindo hoje)
   if (s.start_time_utc) {
     const d = new Date(s.start_time_utc);
     if (!isNaN(d.getTime())) return d;
@@ -121,13 +89,15 @@ function parseStart(s) {
 }
 
 function withinWindow(startDate, windowVal) {
-  if (!startDate) return true; // se não houver horário, não filtra por tempo
+  if (!startDate) return true;
   const now = new Date();
-  const diff = (startDate - now); // ms até começar
+  const diff = (startDate - now);
   if (windowVal === "any") return true;
-  if (windowVal === "10m") return diff >= 10 * 60 * 1000;
-  if (windowVal === "2h")  return diff >= 2 * 60 * 60 * 1000;
   if (windowVal === "12h") return diff >= 12 * 60 * 60 * 1000;
+  if (windowVal === "1d")  return diff >= 24 * 60 * 60 * 1000;
+  if (windowVal === "2d")  return diff >= 48 * 60 * 60 * 1000;
+  if (windowVal === "7d")  return diff >= 168 * 60 * 60 * 1000;
+  if (windowVal === "30d") return diff >= 720 * 60 * 60 * 1000;
   return true;
 }
 
@@ -194,13 +164,11 @@ function render(rows) {
 
   rows.forEach((s) => {
     const id = buildId(s);
-    if (hiddenIds.has(id)) return; // lixeira local
+    if (hiddenIds.has(id)) return;
 
-    // registrar firstSeen e baseline
     if (!firstSeen.has(id)) firstSeen.set(id, Date.now());
     if (!baseline.has(id)) baseline.set(id, JSON.parse(JSON.stringify(s)));
 
-    // se as odds mudaram comparadas ao baseline, não exibe (auto-remover)
     if (oddsChanged(baseline.get(id), s)) {
       return;
     }
@@ -221,13 +189,11 @@ function render(rows) {
 
     tr.innerHTML = `
       <td>${sanitize(s.event)}</td>
-      <td>${sanitize(s.sport)}</td>
-      <td>${sanitize(s.start_time_br || "")}</td>
       <td>${sanitize(o1.team)}</td>
-      <td class="${pClass}">${o1.odd ?? ""}</td>
+      <td class="odd">${o1.odd ?? ""}</td>
       <td>${sanitize(o1.bookmaker)}</td>
       <td>${sanitize(o2.team)}</td>
-      <td class="${pClass}">${o2.odd ?? ""}</td>
+      <td class="odd">${o2.odd ?? ""}</td>
       <td>${sanitize(o2.bookmaker)}</td>
       <td class="${pClass}">${profit}%</td>
       <td><span class="badge-time" data-time="${sinceMs}">${sinceText}</span></td>
@@ -242,7 +208,6 @@ function render(rows) {
     $tbody.appendChild(tr);
   });
 
-  // mensagens
   $empty.style.display = rows.length === 0 || lastRenderIds.size === 0 ? "block" : "none";
 }
 
@@ -257,31 +222,26 @@ function applyFilters(list) {
   const bookiesSel = getSelectedValues(document.getElementById("bookmakers"));
   const pMin = parseFloat(document.getElementById("profitMin").value);
   const pMax = parseFloat(document.getElementById("profitMax").value);
-  const timeWin = document.getElementById("timeWindow").value;
+  const timeWin = document.getElementById("timeFilter").value;
 
   return list.filter(s => {
-    // texto
     if (q) {
       const hay = [s.event, s.sport, s.outcomes?.[0]?.team, s.outcomes?.[1]?.team, s.outcomes?.[0]?.bookmaker, s.outcomes?.[1]?.bookmaker]
         .map(x => (x || "").toString().toLowerCase()).join(" ");
       if (!hay.includes(q)) return false;
     }
 
-    // esportes
     if (sportsSel.length > 0 && !sportsSel.includes(s.sport)) return false;
 
-    // casas (pelo menos uma das duas deve estar na seleção)
     if (bookiesSel.length > 0) {
       const b1 = s.outcomes?.[0]?.bookmaker, b2 = s.outcomes?.[1]?.bookmaker;
       if (!(bookiesSel.includes(b1) || bookiesSel.includes(b2))) return false;
     }
 
-    // lucro
     const p = Number(s.profit || 0);
     if (!isNaN(pMin) && s.profit != null && p < pMin) return false;
     if (!isNaN(pMax) && s.profit != null && p > pMax) return false;
 
-    // horário
     const start = parseStart(s);
     if (!withinWindow(start, timeWin)) return false;
 
@@ -299,16 +259,12 @@ async function fetchData() {
 
     let list = Array.isArray(data?.surebets) ? data.surebets : [];
 
-    // demo opcional
     if (list.length === 0 && USE_DEMO_WHEN_EMPTY) {
       list = DEMO.surebets;
     }
 
-    // atualizar baseline/remover desaparecidos:
-    // se algum ID que já estava renderizado sumiu do fetch => some do painel automaticamente
     const fetchedById = new Map(list.map(s => [buildId(s), s]));
 
-    // Limpeza de firstSeen/baseline para ids que nunca mais aparecem
     for (const id of Array.from(firstSeen.keys())) {
       if (!fetchedById.has(id)) {
         firstSeen.delete(id);
@@ -329,7 +285,7 @@ async function fetchData() {
 }
 
 /***** EVENTOS UI *****/
-// popular selects
+// Popular selects
 (function initSelects() {
   const $sports = document.getElementById("sports");
   const $bookies = document.getElementById("bookmakers");
@@ -345,39 +301,20 @@ async function fetchData() {
     opt.value = b; opt.textContent = b;
     $bookies.appendChild(opt);
   });
-
-  document.getElementById("sportsSelectAll").addEventListener("click", () => {
-    Array.from($sports.options).forEach(o => o.selected = true);
-    render(applyFilters(lastFetched));
-  });
-  document.getElementById("sportsClear").addEventListener("click", () => {
-    Array.from($sports.options).forEach(o => o.selected = false);
-    render(applyFilters(lastFetched));
-  });
-
-  document.getElementById("bookiesSelectAll").addEventListener("click", () => {
-    Array.from($bookies.options).forEach(o => o.selected = true);
-    render(applyFilters(lastFetched));
-  });
-  document.getElementById("bookiesClear").addEventListener("click", () => {
-    Array.from($bookies.options).forEach(o => o.selected = false);
-    render(applyFilters(lastFetched));
-  });
 })();
 
-// filtros reagem
-["buscar","profitMin","profitMax","timeWindow"].forEach(id => {
+// Filtros reagem
+["buscar","profitMin","profitMax"].forEach(id => {
   document.getElementById(id).addEventListener("input", () => render(applyFilters(lastFetched)));
-  document.getElementById(id).addEventListener("change", () => render(applyFilters(lastFetched)));
 });
-["sports","bookmakers"].forEach(id => {
+["timeFilter"].forEach(id => {
   document.getElementById(id).addEventListener("change", () => render(applyFilters(lastFetched)));
 });
 
-// botão atualizar
+// Botão atualizar
 document.getElementById("btnAtualizar").addEventListener("click", fetchData);
 
-// ações por linha (delegação)
+// Ações por linha
 $tbody.addEventListener("click", (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
@@ -406,7 +343,7 @@ $tbody.addEventListener("click", (e) => {
   }
 });
 
-// atualiza “há X minutos” a cada 5s
+// Atualiza “há X minutos” a cada 5s
 setInterval(() => {
   document.querySelectorAll(".badge-time").forEach(el => {
     const t = Number(el.getAttribute("data-time"));
@@ -414,8 +351,8 @@ setInterval(() => {
   });
 }, 5000);
 
-// atualização automática (sem contador visual)
+// Atualização automática
 setInterval(fetchData, REFRESH_MS);
 
-// primeira carga
+// Primeira carga
 fetchData();
