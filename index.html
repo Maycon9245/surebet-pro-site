@@ -1,117 +1,88 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🚀 Surebet PRO</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surebet - Projeto</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Topo com logo -->
   <header>
-    <img src="img/logo.png" alt="Surebet PRO" class="logo-topo"/>
+    <h1>Surebet - Projeto</h1>
   </header>
 
+  <aside class="filtros">
+    <h2>Filtros</h2>
+
+    <label for="esporte">Esporte:</label>
+    <select id="esporte">
+      <option value="todos">Todos</option>
+      <option value="futebol">Futebol</option>
+      <option value="tenis">Tênis</option>
+      <option value="basquete">Basquete</option>
+      <option value="volei">Vôlei</option>
+    </select>
+
+    <label for="casa">Casa de Aposta:</label>
+    <select id="casa">
+      <option value="todas">Todas</option>
+      <option value="betfair">Betfair</option>
+      <option value="ivibet">Ivibet</option>
+      <option value="betpix">Betpix</option>
+      <option value="esporte365">Esporte365</option>
+    </select>
+
+    <label for="lucro">Lucro mínimo (%):</label>
+    <input type="number" id="lucro" placeholder="Ex: 2">
+
+    <label for="horario">Horários:</label>
+    <input type="time" id="horario">
+
+    <button onclick="aplicarFiltros()">Aplicar</button>
+    <button onclick="limparFiltros()">Limpar</button>
+  </aside>
+
   <main>
-    <h1>🚀 Surebet PRO</h1>
-    <p>Encontre apostas garantidas com lucro matemático — atualizado automaticamente</p>
-
-    <!-- Filtros -->
-    <section class="filtros">
-      <input type="text" id="buscar" placeholder="🔎 Buscar jogo..." />
-
-      <!-- Horários -->
-      <div class="filter-block">
-        <label for="timeFilter">Horários</label>
-        <select id="timeFilter">
-          <option value="any">Qualquer horário</option>
-          <option value="12h">12 horas</option>
-          <option value="1d">1 dia</option>
-          <option value="2d">2 dias</option>
-          <option value="7d">1 semana</option>
-          <option value="30d">4 semanas e 2 dias</option>
-          <option value="custom">Customizado...</option>
-        </select>
-      </div>
-
-      <!-- Lucro -->
-      <div class="filter-inline">
-        <label>Lucro mín. (%)</label>
-        <input type="number" id="profitMin" min="0" step="0.1" placeholder="0.0"/>
-      </div>
-      <div class="filter-inline">
-        <label>Lucro máx. (%)</label>
-        <input type="number" id="profitMax" min="0" step="0.1" placeholder=""/>
-      </div>
-
-      <!-- Casas de Apostas -->
-      <details>
-        <summary>Casas de Apostas</summary>
-        <label><input type="checkbox" value="Betfair"> Betfair</label>
-        <label><input type="checkbox" value="Pinnacle"> Pinnacle</label>
-        <label><input type="checkbox" value="Bet365"> Bet365</label>
-        <label><input type="checkbox" value="Betano"> Betano</label>
-        <label><input type="checkbox" value="PixBet"> PixBet</label>
-        <label><input type="checkbox" value="1xBet"> 1xBet</label>
-        <label><input type="checkbox" value="Ivibet"> Ivibet</label>
-      </details>
-
-      <!-- Esportes -->
-      <details>
-        <summary>Esportes</summary>
-        <label><input type="checkbox" value="Futebol"> Futebol</label>
-        <label><input type="checkbox" value="Basquete"> Basquete</label>
-        <label><input type="checkbox" value="Tênis"> Tênis</label>
-        <label><input type="checkbox" value="Vôlei"> Vôlei</label>
-        <label><input type="checkbox" value="MLB"> MLB</label>
-        <label><input type="checkbox" value="NFL"> NFL</label>
-      </details>
-
-      <!-- Torneios -->
-      <details>
-        <summary>Torneios</summary>
-        <label><input type="checkbox" value="Copa do Mundo"> Copa do Mundo</label>
-        <label><input type="checkbox" value="Champions League"> Champions League</label>
-        <label><input type="checkbox" value="Brasileirão"> Brasileirão</label>
-        <label><input type="checkbox" value="NBA"> NBA</label>
-        <label><input type="checkbox" value="Wimbledon"> Wimbledon</label>
-      </details>
-
-      <!-- Botão Atualizar -->
-      <button id="btnAtualizar" type="button">🔄 Atualizar</button>
-    </section>
-
-    <!-- Tabela -->
-    <section class="tabela">
-      <table>
-        <thead>
-          <tr>
-            <th>Evento</th>
-            <th>Time 1</th>
-            <th>Odd</th>
-            <th>Casa</th>
-            <th>Time 2</th>
-            <th>Odd</th>
-            <th>Casa</th>
-            <th>Lucro</th>
-            <th>Desde</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="linhas">
-          <!-- Preenchido via JS -->
-        </tbody>
-      </table>
-      <div id="loading" class="loading" style="display:none;">🔄 Buscando oportunidades...</div>
-      <div id="empty" class="empty" style="display:none;">🔍 Nenhuma surebet encontrada</div>
-    </section>
+    <h2>Jogos e Odds</h2>
+    <table id="tabela">
+      <thead>
+        <tr>
+          <th>Esporte</th>
+          <th>Times/Jogadores</th>
+          <th>Casa</th>
+          <th>Odd</th>
+          <th>Lucro (%)</th>
+          <th>Horário</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Futebol</td>
+          <td>Flamengo x Palmeiras</td>
+          <td>Betfair</td>
+          <td class="odd">2.10</td>
+          <td class="odd">5%</td>
+          <td>18:30</td>
+        </tr>
+        <tr>
+          <td>Tênis</td>
+          <td>Opelka x Comesana</td>
+          <td>Ivibet</td>
+          <td class="odd">1.85</td>
+          <td class="odd">3%</td>
+          <td>15:00</td>
+        </tr>
+        <tr>
+          <td>Basquete</td>
+          <td>Lakers x Celtics</td>
+          <td>Betpix</td>
+          <td class="odd">2.30</td>
+          <td class="odd">7%</td>
+          <td>21:00</td>
+        </tr>
+      </tbody>
+    </table>
   </main>
-
-  <!-- Rodapé -->
-  <footer>
-    <img src="img/logo.png" alt="Surebet PRO" class="logo-rodape"/>
-    <p>© 2025 Surebet PRO — Todos os direitos reservados</p>
-  </footer>
 
   <script src="script.js"></script>
 </body>
