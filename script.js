@@ -122,9 +122,10 @@ function withinWindow(startDate, windowVal) {
   const now = new Date();
   const diff = (startDate - now);
   if (windowVal === "any") return true;
-  if (windowVal === "10m") return diff >= 10 * 60 * 1000;
-  if (windowVal === "2h")  return diff >= 2 * 60 * 60 * 1000;
   if (windowVal === "12h") return diff >= 12 * 60 * 60 * 1000;
+  if (windowVal === "16h") return diff >= 16 * 60 * 60 * 1000;
+  if (windowVal === "1d")  return diff >= 24 * 60 * 60 * 1000;
+  if (windowVal === "2d")  return diff >= 48 * 60 * 60 * 1000;
   return true;
 }
 
