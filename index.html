@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Topo com logo centralizado -->
+  <!-- Topo com logo -->
   <header>
     <img src="img/logo.png" alt="Surebet PRO" class="logo-topo"/>
   </header>
@@ -20,14 +20,14 @@
     <section class="filtros">
       <input type="text" id="buscar" placeholder="🔎 Buscar jogo..." />
 
-      <!-- Esportes (com checkboxes e botão retrátil) -->
+      <!-- Esportes -->
       <div class="filter-block">
         <div class="filter-header">
           <label>Esportes</label>
           <button type="button" class="toggle-btn" data-target="sports-list">🔽 Esconder</button>
         </div>
         <div id="sports-list" class="checkbox-group">
-          <!-- Preenchido pelo JS -->
+          <!-- Preenchido via JS -->
         </div>
         <div class="filter-actions">
           <button id="sportsSelectAll" type="button">Marcar tudo</button>
@@ -35,14 +35,14 @@
         </div>
       </div>
 
-      <!-- Casas de Aposta (com checkboxes e botão retrátil) -->
+      <!-- Casas de Aposta -->
       <div class="filter-block">
         <div class="filter-header">
           <label>Casas de Aposta</label>
           <button type="button" class="toggle-btn" data-target="bookmakers-list">🔽 Esconder</button>
         </div>
         <div id="bookmakers-list" class="checkbox-group">
-          <!-- Preenchido pelo JS -->
+          <!-- Preenchido via JS -->
         </div>
         <div class="filter-actions">
           <button id="bookiesSelectAll" type="button">Selecionar todas</button>
@@ -60,14 +60,15 @@
         <input type="number" id="profitMax" min="0" step="0.1" placeholder=""/>
       </div>
 
-      <!-- Horário -->
+      <!-- Evento durante -->
       <div class="filter-inline">
-        <label>Horário</label>
+        <label>Evento durante</label>
         <select id="timeWindow">
           <option value="any">Qualquer horário</option>
-          <option value="10m">A partir de 10 min</option>
-          <option value="2h">A partir de 2 horas</option>
-          <option value="12h">A partir de 12 horas</option>
+          <option value="12h">12 horas</option>
+          <option value="16h">16 horas</option>
+          <option value="1d">1 dia</option>
+          <option value="2d">2 dias</option>
         </select>
       </div>
 
@@ -94,7 +95,7 @@
           </tr>
         </thead>
         <tbody id="linhas">
-          <!-- preenchido via JS -->
+          <!-- Preenchido via JS -->
         </tbody>
       </table>
       <div id="loading" class="loading" style="display:none;">🔄 Buscando oportunidades...</div>
