@@ -1,104 +1,100 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🚀 Surebet PRO</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projeto Surebet</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Topo com logo centralizado -->
+  <!-- Cabeçalho -->
   <header>
-    <img src="img/logo.png" alt="Surebet PRO" class="logo-topo"/>
+    <img src="logo.png" alt="Logo" class="logo">
+    <h1>Surebet - Comparador de Odds</h1>
   </header>
 
+  <!-- Conteúdo principal -->
   <main>
-    <h1>🚀 Surebet PRO</h1>
-    <p>Encontre apostas garantidas com lucro matemático — atualizado automaticamente</p>
-
-    <!-- Filtros -->
-    <section class="filtros">
-      <input type="text" id="buscar" placeholder="🔎 Buscar jogo..." />
-
-      <!-- Esportes (multi-select) -->
-      <div class="filter-block">
-        <label for="sports">Esportes</label>
-        <select id="sports" multiple size="6"></select>
-        <div class="filter-actions">
-          <button id="sportsSelectAll" type="button">Marcar tudo</button>
-          <button id="sportsClear" type="button">Limpar</button>
-        </div>
-      </div>
-
-      <!-- Casas (multi-select) -->
-      <div class="filter-block">
-        <label for="bookmakers">Casas de Aposta</label>
-        <select id="bookmakers" multiple size="6"></select>
-        <div class="filter-actions">
-          <button id="bookiesSelectAll" type="button">Selecionar todas</button>
-          <button id="bookiesClear" type="button">Limpar</button>
-        </div>
-      </div>
-
-      <!-- Lucro -->
-      <div class="filter-inline">
-        <label>Lucro mín. (%)</label>
-        <input type="number" id="profitMin" min="0" step="0.1" placeholder="0.0"/>
-      </div>
-      <div class="filter-inline">
-        <label>Lucro máx. (%)</label>
-        <input type="number" id="profitMax" min="0" step="0.1" placeholder=""/>
-      </div>
-
-      <!-- Horário -->
-      <div class="filter-inline">
-        <label>Horário</label>
-        <select id="timeWindow">
-          <option value="any">Qualquer horário</option>
-          <option value="10m">A partir de 10 min</option>
-          <option value="2h">A partir de 2 horas</option>
-          <option value="12h">A partir de 12 horas</option>
-        </select>
-      </div>
-
-      <button id="btnAtualizar" type="button">🔄 Atualizar</button>
-    </section>
-
-    <!-- Tabela -->
     <section class="tabela">
+      <h2>Jogos & Odds</h2>
       <table>
         <thead>
           <tr>
-            <th>Evento</th>
-            <th>Sport</th>
-            <th>Horário (BR)</th>
-            <th>Time 1</th>
-            <th>Odd</th>
-            <th>Casa</th>
-            <th>Time 2</th>
-            <th>Odd</th>
-            <th>Casa</th>
-            <th>Lucro</th>
-            <th>Desde</th>
-            <th>Ações</th>
+            <th>Esporte</th>
+            <th>Times/Jogadores</th>
+            <th>Casa 1</th>
+            <th>Casa 2</th>
+            <th>Casa 3</th>
+            <th>Lucro (%)</th>
           </tr>
         </thead>
-        <tbody id="linhas">
-          <!-- preenchido via JS -->
+        <tbody>
+          <tr>
+            <td>Futebol</td>
+            <td>Flamengo x Palmeiras</td>
+            <td>2.10</td>
+            <td>2.05</td>
+            <td>2.20</td>
+            <td class="lucro verde">3.5%</td>
+          </tr>
+          <tr>
+            <td>Tênis</td>
+            <td>Nadal x Djokovic</td>
+            <td>1.80</td>
+            <td>2.40</td>
+            <td>2.30</td>
+            <td class="lucro amarelo">1.8%</td>
+          </tr>
+          <tr>
+            <td>Basquete</td>
+            <td>Lakers x Celtics</td>
+            <td>1.95</td>
+            <td>2.00</td>
+            <td>2.05</td>
+            <td class="lucro cinza">0.5%</td>
+          </tr>
         </tbody>
       </table>
-      <div id="loading" class="loading" style="display:none;">🔄 Buscando oportunidades...</div>
-      <div id="empty" class="empty" style="display:none;">🔍 Nenhuma surebet encontrada</div>
     </section>
   </main>
 
-  <!-- Rodapé com logo menor -->
-  <footer>
-    <img src="img/logo.png" alt="Surebet PRO" class="logo-rodape"/>
-    <p>© 2025 Surebet PRO — Todos os direitos reservados</p>
-  </footer>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>Filtros</h2>
+    <details open>
+      <summary>Esportes</summary>
+      <label><input type="checkbox"> Futebol</label><br>
+      <label><input type="checkbox"> Tênis</label><br>
+      <label><input type="checkbox"> Basquete</label><br>
+      <label><input type="checkbox"> Vôlei</label><br>
+      <label><input type="checkbox"> MMA</label>
+    </details>
+
+    <details>
+      <summary>Casas de Apostas</summary>
+      <label><input type="checkbox"> Betfair</label><br>
+      <label><input type="checkbox"> Ivibet</label><br>
+      <label><input type="checkbox"> Betpix</label><br>
+      <label><input type="checkbox"> Esporte365</label><br>
+      <label><input type="checkbox"> Pinnacle</label>
+    </details>
+
+    <details>
+      <summary>Lucro (%)</summary>
+      <input type="number" placeholder="Mínimo"> -
+      <input type="number" placeholder="Máximo">
+    </details>
+
+    <details>
+      <summary>Horário</summary>
+      <input type="time"> -
+      <input type="time">
+    </details>
+  </aside>
 
   <script src="script.js"></script>
 </body>
 </html>
+
+
 
