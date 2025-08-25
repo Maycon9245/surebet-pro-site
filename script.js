@@ -185,6 +185,13 @@ const DEMO = {
   ]
 };
 
+/** CALCULAR STAKE **/
+function calcularStake(profit) {
+  const bankroll = 1000; // R$1000 de banca
+  const riskPercent = 0.01; // 1% da banca
+  return bankroll * riskPercent;
+}
+
 /** RENDER **/
 function render(rows) {
   $tbody.innerHTML = "";
@@ -413,11 +420,32 @@ $tbody.addEventListener("click", (e) => {
   }
 
   if (act === "open") {
-    const b1 = item.outcomes?.[0]?.bookmaker, b2 = item.outcomes?.[1]?.bookmaker;
-    const u1 = BOOKMAKER_URL[b1] || null;
-    const u2 = BOOKMAKER_URL[b2] || null;
-    if (u1) window.open(u1, "_blank");
-    if (u2) window.open(u2, "_blank");
+    const o1 = item.outcomes?.[0];
+    const o2 = item.outcomes?.[1];
+    
+    const dados = {
+      event: item.event,
+      sport: item.sport,
+      start_time_br: item.start_time_br,
+      team1: o1.team,
+      odd1: o1.odd,
+      bookmaker1: o1.bookmaker,
+      team2: o2.team,
+      odd2: o2.odd,
+      bookmaker2: o2.bookmaker,
+      profit: item.profit,
+      stake: calcularStake(item.profit)
+    };
+
+    // Envia para a extensão
+    chrome.storage.local.set({ surebetData: dados, ready: true }, () => {
+      const u1 = BOOKMAKER_URL[o1.bookmaker] || null;
+      const u2 = BOOKMAKER_URL[o2.bookmaker] || null;
+      if (u1) window.open(u1, "_blank");
+      if (u2) window.open(u2, "_blank");
+      
+      alert(`✅ Dados enviados!\nStake: R$ ${dados.stake.toFixed(2)}`);
+    });
   }
 });
 
