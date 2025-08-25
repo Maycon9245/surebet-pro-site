@@ -1,107 +1,266 @@
-/* Reset básico */
+:root {
+  --bg: #0d1117;
+  --card-bg: #161b22;
+  --text: #e6edf3;
+  --accent: #4ade80;
+  --border: #30363d;
+  --hover: #21262d;
+
+  --profit-low: #9ca3af;
+  --profit-mid: #facc15;
+  --profit-high: #22c55e;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', system-ui, Arial, sans-serif;
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: #f5f5f5;
-  color: #333;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
 }
 
-/* Cabeçalho */
 header {
+  background: var(--card-bg);
+  padding: 18px 12px;
+  text-align: center;
+  border-bottom: 2px solid var(--border);
+}
+.logo-topo {
+  height: 60px;
+}
+
+main {
+  padding: 20px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+p {
+  text-align: center;
+  color: #8b949e;
+  margin-bottom: 20px;
+}
+
+/* Cabeçalho do filtro */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.filter-header label {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* Botão retrátil */
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  font-size: 14px;
+}
+.toggle-btn:hover {
+  color: var(--accent);
+}
+.toggle-btn.expanded::after {
+  content: "🔽";
+}
+.toggle-btn.collapsed::after {
+  content: "▶️";
+}
+
+/* Checkbox group */
+.checkbox-group {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
+.checkbox-group label {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 15px;
-  padding: 15px;
-  background: #222;
-  color: #fff;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 14px;
+  color: #e6edf3;
+  cursor: pointer;
+}
+.checkbox-group input[type="checkbox"] {
+  accent-color: var(--accent);
+  margin: 0;
 }
 
-header .logo {
-  height: 40px;
+/* Filtros */
+.filtros {
+  display: grid;
+  grid-template-columns: 1fr 240px 240px repeat(3, 160px) 120px;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+.filtros input[type="text"] {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: white;
 }
 
-/* Conteúdo principal */
-main {
-  flex: 1;
-  padding: 20px;
-  margin-right: 250px; /* espaço da sidebar */
-}
-
-.tabela {
-  background: #fff;
-  padding: 20px;
+.filter-block {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  padding: 10px;
 }
 
-.tabela h2 {
-  margin-bottom: 15px;
-  font-size: 20px;
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+.filter-actions button {
+  flex: 1;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #cbd5e1;
+  cursor: pointer;
+  border: 1px solid #1f2937;
+  font-size: 14px;
+}
+.filter-actions button:hover {
+  filter: brightness(1.1);
 }
 
+.filtros select, .filtros input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: white;
+  border: 1px solid var(--border);
+}
+
+#btnAtualizar {
+  background: var(--accent);
+  color: #052e16;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+#btnAtualizar:hover {
+  filter: brightness(1.05);
+}
+
+/* Tabela */
 table {
   width: 100%;
   border-collapse: collapse;
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
 }
-
-table th, table td {
-  padding: 10px;
-  border: 1px solid #ddd;
+th, td {
+  padding: 12px;
   text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  background: var(--card-bg);
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: .02em;
+}
+tr:hover {
+  background: var(--hover);
 }
 
-table th {
-  background: #222;
-  color: #fff;
+.profit {
+  font-weight: 700;
+}
+.profit.low { color: var(--profit-low); }
+.profit.mid { color: var(--profit-mid); }
+.profit.high { color: var(--profit-high); }
+
+.badge-time {
+  font-size: 12px;
+  color: #cbd5e1;
+  background: #0f172a;
+  border: 1px solid #1f2937;
+  border-radius: 999px;
+  padding: 4px 8px;
+  display: inline-block;
 }
 
-.lucro.verde { color: green; font-weight: bold; }
-.lucro.amarelo { color: orange; font-weight: bold; }
-.lucro.cinza { color: gray; font-weight: bold; }
-
-/* Sidebar */
-.sidebar {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 250px;
-  height: 100%;
-  background: #fff;
-  border-left: 2px solid #ddd;
-  padding: 20px;
-  overflow-y: auto;
+.actions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
 }
-
-.sidebar h2 {
-  margin-bottom: 10px;
-  font-size: 18px;
-  text-align: center;
-}
-
-.sidebar details {
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 8px;
-  background: #fafafa;
-}
-
-.sidebar summary {
+.action-btn {
+  background: var(--accent);
+  color: black;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 700;
+}
+.trash-btn {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.action-btn:hover, .trash-btn:hover {
+  filter: brightness(1.1);
 }
 
-.sidebar input[type="number"], .sidebar input[type="time"] {
-  width: 45%;
-  padding: 4px;
-  margin-top: 5px;
+.loading, .empty {
+  text-align: center;
+  color: #8b949e;
+  padding: 12px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  margin-top: 12px;
+}
+
+footer {
+  background: var(--card-bg);
+  text-align: center;
+  padding: 20px;
+  border-top: 2px solid var(--border);
+  margin-top: 30px;
+}
+.logo-rodape {
+  height: 30px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 1100px) {
+  .filtros {
+    grid-template-columns: 1fr 1fr;
+  }
 }
