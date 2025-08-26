@@ -259,8 +259,75 @@ footer {
   margin-bottom: 8px;
 }
 
+/* --- STAKE PRINCIPAL --- */
+.stake-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.stake-toggle {
+  background: var(--accent);
+  color: #052e16;
+  border: none;
+  padding: 12px 15px;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.stake-toggle:hover {
+  filter: brightness(1.1);
+}
+
+.stake-content {
+  display: none;
+  padding: 15px;
+  background: var(--bg);
+  border-top: 1px dashed var(--border);
+}
+
+.stake-content label {
+  display: block;
+  margin: 6px 0 4px;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.stake-content input,
+.stake-content select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.stake-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stake-result {
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--hover);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #e6edf3;
+}
+
 @media (max-width: 1100px) {
   .filtros {
     grid-template-columns: 1fr 1fr;
   }
 }
+
