@@ -437,14 +437,16 @@ $tbody.addEventListener("click", (e) => {
       stake: calcularStake(item.profit)
     };
 
-    // Envia para a extensão
-    chrome.storage.local.set({ surebetData: dados, ready: true }, () => {
-      const u1 = BOOKMAKER_URL[o1.bookmaker] || null;
-      const u2 = BOOKMAKER_URL[o2.bookmaker] || null;
-      if (u1) window.open(u1, "_blank");
-      if (u2) window.open(u2, "_blank");
-      
-      alert(`✅ Dados enviados!\nStake: R$ ${dados.stake.toFixed(2)}`);
+    // ✅ Envia mensagem direta para a extensão
+    chrome.runtime.sendMessage("ndbogpmkbjgkbgiiijenoiooeanmahjm", {
+      action: "openSurebet",
+       dados
+    }, (response) => {
+      if (chrome.runtime.lastError) {
+        alert("❌ Extensão não respondeu. Confira se está instalada.");
+      } else {
+        alert(`✅ Dados enviados!\nStake: R$ ${dados.stake.toFixed(2)}`);
+      }
     });
   }
 });
