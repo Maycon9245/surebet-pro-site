@@ -192,6 +192,11 @@ function calcularStake(profit) {
   return bankroll * riskPercent;
 }
 
+// Calcula stake2 com base em stake1 fixa
+function calcularStakeProporcional(profit, odd1, odd2, stake1) {
+  return (stake1 * odd1) / odd2;
+}
+
 /** RENDER **/
 function render(rows) {
   $tbody.innerHTML = "";
@@ -423,6 +428,25 @@ $tbody.addEventListener("click", (e) => {
     const o1 = item.outcomes?.[0];
     const o2 = item.outcomes?.[1];
     
+    // Pega os valores da caixinha
+    const stakeTotal = parseFloat(document.getElementById("stakeTotal").value) || 100;
+    const casaPrincipal = document.getElementById("casaPrincipal").value;
+    const stakeFixa = parseFloat(document.getElementById("stakeFixa").value) || 0;
+
+    let stake1, stake2;
+
+    if (casaPrincipal === o1.bookmaker && stakeFixa > 0) {
+      stake1 = stakeFixa;
+      stake2 = calcularStakeProporcional(item.profit, o1.odd, o2.odd, stake1);
+    } else if (casaPrincipal === o2.bookmaker && stakeFixa > 0) {
+      stake2 = stakeFixa;
+      stake1 = calcularStakeProporcional(item.profit, o2.odd, o1.odd, stake2);
+    } else {
+      const stakeBase = calcularStake(item.profit);
+      stake1 = stakeBase;
+      stake2 = stakeBase;
+    }
+
     const dados = {
       event: item.event,
       sport: item.sport,
@@ -434,10 +458,11 @@ $tbody.addEventListener("click", (e) => {
       odd2: o2.odd,
       bookmaker2: o2.bookmaker,
       profit: item.profit,
-      stake: calcularStake(item.profit)
+      stake1: parseFloat(stake1.toFixed(2)),
+      stake2: parseFloat(stake2.toFixed(2))
     };
 
-    // ✅ Envia mensagem direta para a extensão
+    // Envia para a extensão
     chrome.runtime.sendMessage("ndbogpmkbjgkbgiiijenoiooeanmahjm", {
       action: "openSurebet",
        dados
@@ -445,7 +470,7 @@ $tbody.addEventListener("click", (e) => {
       if (chrome.runtime.lastError) {
         alert("❌ Extensão não respondeu. Confira se está instalada.");
       } else {
-        alert(`✅ Dados enviados!\nStake: R$ ${dados.stake.toFixed(2)}`);
+        alert(`✅ Dados enviados!\n${o1.bookmaker}: R$ ${dados.stake1}\n${o2.bookmaker}: R$ ${dados.stake2}`);
       }
     });
   }
@@ -464,3 +489,57 @@ setInterval(fetchData, REFRESH_MS);
 
 // Primeira carga
 fetchData();
+
+// 🔹 LÓGICA DA CAIXINHA DE STAKE
+const stakeToggle = document.querySelector(".stake-toggle");
+const stakeContent = document.querySelector(".stake-content");
+const stakeTotal = document.getElementById("stakeTotal");
+const casaPrincipal = document.getElementById("casaPrincipal");
+const stakeFixa = document.getElementById("stakeFixa");
+const resultadoStake = document.getElementById("resultadoStake");
+
+// Abrir/fechar
+stakeToggle.addEventListener("click", () => {
+  const isHidden = stakeContent.style.display !== "block";
+  stakeContent.style.display = isHidden ? "block" : "none";
+  stakeToggle.textContent = isHidden ? "💰 Stake Principal ▼" : "💰 Stake Principal ▲";
+});
+
+// Calcular distribuição
+function calcularStake() {
+  const total = parseFloat(stakeTotal.value) || 0;
+  const fixa = parseFloat(stakeFixa.value) || 0;
+  const casa = casaPrincipal.value;
+
+  if (total <= 0) {
+    resultadoStake.innerHTML = "⚠️ Stake total deve ser maior que 0.";
+    return;
+  }
+
+  if (fixa > total) {
+    resultadoStake.innerHTML = "⚠️ Valor fixo não pode ser maior que o total.";
+    return;
+  }
+
+  if (!casa) {
+    resultadoStake.innerHTML = `✅ Stake total: R$ ${total.toFixed(2)}<br>
+                                ➡️ Escolha uma casa para definir valor fixo.`;
+    return;
+  }
+
+  const outraCasa = total - fixa;
+
+  resultadoStake.innerHTML = `
+    <strong>🎯 Casa Principal:</strong> ${casa} → R$ ${fixa.toFixed(2)}<br>
+    <strong>➡️ Outra casa:</strong> → R$ ${outraCasa.toFixed(2)}<br>
+    <strong>✅ Total:</strong> R$ ${total.toFixed(2)}
+  `;
+}
+
+// Atualizar em tempo real
+stakeTotal.addEventListener("input", calcularStake);
+stakeFixa.addEventListener("input", calcularStake);
+casaPrincipal.addEventListener("change", calcularStake);
+
+// Primeiro cálculo
+calcularStake();
