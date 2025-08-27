@@ -1,10 +1,10 @@
-// Ações por linh/** CONFIG **/
+/** CONFIG **/
 const DATA_URL = "https://maycon9245.github.io/surebet-data/surebets.json";
 
-// Habilite para usar dados fake quando o JSON vier vazio
+// Usa dados fake se JSON vier vazio
 const USE_DEMO_WHEN_EMPTY = true;
 
-// Intervalo de atualização (ms)
+// Atualiza a cada 30 segundos
 const REFRESH_MS = 30000;
 
 /** LISTAS **/
@@ -26,7 +26,7 @@ const BOOKMAKERS = [
   "MrJack.bet","Viebett","F12.bet","Betcris","BetWarrior","BetNational","BetMais","Marathonbet","Blaze","Ivibet","Bwin","888sport"
 ];
 
-// Mapa para abrir sites
+// Links para abrir as casas
 const BOOKMAKER_URL = {
   "Betfair": "https://www.betfair.com/sport",
   "Pinnacle": "https://www.pinnacle.com/pt/",
@@ -66,16 +66,24 @@ const BOOKMAKER_URL = {
 const $tbody = document.getElementById("linhas");
 const $loading = document.getElementById("loading");
 const $empty = document.getElementById("empty");
+const $stakeBox = document.getElementById("stakeBox");
+const $totalStake = document.getElementById("totalStake");
+const $odd1 = document.getElementById("odd1");
+const $odd2 = document.getElementById("odd2");
+const $stake1 = document.getElementById("stake1");
+const $stake2 = document.getElementById("stake2");
+const $casa1 = document.getElementById("casa1");
+const $casa2 = document.getElementById("casa2");
 
 const hiddenIds = new Set(JSON.parse(localStorage.getItem("hiddenIds") || "[]"));
 const firstSeen = new Map();
 const baseline = new Map();
 let lastRenderIds = new Set();
 let lastFetched = [];
+let currentOdds = { odd1: null, odd2: null, casa1: "", casa2: "" };
 
 /** HELPERS **/
 function sanitize(str) { return (str || "").toString().trim(); }
-
 function buildId(s) {
   try {
     const a = s.outcomes?.[0] || {};
@@ -137,17 +145,12 @@ function oddsChanged(baselineItem, currentItem) {
   const b1 = currentItem.outcomes?.[1]?.odd ?? null;
   const p0 = baselineItem.profit ?? null;
   const p1 = currentItem.profit ?? null;
-
   const eps = 1e-6;
-  const changed =
-    (a0 == null || a1 == null ? false : Math.abs(Number(a0) - Number(a1)) > eps) ||
-    (b0 == null || b1 == null ? false : Math.abs(Number(b0) - Number(b1)) > eps) ||
-    (p0 == null || p1 == null ? false : Math.abs(Number(p0) - Number(p1)) > eps);
-
+  const changed = (a0 == null || a1 == null ? false : Math.abs(Number(a0) - Number(a1)) > eps) || (b0 == null || b1 == null ? false : Math.abs(Number(b0) - Number(b1)) > eps) || (p0 == null || p1 == null ? false : Math.abs(Number(p0) - Number(p1)) > eps);
   return changed;
 }
 
-/** DEMO DATA **/
+/** DADOS FALSOS (se JSON falhar) **/
 const DEMO = {
   last_updated: new Date().toISOString(),
   count: 3,
@@ -185,26 +188,7 @@ const DEMO = {
   ]
 };
 
-// --- CÁLCULO MATEMÁTICO CORRETO DE STAKE ---
-function calcularStakes(odd1, odd2, stakeTotal) {
-  const stake1 = (stakeTotal * odd2) / (odd1 + odd2);
-  const stake2 = (stakeTotal * odd1) / (odd1 + odd2);
-  return { stake1, stake2 };
-}
-
-function calcularComFixa(odd1, odd2, stakeFixa, casaFixa) {
-  if (casaFixa === "1") {
-    const stake1 = stakeFixa;
-    const stake2 = (stake1 * odd1) / odd2;
-    return { stake1, stake2 };
-  } else {
-    const stake2 = stakeFixa;
-    const stake1 = (stake2 * odd2) / odd1;
-    return { stake1, stake2 };
-  }
-}
-
-/** RENDER **/
+/** RENDERIZA A TABELA **/
 function render(rows) {
   $tbody.innerHTML = "";
   lastRenderIds = new Set();
@@ -215,7 +199,6 @@ function render(rows) {
 
     if (!firstSeen.has(id)) firstSeen.set(id, Date.now());
     if (!baseline.has(id)) baseline.set(id, JSON.parse(JSON.stringify(s)));
-
     if (oddsChanged(baseline.get(id), s)) return;
 
     lastRenderIds.add(id);
@@ -225,12 +208,15 @@ function render(rows) {
 
     const profit = Number(s.profit || 0);
     const pClass = `profit ${profitClass(profit)}`;
-
     const sinceMs = firstSeen.get(id) || Date.now();
     const sinceText = timeAgo(sinceMs);
 
     const tr = document.createElement("tr");
     tr.dataset.id = id;
+    tr.dataset.odd1 = o1.odd;
+    tr.dataset.odd2 = o2.odd;
+    tr.dataset.casa1 = o1.bookmaker;
+    tr.dataset.casa2 = o2.bookmaker;
 
     tr.innerHTML = `
       <td>${sanitize(s.event)}</td>
@@ -258,11 +244,10 @@ function render(rows) {
   $empty.style.display = rows.length === 0 || lastRenderIds.size === 0 ? "block" : "none";
 }
 
-/** CRIAR CHECKBOXES **/
+/** CRIA CHECKBOXES **/
 function createCheckboxes(items, containerId, selectedStorageKey) {
   const container = document.getElementById(containerId);
   const selected = JSON.parse(localStorage.getItem(selectedStorageKey) || "[]");
-
   items.forEach(name => {
     const label = document.createElement("label");
     const input = document.createElement("input");
@@ -286,7 +271,6 @@ function createCheckboxes(items, containerId, selectedStorageKey) {
   });
 }
 
-// Inicializa checkboxes
 createCheckboxes(SPORTS, "sports-list", "selectedSports");
 createCheckboxes(BOOKMAKERS, "bookmakers-list", "selectedBookmakers");
 
@@ -305,39 +289,31 @@ function applyFilters(list) {
         .map(x => (x || "").toString().toLowerCase()).join(" ");
       if (!hay.includes(q)) return false;
     }
-
     if (selectedSports.length > 0 && !selectedSports.includes(s.sport)) return false;
-
     if (selectedBookmakers.length > 0) {
       const b1 = s.outcomes?.[0]?.bookmaker, b2 = s.outcomes?.[1]?.bookmaker;
       if (!(selectedBookmakers.includes(b1) || selectedBookmakers.includes(b2))) return false;
     }
-
     const p = Number(s.profit || 0);
     if (p < pMin) return false;
     if (p > pMax) return false;
-
     const start = parseStart(s);
     if (!withinWindow(start, timeWin)) return false;
-
     return true;
   });
 }
 
-/** FETCH **/
+/** BUSCA DADOS **/
 async function fetchData() {
   $loading.style.display = "block";
   try {
     const resp = await fetch(DATA_URL, { cache: "no-store" });
     if (!resp.ok) throw new Error("Falha ao carregar o JSON");
     const data = await resp.json();
-
     let list = Array.isArray(data?.surebets) ? data.surebets : [];
-
     if (list.length === 0 && USE_DEMO_WHEN_EMPTY) {
       list = DEMO.surebets;
     }
-
     const fetchedById = new Map(list.map(s => [buildId(s), s]));
     for (const id of Array.from(firstSeen.keys())) {
       if (!fetchedById.has(id)) {
@@ -345,7 +321,6 @@ async function fetchData() {
         baseline.delete(id);
       }
     }
-
     lastFetched = list;
     const filtered = applyFilters(list);
     render(filtered);
@@ -364,7 +339,6 @@ document.querySelectorAll(".toggle-btn").forEach(btn => {
     const targetId = btn.dataset.target;
     const target = document.getElementById(targetId);
     const isExpanded = target.style.display !== "none";
-
     if (isExpanded) {
       target.style.display = "none";
       btn.textContent = "▶️ Mostrar";
@@ -379,45 +353,43 @@ document.querySelectorAll(".toggle-btn").forEach(btn => {
   });
 });
 
-/** FILTROS REAGEM **/
 ["buscar", "profitMin", "profitMax", "timeWindow"].forEach(id => {
-  document.getElementById(id).addEventListener("input", () => render(applyFilters(lastFetched)));
+  document.getElementById(id)?.addEventListener("input", () => render(applyFilters(lastFetched)));
 });
 
-// Botões de ação
-document.getElementById("sportsSelectAll").addEventListener("click", () => {
+document.getElementById("sportsSelectAll")?.addEventListener("click", () => {
   document.querySelectorAll('#sports-list input[type="checkbox"]').forEach(cb => cb.checked = true);
   localStorage.setItem("selectedSports", JSON.stringify(SPORTS));
   render(applyFilters(lastFetched));
 });
 
-document.getElementById("sportsClear").addEventListener("click", () => {
+document.getElementById("sportsClear")?.addEventListener("click", () => {
   document.querySelectorAll('#sports-list input[type="checkbox"]').forEach(cb => cb.checked = false);
   localStorage.setItem("selectedSports", JSON.stringify([]));
   render(applyFilters(lastFetched));
 });
 
-document.getElementById("bookiesSelectAll").addEventListener("click", () => {
+document.getElementById("bookiesSelectAll")?.addEventListener("click", () => {
   document.querySelectorAll('#bookmakers-list input[type="checkbox"]').forEach(cb => cb.checked = true);
   localStorage.setItem("selectedBookmakers", JSON.stringify(BOOKMAKERS));
   render(applyFilters(lastFetched));
 });
 
-document.getElementById("bookiesClear").addEventListener("click", () => {
+document.getElementById("bookiesClear")?.addEventListener("click", () => {
   document.querySelectorAll('#bookmakers-list input[type="checkbox"]').forEach(cb => cb.checked = false);
   localStorage.setItem("selectedBookmakers", JSON.stringify([]));
   render(applyFilters(lastFetched));
 });
 
-document.getElementById("btnAtualizar").addEventListener("click", fetchData);
-a
+document.getElementById("btnAtualizar")?.addEventListener("click", fetchData);
+
+// Ações por linha
 $tbody.addEventListener("click", (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
   const tr = e.target.closest("tr");
   const id = tr?.dataset?.id;
   if (!id) return;
-
   const act = btn.dataset.act;
   const item = lastFetched.find(s => buildId(s) === id);
   if (!item) return;
@@ -433,46 +405,32 @@ $tbody.addEventListener("click", (e) => {
   if (act === "open") {
     const o1 = item.outcomes?.[0];
     const o2 = item.outcomes?.[1];
-    
-    // Pega os valores da caixinha
-    const stakeTotal = parseFloat(document.getElementById("stakeTotal").value) || 100;
-    const casaPrincipal = document.getElementById("casaPrincipal").value;
-    const stakeFixa = parseFloat(document.getElementById("stakeFixa").value) || 0;
+    const odd1 = Number(o1.odd);
+    const odd2 = Number(o2.odd);
+    const totalStake = parseFloat($totalStake?.value) || 100;
 
-    let stake1, stake2;
+    const inv1 = 1 / odd1;
+    const inv2 = 1 / odd2;
+    const somaInv = inv1 + inv2;
 
-    // Se definir valor fixo em uma casa
-    if (casaPrincipal === o1.bookmaker && stakeFixa > 0) {
-      const { stake1: s1, stake2: s2 } = calcularComFixa(o1.odd, o2.odd, stakeFixa, "1");
-      stake1 = s1;
-      stake2 = s2;
-    } else if (casaPrincipal === o2.bookmaker && stakeFixa > 0) {
-      const { stake1: s1, stake2: s2 } = calcularComFixa(o1.odd, o2.odd, stakeFixa, "2");
-      stake1 = s1;
-      stake2 = s2;
-    } else {
-      // Se não definir, usa divisão proporcional
-      const { stake1: s1, stake2: s2 } = calcularStakes(o1.odd, o2.odd, stakeTotal);
-      stake1 = s1;
-      stake2 = s2;
-    }
+    const stake1 = (totalStake * inv1) / somaInv;
+    const stake2 = (totalStake * inv2) / somaInv;
 
     const dados = {
       event: item.event,
       sport: item.sport,
       start_time_br: item.start_time_br,
       team1: o1.team,
-      odd1: o1.odd,
+      odd1: odd1,
       bookmaker1: o1.bookmaker,
       team2: o2.team,
-      odd2: o2.odd,
+      odd2: odd2,
       bookmaker2: o2.bookmaker,
       profit: item.profit,
       stake1: parseFloat(stake1.toFixed(2)),
       stake2: parseFloat(stake2.toFixed(2))
     };
 
-    // Envia para a extensão
     chrome.runtime.sendMessage("ndbogpmkbjgkbgiiijenoiooeanmahjm", {
       action: "openSurebet",
        dados
@@ -500,75 +458,39 @@ setInterval(fetchData, REFRESH_MS);
 // Primeira carga
 fetchData();
 
-// 🔹 LÓGICA DA CAIXINHA DE STAKE
-const stakeToggle = document.querySelector(".stake-toggle");
-const stakeContent = document.querySelector(".stake-content");
-const stakeTotal = document.getElementById("stakeTotal");
-const casaPrincipal = document.getElementById("casaPrincipal");
-const stakeFixa = document.getElementById("stakeFixa");
-const resultadoStake = document.getElementById("resultadoStake");
+// 🔹 CÁLCULO DE STAKE AO CLICAR NA LINHA
+$tbody.addEventListener("click", (e) => {
+  const tr = e.target.closest("tr");
+  if (!tr || !tr.dataset.odd1) return;
 
-// Abrir/fechar
-stakeToggle.addEventListener("click", () => {
-  const isHidden = stakeContent.style.display !== "block";
-  stakeContent.style.display = isHidden ? "block" : "none";
-  stakeToggle.textContent = isHidden ? "💰 Stake Principal ▼" : "💰 Stake Principal ▲";
+  currentOdds = {
+    odd1: parseFloat(tr.dataset.odd1),
+    odd2: parseFloat(tr.dataset.odd2),
+    casa1: tr.dataset.casa1,
+    casa2: tr.dataset.casa2
+  };
+
+  $casa1.textContent = currentOdds.casa1;
+  $casa2.textContent = currentOdds.casa2;
+  $odd1.textContent = currentOdds.odd1.toFixed(2);
+  $odd2.textContent = currentOdds.odd2.toFixed(2);
+
+  $stakeBox.style.display = "block";
+  calcularStakes();
 });
 
-// Calcular distribuição
-function calcularStake() {
-  const total = parseFloat(stakeTotal.value) || 100;
-  const fixa = parseFloat(stakeFixa.value) || 0;
-  const casa = casaPrincipal.value;
-
-  if (total <= 0) {
-    resultadoStake.innerHTML = "⚠️ Stake total deve ser maior que 0.";
-    return;
-  }
-
-  if (fixa > total) {
-    resultadoStake.innerHTML = "⚠️ Valor fixo não pode ser maior que o total.";
-    return;
-  }
-
-  if (!casa) {
-    resultadoStake.innerHTML = `✅ Stake total: R$ ${total.toFixed(2)}<br>
-                                ➡️ Escolha uma casa para definir valor fixo.`;
-    return;
-  }
-
-  // Simulação de odds (para preview)
-  const odd1 = 2.10;
-  const odd2 = 2.05;
-
-  let stake1, stake2;
-
-  if (casa === "Betfair") {
-    const { stake1: s1, stake2: s2 } = calcularComFixa(odd1, odd2, fixa, "1");
-    stake1 = s1;
-    stake2 = s2;
-  } else if (casa === "Pinnacle") {
-    const { stake1: s1, stake2: s2 } = calcularComFixa(odd1, odd2, fixa, "2");
-    stake1 = s1;
-    stake2 = s2;
-  } else {
-    const { stake1: s1, stake2: s2 } = calcularStakes(odd1, odd2, total);
-    stake1 = s1;
-    stake2 = s2;
-  }
-
-  resultadoStake.innerHTML = `
-    <strong>🎯 ${casa}:</strong> R$ ${fixa > 0 ? fixa.toFixed(2) : stake1.toFixed(2)}<br>
-    <strong>➡️ Outra casa:</strong> R$ ${stake2.toFixed(2)}<br>
-    <strong>✅ Total:</strong> R$ ${(stake1 + stake2).toFixed(2)}
-  `;
+// Calcula as stakes
+function calcularStakes() {
+  if (!currentOdds.odd1 || !currentOdds.odd2) return;
+  const totalStake = parseFloat($totalStake.value) || 100;
+  const inv1 = 1 / currentOdds.odd1;
+  const inv2 = 1 / currentOdds.odd2;
+  const somaInv = inv1 + inv2;
+  const s1 = (totalStake * inv1) / somaInv;
+  const s2 = (totalStake * inv2) / somaInv;
+  $stake1.textContent = s1.toFixed(2);
+  $stake2.textContent = s2.toFixed(2);
 }
 
-// Atualizar em tempo real
-stakeTotal.addEventListener("input", calcularStake);
-stakeFixa.addEventListener("input", calcularStake);
-casaPrincipal.addEventListener("change", calcularStake);
-
-// Primeiro cálculo
-calcularStake();
-
+// Atualiza em tempo real
+$totalStake?.addEventListener("input", calcularStakes);
