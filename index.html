@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Topo com logo -->
   <header>
     <img src="img/logo.png" alt="Surebet PRO" class="logo-topo"/>
   </header>
@@ -16,41 +15,33 @@
     <h1>🚀 Surebet PRO</h1>
     <p>Encontre apostas garantidas com lucro matemático — atualizado automaticamente</p>
 
-    <!-- Filtros -->
     <section class="filtros">
       <input type="text" id="buscar" placeholder="🔎 Buscar jogo..." />
 
-      <!-- Esportes -->
       <div class="filter-block">
         <div class="filter-header">
           <label>Esportes</label>
           <button type="button" class="toggle-btn" data-target="sports-list">🔽 Esconder</button>
         </div>
-        <div id="sports-list" class="checkbox-group">
-          <!-- Preenchido via JS -->
-        </div>
+        <div id="sports-list" class="checkbox-group"></div>
         <div class="filter-actions">
           <button id="sportsSelectAll" type="button">Marcar tudo</button>
           <button id="sportsClear" type="button">Limpar</button>
         </div>
       </div>
 
-      <!-- Casas de Aposta -->
       <div class="filter-block">
         <div class="filter-header">
           <label>Casas de Aposta</label>
           <button type="button" class="toggle-btn" data-target="bookmakers-list">🔽 Esconder</button>
         </div>
-        <div id="bookmakers-list" class="checkbox-group">
-          <!-- Preenchido via JS -->
-        </div>
+        <div id="bookmakers-list" class="checkbox-group"></div>
         <div class="filter-actions">
           <button id="bookiesSelectAll" type="button">Selecionar todas</button>
           <button id="bookiesClear" type="button">Limpar</button>
         </div>
       </div>
 
-      <!-- Lucro -->
       <div class="filter-inline">
         <label>Lucro mín. (%)</label>
         <input type="number" id="profitMin" min="0" step="0.1" placeholder="0.0"/>
@@ -60,7 +51,6 @@
         <input type="number" id="profitMax" min="0" step="0.1" placeholder=""/>
       </div>
 
-      <!-- Evento durante -->
       <div class="filter-inline">
         <label>Evento durante</label>
         <select id="timeWindow">
@@ -75,12 +65,11 @@
       <button id="btnAtualizar" type="button">🔄 Atualizar</button>
     </section>
 
-    <!-- 🔹 CAIXINHA RETRÁTIL DE STAKE -->
     <div class="stake-box">
       <button class="stake-toggle">💰 Stake Principal ▼</button>
       <div class="stake-content">
         <label for="stakeTotal">Stake Total (R$):</label>
-        <input type="number" id="stakeTotal" value="100" min="0.5" step="0.1" />
+        <input type="number" id="stakeTotal" value="1000" min="0.5" step="0.1" />
 
         <div class="stake-row">
           <div>
@@ -133,7 +122,6 @@
       </div>
     </div>
 
-    <!-- Tabela -->
     <section class="tabela">
       <table>
         <thead>
@@ -152,16 +140,13 @@
             <th>Ações</th>
           </tr>
         </thead>
-        <tbody id="linhas">
-          <!-- Preenchido via JS -->
-        </tbody>
+        <tbody id="linhas"></tbody>
       </table>
-      <div id="loading" class="loading" style="display:none;">🔄 Buscando oportunidades...</div>
-      <div id="empty" class="empty" style="display:none;">🔍 Nenhuma surebet encontrada</div>
+      <div id="loading" class="loading">🔄 Buscando oportunidades...</div>
+      <div id="empty" class="empty">🔍 Nenhuma surebet encontrada</div>
     </section>
   </main>
 
-  <!-- Rodapé -->
   <footer>
     <img src="img/logo.png" alt="Surebet PRO" class="logo-rodape"/>
     <p>© 2025 Surebet PRO — Todos os direitos reservados</p>
