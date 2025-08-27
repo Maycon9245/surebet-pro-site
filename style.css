@@ -50,6 +50,7 @@ p {
   margin-bottom: 20px;
 }
 
+/* --- CABEÇALHO DOS FILTROS --- */
 .filter-header {
   display: flex;
   justify-content: space-between;
@@ -72,6 +73,7 @@ p {
   color: var(--accent);
 }
 
+/* --- CHECKBOXES --- */
 .checkbox-group {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -95,6 +97,7 @@ p {
   margin: 0;
 }
 
+/* --- FILTROS --- */
 .filtros {
   display: grid;
   grid-template-columns: 1fr 240px 240px repeat(3, 160px) 120px;
@@ -136,7 +139,8 @@ p {
   filter: brightness(1.1);
 }
 
-.filtros select, .filtros input[type="number"] {
+.filtros select,
+.filtros input[type="number"] {
   width: 100%;
   padding: 10px;
   border: none;
@@ -159,6 +163,7 @@ p {
   filter: brightness(1.05);
 }
 
+/* --- TABELA --- */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -200,6 +205,7 @@ tr:hover {
   display: inline-block;
 }
 
+/* --- AÇÕES --- */
 .actions {
   display: flex;
   gap: 6px;
@@ -222,11 +228,14 @@ tr:hover {
   border-radius: 8px;
   cursor: pointer;
 }
-.action-btn:hover, .trash-btn:hover {
+.action-btn:hover,
+.trash-btn:hover {
   filter: brightness(1.1);
 }
 
-.loading, .empty {
+/* --- LOADING E VAZIO --- */
+.loading,
+.empty {
   text-align: center;
   color: #8b949e;
   padding: 12px;
@@ -235,6 +244,7 @@ tr:hover {
   margin-top: 12px;
 }
 
+/* --- RODAPÉ --- */
 footer {
   background: var(--card-bg);
   text-align: center;
@@ -247,47 +257,31 @@ footer {
   margin-bottom: 8px;
 }
 
-/* --- STAKE PRINCIPAL --- */
-.stake-box {
+/* --- STAKE BOX (abre ao clicar na linha) --- */
+#stakeBox {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 10px;
-  margin: 15px 0;
-  overflow: hidden;
-}
-
-.stake-toggle {
-  background: var(--accent);
-  color: #052e16;
-  border: none;
-  padding: 12px 15px;
-  width: 100%;
-  text-align: left;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  border-radius: 8px;
-}
-.stake-toggle:hover {
-  filter: brightness(1.1);
-}
-
-.stake-content {
-  display: none;
   padding: 15px;
-  background: var(--bg);
-  border-top: 1px dashed var(--border);
+  margin: 20px 0;
+  font-size: 14px;
+  display: none;
 }
 
-.stake-content label {
+#stakeBox h3 {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: 16px;
+}
+
+#stakeBox label {
   display: block;
   margin: 6px 0 4px;
   color: #cbd5e1;
   font-size: 14px;
 }
 
-.stake-content input,
-.stake-content select {
+#stakeBox input {
   width: 100%;
   padding: 8px;
   border: 1px solid var(--border);
@@ -297,22 +291,18 @@ footer {
   font-size: 14px;
 }
 
-.stake-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+#stakeDetails {
+  margin-top: 10px;
+  line-height: 1.8;
+  font-size: 14px;
 }
 
-.stake-result {
-  margin-top: 10px;
-  padding: 10px;
-  background: var(--hover);
-  border-radius: 6px;
-  font-size: 14px;
-  line-height: 1.5;
+#stakeDetails p {
+  margin: 4px 0;
   color: #e6edf3;
 }
 
+/* --- RESPONSIVO --- */
 @media (max-width: 1100px) {
   .filtros {
     grid-template-columns: 1fr 1fr;
