@@ -15,6 +15,9 @@
     <h1>🚀 Surebet PRO</h1>
     <p>Encontre apostas garantidas com lucro matemático — atualizado automaticamente</p>
 
+    <!-- 🔐 BOTÃO DE LOGIN -->
+    <button id="loginBtn" class="login-btn">🔑 Login / Assinar</button>
+
     <section class="filtros">
       <input type="text" id="buscar" placeholder="🔎 Buscar jogo..." />
 
@@ -65,7 +68,7 @@
       <button id="btnAtualizar" type="button">🔄 Atualizar</button>
     </section>
 
-    <!-- 🔹 CAIXINHA DE STAKE NO TOPO -->
+    <!-- 🔹 CAIXINHA DE STAKE -->
     <div class="stake-box">
       <button class="stake-toggle">💰 Stake Principal ▼</button>
       <div class="stake-content">
@@ -149,6 +152,74 @@
     </section>
   </main>
 
+  <!-- MODAL DE LOGIN/ASSINATURA -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-content">
+      <span id="closeModal" class="close-btn">&times;</span>
+      <h2>🔐 Acesso ao Surebet PRO</h2>
+
+      <!-- Abas -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="login">Entrar</button>
+        <button class="tab-btn" data-tab="register">Cadastrar</button>
+      </div>
+
+      <!-- Formulário de Login -->
+      <div id="loginTab" class="tab-content active">
+        <input type="email" id="loginEmail" placeholder="E-mail" required />
+        <input type="password" id="loginPassword" placeholder="Senha" required />
+        <button id="loginSubmit" class="action-btn">Entrar</button>
+      </div>
+
+      <!-- Formulário de Cadastro -->
+      <div id="registerTab" class="tab-content">
+        <input type="text" id="registerName" placeholder="Nome" required />
+        <input type="email" id="registerEmail" placeholder="E-mail" required />
+        <input type="password" id="registerPassword" placeholder="Senha" required />
+        <button id="registerSubmit" class="action-btn">Cadastrar</button>
+      </div>
+
+      <!-- Planos de Assinatura -->
+      <div id="plansTab" class="tab-content" style="display: none;">
+        <h3>🚀 Escolha seu Plano</h3>
+        <div class="plan-card">
+          <h4>Semanal</h4>
+          <p><strong>R$ 29,90</strong></p>
+          <button class="plan-btn" data-plan="semanal">Assinar</button>
+        </div>
+        <div class="plan-card">
+          <h4>Mensal</h4>
+          <p><strong>R$ 79,90</strong></p>
+          <button class="plan-btn" data-plan="mensal">Assinar</button>
+        </div>
+        <div class="plan-card">
+          <h4>Trimestral</h4>
+          <p><strong>R$ 199,90</strong></p>
+          <button class="plan-btn" data-plan="trimestral">Assinar</button>
+        </div>
+      </div>
+
+      <!-- Pagamento via PIX -->
+      <div id="pixTab" class="tab-content" style="display: none;">
+        <h3>💳 Pagar via PIX</h3>
+        <p>Chave PIX: <code>pix@surebetpro.com.br</code></p>
+        <p><strong>Valor:</strong> <span id="pixValue">R$ 0,00</span></p>
+        <div class="qrcode" id="qrcode"></div>
+        <button id="copyPix" class="action-btn">📋 Copiar Chave PIX</button>
+        <p><small>Após o pagamento, o acesso será liberado em até 5 minutos.</small></p>
+      </div>
+
+      <!-- Timer do Plano Ativo -->
+      <div id="timerTab" class="tab-content" style="display: none;">
+        <h3>⏱️ Seu Plano Ativo</h3>
+        <p><strong>Plano:</strong> <span id="activePlan">Nenhum</span></p>
+        <p><strong>Expira em:</strong></p>
+        <div id="countdown">00d 00h 00m 00s</div>
+        <button id="logoutBtn" class="logout-btn">Sair da Conta</button>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <img src="img/logo.png" alt="Surebet PRO" class="logo-rodape"/>
     <p>© 2025 Surebet PRO — Todos os direitos reservados</p>
@@ -157,4 +228,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
