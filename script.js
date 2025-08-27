@@ -1,4 +1,4 @@
-/** CONFIG **/
+// Ações por linh/** CONFIG **/
 const DATA_URL = "https://maycon9245.github.io/surebet-data/surebets.json";
 
 // Habilite para usar dados fake quando o JSON vier vazio
@@ -185,16 +185,23 @@ const DEMO = {
   ]
 };
 
-/** CALCULAR STAKE **/
-function calcularStake(profit) {
-  const bankroll = 1000; // R$1000 de banca
-  const riskPercent = 0.01; // 1% da banca
-  return bankroll * riskPercent;
+// --- CÁLCULO MATEMÁTICO CORRETO DE STAKE ---
+function calcularStakes(odd1, odd2, stakeTotal) {
+  const stake1 = (stakeTotal * odd2) / (odd1 + odd2);
+  const stake2 = (stakeTotal * odd1) / (odd1 + odd2);
+  return { stake1, stake2 };
 }
 
-// Calcula stake2 com base em stake1 fixa (para surebet)
-function calcularStakeProporcional(odd1, odd2, stake1) {
-  return (stake1 * odd1) / odd2;
+function calcularComFixa(odd1, odd2, stakeFixa, casaFixa) {
+  if (casaFixa === "1") {
+    const stake1 = stakeFixa;
+    const stake2 = (stake1 * odd1) / odd2;
+    return { stake1, stake2 };
+  } else {
+    const stake2 = stakeFixa;
+    const stake1 = (stake2 * odd2) / odd1;
+    return { stake1, stake2 };
+  }
 }
 
 /** RENDER **/
@@ -403,8 +410,7 @@ document.getElementById("bookiesClear").addEventListener("click", () => {
 });
 
 document.getElementById("btnAtualizar").addEventListener("click", fetchData);
-
-// Ações por linha
+a
 $tbody.addEventListener("click", (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
@@ -437,16 +443,18 @@ $tbody.addEventListener("click", (e) => {
 
     // Se definir valor fixo em uma casa
     if (casaPrincipal === o1.bookmaker && stakeFixa > 0) {
-      stake1 = stakeFixa;
-      stake2 = calcularStakeProporcional(o1.odd, o2.odd, stake1);
+      const { stake1: s1, stake2: s2 } = calcularComFixa(o1.odd, o2.odd, stakeFixa, "1");
+      stake1 = s1;
+      stake2 = s2;
     } else if (casaPrincipal === o2.bookmaker && stakeFixa > 0) {
-      stake2 = stakeFixa;
-      stake1 = calcularStakeProporcional(o2.odd, o1.odd, stake2);
+      const { stake1: s1, stake2: s2 } = calcularComFixa(o1.odd, o2.odd, stakeFixa, "2");
+      stake1 = s1;
+      stake2 = s2;
     } else {
-      // Se não definir, usa stake base proporcional
-      const baseStake = calcularStake(item.profit);
-      stake1 = baseStake;
-      stake2 = calcularStakeProporcional(o1.odd, o2.odd, stake1);
+      // Se não definir, usa divisão proporcional
+      const { stake1: s1, stake2: s2 } = calcularStakes(o1.odd, o2.odd, stakeTotal);
+      stake1 = s1;
+      stake2 = s2;
     }
 
     const dados = {
@@ -529,12 +537,30 @@ function calcularStake() {
     return;
   }
 
-  const outraCasa = total - fixa;
+  // Simulação de odds (para preview)
+  const odd1 = 2.10;
+  const odd2 = 2.05;
+
+  let stake1, stake2;
+
+  if (casa === "Betfair") {
+    const { stake1: s1, stake2: s2 } = calcularComFixa(odd1, odd2, fixa, "1");
+    stake1 = s1;
+    stake2 = s2;
+  } else if (casa === "Pinnacle") {
+    const { stake1: s1, stake2: s2 } = calcularComFixa(odd1, odd2, fixa, "2");
+    stake1 = s1;
+    stake2 = s2;
+  } else {
+    const { stake1: s1, stake2: s2 } = calcularStakes(odd1, odd2, total);
+    stake1 = s1;
+    stake2 = s2;
+  }
 
   resultadoStake.innerHTML = `
-    <strong>🎯 Casa Principal:</strong> ${casa} → R$ ${fixa.toFixed(2)}<br>
-    <strong>➡️ Outra casa:</strong> → R$ ${outraCasa.toFixed(2)}<br>
-    <strong>✅ Total:</strong> R$ ${total.toFixed(2)}
+    <strong>🎯 ${casa}:</strong> R$ ${fixa > 0 ? fixa.toFixed(2) : stake1.toFixed(2)}<br>
+    <strong>➡️ Outra casa:</strong> R$ ${stake2.toFixed(2)}<br>
+    <strong>✅ Total:</strong> R$ ${(stake1 + stake2).toFixed(2)}
   `;
 }
 
@@ -545,3 +571,4 @@ casaPrincipal.addEventListener("change", calcularStake);
 
 // Primeiro cálculo
 calcularStake();
+
