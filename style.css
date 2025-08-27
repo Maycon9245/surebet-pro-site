@@ -5,7 +5,6 @@
   --accent: #4ade80;
   --border: #30363d;
   --hover: #21262d;
-
   --profit-low: #9ca3af;
   --profit-mid: #facc15;
   --profit-high: #22c55e;
@@ -51,7 +50,6 @@ p {
   margin-bottom: 20px;
 }
 
-/* Cabeçalho do filtro */
 .filter-header {
   display: flex;
   justify-content: space-between;
@@ -63,7 +61,6 @@ p {
   color: var(--accent);
 }
 
-/* Botão retrátil */
 .toggle-btn {
   background: transparent;
   border: none;
@@ -74,14 +71,7 @@ p {
 .toggle-btn:hover {
   color: var(--accent);
 }
-.toggle-btn.expanded::after {
-  content: "🔽";
-}
-.toggle-btn.collapsed::after {
-  content: "▶️";
-}
 
-/* Checkbox group */
 .checkbox-group {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -105,7 +95,6 @@ p {
   margin: 0;
 }
 
-/* Filtros */
 .filtros {
   display: grid;
   grid-template-columns: 1fr 240px 240px repeat(3, 160px) 120px;
@@ -170,7 +159,6 @@ p {
   filter: brightness(1.05);
 }
 
-/* Tabela */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -330,4 +318,3 @@ footer {
     grid-template-columns: 1fr 1fr;
   }
 }
-
