@@ -65,6 +65,64 @@
       <button id="btnAtualizar" type="button">🔄 Atualizar</button>
     </section>
 
+    <!-- 🔹 CAIXINHA DE STAKE NO TOPO -->
+    <div class="stake-box">
+      <button class="stake-toggle">💰 Stake Principal ▼</button>
+      <div class="stake-content">
+        <label for="stakeTotal">Stake Total (R$):</label>
+        <input type="number" id="stakeTotal" value="100" min="0.5" step="0.1" />
+
+        <div class="stake-row">
+          <div>
+            <label for="casaPrincipal">Casa Principal:</label>
+            <select id="casaPrincipal">
+              <option value="">-- Selecione --</option>
+              <option value="Betfair">Betfair</option>
+              <option value="Pinnacle">Pinnacle</option>
+              <option value="Betano">Betano</option>
+              <option value="Bet365">Bet365</option>
+              <option value="1xBet">1xBet</option>
+              <option value="PixBet">PixBet</option>
+              <option value="KTO">KTO</option>
+              <option value="Sportingbet">Sportingbet</option>
+              <option value="Betway">Betway</option>
+              <option value="Betpix365">Betpix365</option>
+              <option value="LeoVegas">LeoVegas</option>
+              <option value="Bodog">Bodog</option>
+              <option value="Parimatch">Parimatch</option>
+              <option value="Betsson">Betsson</option>
+              <option value="22Bet">22Bet</option>
+              <option value="Galera.Bet">Galera.Bet</option>
+              <option value="Esportes da Sorte">Esportes da Sorte</option>
+              <option value="Rivalo">Rivalo</option>
+              <option value="EstrelaBet">EstrelaBet</option>
+              <option value="Casa de Apostas">Casa de Apostas</option>
+              <option value="MrJack.bet">MrJack.bet</option>
+              <option value="Viebett">Viebett</option>
+              <option value="F12.bet">F12.bet</option>
+              <option value="Betcris">Betcris</option>
+              <option value="BetWarrior">BetWarrior</option>
+              <option value="BetNational">BetNational</option>
+              <option value="BetMais">BetMais</option>
+              <option value="Marathonbet">Marathonbet</option>
+              <option value="Blaze">Blaze</option>
+              <option value="Ivibet">Ivibet</option>
+              <option value="Bwin">Bwin</option>
+              <option value="888sport">888sport</option>
+            </select>
+          </div>
+          <div>
+            <label for="stakeFixa">Valor fixo (R$):</label>
+            <input type="number" id="stakeFixa" value="0" min="0" step="0.1" />
+          </div>
+        </div>
+
+        <div id="resultadoStake" class="stake-result">
+          ➡️ Defina os valores para calcular a distribuição.
+        </div>
+      </div>
+    </div>
+
     <!-- Tabela -->
     <section class="tabela">
       <table>
@@ -89,18 +147,6 @@
       <div id="loading" class="loading">🔄 Buscando oportunidades...</div>
       <div id="empty" class="empty">🔍 Nenhuma surebet encontrada</div>
     </section>
-
-    <!-- 🔹 CAIXINHA DE STAKE (abre ao clicar na linha) -->
-    <div id="stakeBox" class="stake-box" style="display:none;">
-      <h3>💰 Cálculo de Stake</h3>
-      <label for="totalStake">Valor total da aposta (R$):</label>
-      <input type="number" id="totalStake" value="100" min="0.5" step="0.1" />
-
-      <div id="stakeDetails">
-        <p><strong><span id="casa1">Casa 1</span>:</strong> <span id="odd1">-</span> | <strong>Stake:</strong> R$ <span id="stake1">0,00</span></p>
-        <p><strong><span id="casa2">Casa 2</span>:</strong> <span id="odd2">-</span> | <strong>Stake:</strong> R$ <span id="stake2">0,00</span></p>
-      </div>
-    </div>
   </main>
 
   <footer>
@@ -111,3 +157,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
