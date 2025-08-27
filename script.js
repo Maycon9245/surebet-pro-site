@@ -3,7 +3,7 @@ const DATA_URL = "https://maycon9245.github.io/surebet-data/surebets.json";
 const USE_DEMO_WHEN_EMPTY = true;
 const REFRESH_MS = 30000;
 
-// Listas de esportes e casas
+/** LISTAS **/
 const SPORTS = ["Artes marciais","Badminton","Bandy","Basquete","Basquete 3x3","Basquete 4x4","Beisebal","Beisebol finlandês","Boliche","Cricket","Críquete","Dardos","Esportes virtuais","Basquete (SRL)","Cricket (SRL)","Futebol (SRL)","Tênis (SRL)","Floorball","Futebol","Futebol 3x3","Futebol 4x4","Futebol 5x5","Futebol Gaélico","Futebol americano","Futebol australiano","Futebol de praia","Futebol de salão","Golfe","Handebol","Handebol de praia","Hurling","Hóquei","Hóquei 3x3","Hóquei de ar","Hóquei de ar 2x2","Hóquei em campo","Lacrosse","Netbol","O que Onde Quando","Pólo aquático","Rugby","Short hockey","Sinuca","Tênis","Tênis de mesa","Voleibol","Voleibol de praia","Xadrez","eSport","Arena of Valor","Call of Duty","Counter-Strike","Deadlock","Dota","E-Basquete","E-Futebol","E-Hóquei","E-Tênis","E-Voleibol","Famosas em dispositivos móveis","King of Glory","League of Legends","NBA2K","Overwatch","Rainbow","Rocket League","StarCraft","Valorant","Warcraft"];
 const BOOKMAKERS = ["Betfair","Pinnacle","Betano","Bet365","1xBet","PixBet","KTO","Sportingbet","Betway","Betpix365","LeoVegas","Bodog","Parimatch","Betsson","22Bet","Galera.Bet","Esportes da Sorte","Rivalo","EstrelaBet","Casa de Apostas","MrJack.bet","Viebett","F12.bet","Betcris","BetWarrior","BetNational","BetMais","Marathonbet","Blaze","Ivibet","Bwin","888sport"];
 
@@ -42,18 +42,17 @@ const BOOKMAKER_URL = {
   "888sport": "https://www.888sport.com/"
 };
 
-// State
+/** STATE **/
 const $tbody = document.getElementById("linhas");
 const $loading = document.getElementById("loading");
 const $empty = document.getElementById("empty");
-
 const hiddenIds = new Set(JSON.parse(localStorage.getItem("hiddenIds") || "[]"));
 const firstSeen = new Map();
 const baseline = new Map();
 let lastRenderIds = new Set();
 let lastFetched = [];
 
-// Helpers
+/** HELPERS **/
 function sanitize(str) { return (str || "").toString().trim(); }
 function buildId(s) {
   try {
@@ -108,7 +107,7 @@ function oddsChanged(baselineItem, currentItem) {
   return changed;
 }
 
-// Dados fake
+/** DEMO **/
 const DEMO = {
   last_updated: new Date().toISOString(),
   count: 3,
@@ -119,7 +118,7 @@ const DEMO = {
   ]
 };
 
-// Cálculo matemático correto
+/** CÁLCULO DE STAKE **/
 function calcularStakes(odd1, odd2, stakeTotal) {
   const stake1 = (stakeTotal * odd2) / (odd1 + odd2);
   const stake2 = (stakeTotal * odd1) / (odd1 + odd2);
@@ -137,7 +136,7 @@ function calcularComFixa(odd1, odd2, stakeFixa, casaFixa) {
   }
 }
 
-// Render
+/** RENDER **/
 function render(rows) {
   $tbody.innerHTML = "";
   lastRenderIds = new Set();
@@ -180,7 +179,7 @@ function render(rows) {
   $empty.style.display = rows.length === 0 || lastRenderIds.size === 0 ? "block" : "none";
 }
 
-// Checkboxes
+/** CHECKBOXES **/
 function createCheckboxes(items, containerId, selectedStorageKey) {
   const container = document.getElementById(containerId);
   const selected = JSON.parse(localStorage.getItem(selectedStorageKey) || "[]");
@@ -209,7 +208,7 @@ function createCheckboxes(items, containerId, selectedStorageKey) {
 createCheckboxes(SPORTS, "sports-list", "selectedSports");
 createCheckboxes(BOOKMAKERS, "bookmakers-list", "selectedBookmakers");
 
-// Filtros
+/** FILTROS **/
 function applyFilters(list) {
   const q = (document.getElementById("buscar").value || "").toLowerCase();
   const selectedSports = JSON.parse(localStorage.getItem("selectedSports") || "[]");
@@ -237,7 +236,7 @@ function applyFilters(list) {
   });
 }
 
-// Fetch
+/** FETCH **/
 async function fetchData() {
   $loading.style.display = "block";
   try {
@@ -267,7 +266,7 @@ async function fetchData() {
   }
 }
 
-// Botão retrátil
+/** BOTÃO RETRÁTIL **/
 document.querySelectorAll(".toggle-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const targetId = btn.dataset.target;
@@ -291,30 +290,21 @@ document.querySelectorAll(".toggle-btn").forEach(btn => {
   document.getElementById(id)?.addEventListener("input", () => render(applyFilters(lastFetched)));
 });
 
-// Botões de ação
-document.getElementById("sportsSelectAll")?.addEventListener("click", () => {
-  document.querySelectorAll('#sports-list input[type="checkbox"]').forEach(cb => cb.checked = true);
-  localStorage.setItem("selectedSports", JSON.stringify(SPORTS));
-  render(applyFilters(lastFetched));
+["sportsSelectAll", "sportsClear", "bookiesSelectAll", "bookiesClear", "btnAtualizar"].forEach(id => {
+  document.getElementById(id)?.addEventListener("click", () => {
+    if (id === "btnAtualizar") fetchData();
+    else {
+      const isSelect = id.includes("SelectAll");
+      const isSports = id.includes("sports");
+      const container = isSports ? "sports-list" : "bookmakers-list";
+      document.querySelectorAll(`#${container} input[type="checkbox"]`).forEach(cb => cb.checked = isSelect);
+      localStorage.setItem(isSports ? "selectedSports" : "selectedBookmakers", JSON.stringify(isSelect ? (isSports ? SPORTS : BOOKMAKERS) : []));
+      render(applyFilters(lastFetched));
+    }
+  });
 });
-document.getElementById("sportsClear")?.addEventListener("click", () => {
-  document.querySelectorAll('#sports-list input[type="checkbox"]').forEach(cb => cb.checked = false);
-  localStorage.setItem("selectedSports", JSON.stringify([]));
-  render(applyFilters(lastFetched));
-});
-document.getElementById("bookiesSelectAll")?.addEventListener("click", () => {
-  document.querySelectorAll('#bookmakers-list input[type="checkbox"]').forEach(cb => cb.checked = true);
-  localStorage.setItem("selectedBookmakers", JSON.stringify(BOOKMAKERS));
-  render(applyFilters(lastFetched));
-});
-document.getElementById("bookiesClear")?.addEventListener("click", () => {
-  document.querySelectorAll('#bookmakers-list input[type="checkbox"]').forEach(cb => cb.checked = false);
-  localStorage.setItem("selectedBookmakers", JSON.stringify([]));
-  render(applyFilters(lastFetched));
-});
-document.getElementById("btnAtualizar")?.addEventListener("click", fetchData);
 
-// Ações por linha
+/** AÇÕES POR LINHA **/
 $tbody.addEventListener("click", (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
@@ -384,7 +374,7 @@ $tbody.addEventListener("click", (e) => {
   }
 });
 
-// Atualiza “há X minutos” a cada 5s
+/** ATUALIZA TEMPO REAL **/
 setInterval(() => {
   document.querySelectorAll(".badge-time").forEach(el => {
     const t = Number(el.getAttribute("data-time"));
@@ -392,13 +382,11 @@ setInterval(() => {
   });
 }, 5000);
 
-// Atualização automática
+/** ATUALIZAÇÃO AUTOMÁTICA **/
 setInterval(fetchData, REFRESH_MS);
-
-// Primeira carga
 fetchData();
 
-// 🔹 LÓGICA DA CAIXINHA DE STAKE
+/** STAKE BOX **/
 const stakeToggle = document.querySelector(".stake-toggle");
 const stakeContent = document.querySelector(".stake-content");
 const stakeTotal = document.getElementById("stakeTotal");
@@ -432,7 +420,6 @@ function calcularStake() {
     return;
   }
 
-  // Simulação de odds (para preview)
   const odd1 = 2.10;
   const odd2 = 2.05;
 
@@ -463,3 +450,151 @@ stakeTotal.addEventListener("input", calcularStake);
 stakeFixa.addEventListener("input", calcularStake);
 casaPrincipal.addEventListener("change", calcularStake);
 calcularStake();
+
+// 🔐 SISTEMA DE LOGIN
+const loginBtn = document.getElementById("loginBtn");
+const loginModal = document.getElementById("loginModal");
+const closeModal = document.getElementById("closeModal");
+const tabs = document.querySelectorAll(".tab-btn");
+const tabContents = document.querySelectorAll(".tab-content");
+const loginSubmit = document.getElementById("loginSubmit");
+const registerSubmit = document.getElementById("registerSubmit");
+const planBtns = document.querySelectorAll(".plan-btn");
+const copyPix = document.getElementById("copyPix");
+const logoutBtn = document.getElementById("logoutBtn");
+
+loginBtn.addEventListener("click", () => {
+  loginModal.style.display = "flex";
+  showTab("login");
+});
+
+closeModal.addEventListener("click", () => {
+  loginModal.style.display = "none";
+});
+
+tabs.forEach(btn => {
+  btn.addEventListener("click", () => {
+    tabs.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    const tab = btn.dataset.tab;
+    showTab(tab);
+  });
+});
+
+function showTab(tab) {
+  tabContents.forEach(content => {
+    content.style.display = "none";
+  });
+  document.getElementById(`${tab}Tab`).style.display = "block";
+}
+
+registerSubmit.addEventListener("click", () => {
+  const name = document.getElementById("registerName").value;
+  const email = document.getElementById("registerEmail").value;
+  const password = document.getElementById("registerPassword").value;
+
+  if (!name || !email || !password) {
+    alert("Preencha todos os campos");
+    return;
+  }
+
+  localStorage.setItem("user", JSON.stringify({ name, email, password }));
+  alert("Cadastro realizado! Escolha seu plano.");
+  showTab("plans");
+});
+
+loginSubmit.addEventListener("click", () => {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+  const savedUser = JSON.parse(localStorage.getItem("user"));
+
+  if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
+    alert("E-mail ou senha incorretos");
+    return;
+  }
+
+  alert("Login realizado!");
+  checkSubscription();
+});
+
+planBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const plan = btn.dataset.plan;
+    let days;
+    let price;
+
+    if (plan === "semanal") { days = 7; price = "29,90"; }
+    else if (plan === "mensal") { days = 30; price = "79,90"; }
+    else if (plan === "trimestral") { days = 90; price = "199,90"; }
+
+    document.getElementById("pixValue").textContent = `R$ ${price}`;
+    showTab("pix");
+
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + days);
+    localStorage.setItem("subscription", JSON.stringify({
+      plan: plan.charAt(0).toUpperCase() + plan.slice(1),
+      expiry: expiry.getTime()
+    }));
+
+    startCountdown();
+  });
+});
+
+copyPix.addEventListener("click", () => {
+  navigator.clipboard.writeText("pix@surebetpro.com.br").then(() => {
+    alert("Chave PIX copiada!");
+  });
+});
+
+logoutBtn.addEventListener("click", () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("subscription");
+  loginModal.style.display = "none";
+  alert("Sessão encerrada.");
+});
+
+function checkSubscription() {
+  const sub = JSON.parse(localStorage.getItem("subscription"));
+  if (sub && new Date().getTime() < sub.expiry) {
+    document.getElementById("activePlan").textContent = sub.plan;
+    showTab("timer");
+    startCountdown();
+  } else {
+    showTab("plans");
+  }
+}
+
+function startCountdown() {
+  const sub = JSON.parse(localStorage.getItem("subscription"));
+  if (!sub) return;
+
+  const timer = document.getElementById("countdown");
+  const interval = setInterval(() => {
+    const now = new Date().getTime();
+    const distance = sub.expiry - now;
+
+    if (distance < 0) {
+      clearInterval(interval);
+      timer.textContent = "Expirado";
+      localStorage.removeItem("subscription");
+      alert("Seu plano expirou. Renove para continuar usando.");
+      showTab("plans");
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    timer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }, 1000);
+}
+
+window.addEventListener("load", () => {
+  const user = localStorage.getItem("user");
+  if (user) {
+    checkSubscription();
+  }
+});
