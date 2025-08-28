@@ -1,567 +1,488 @@
-document.addEventListener("DOMContentLoaded", function () {
-  /** CONFIG **/
-  const DATA_URL = "https://maycon9245.github.io/surebet-data/surebets.json";
-  const USE_DEMO_WHEN_EMPTY = true;
-  const REFRESH_MS = 30000;
+:root {
+  --bg: #0d1117;
+  --card-bg: #161b22;
+  --text: #e6edf3;
+  --accent: #4ade80;
+  --border: #30363d;
+  --hover: #21262d;
+  --profit-low: #9ca3af;
+  --profit-mid: #facc15;
+  --profit-high: #22c55e;
+}
 
-  // ELEMENTOS
-  const $tbody = document.getElementById("linhas");
-  const $loading = document.getElementById("loading");
-  const $empty = document.getElementById("empty");
-  const $stakeTotal = document.getElementById("stakeTotal");
-  const $casaPrincipal = document.getElementById("casaPrincipal");
-  const $stakeFixa = document.getElementById("stakeFixa");
-  const $resultadoStake = document.getElementById("resultadoStake");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+}
 
-  // STATE
-  const hiddenIds = new Set(JSON.parse(localStorage.getItem("hiddenIds") || "[]"));
-  const firstSeen = new Map();
-  const baseline = new Map();
-  let lastRenderIds = new Set();
-  let lastFetched = [];
+body {
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+}
 
-  // HELPERS
-  function sanitize(str) { return (str || "").toString().trim(); }
-  function buildId(s) {
-    try {
-      const a = s.outcomes?.[0] || {};
-      const b = s.outcomes?.[1] || {};
-      return [sanitize(s.sport), sanitize(s.event), sanitize(a.team), sanitize(a.bookmaker), sanitize(b.team), sanitize(b.bookmaker)].join("|").toLowerCase();
-    } catch { return Math.random().toString(36).slice(2); }
+header {
+  background: var(--card-bg);
+  padding: 18px 12px;
+  text-align: center;
+  border-bottom: 2px solid var(--border);
+}
+.logo-topo {
+  height: 60px;
+}
+
+main {
+  padding: 20px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+p {
+  text-align: center;
+  color: #8b949e;
+  margin-bottom: 20px;
+}
+
+/* --- BOTÃO DE LOGIN --- */
+.login-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: #052e16;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.login-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* --- MODAL --- */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 1001;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #8b949e;
+}
+.close-btn:hover {
+  color: white;
+}
+
+/* --- ABAS --- */
+.tabs {
+  display: flex;
+  margin: 15px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  color: #8b949e;
+  cursor: pointer;
+  font-size: 14px;
+}
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+}
+
+/* --- FORMULÁRIOS --- */
+.modal-content input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.action-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  color: #052e16;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.action-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* --- PLANOS --- */
+.plan-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+  text-align: center;
+}
+.plan-card h4 {
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+.plan-btn {
+  background: var(--accent);
+  color: #052e16;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  width: 100%;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* --- QR CODE --- */
+.qrcode {
+  background: white;
+  width: 150px;
+  height: 150px;
+  margin: 15px auto;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: #000;
+}
+.qrcode::before {
+  content: "QR CODE";
+}
+
+/* --- TIMER --- */
+#countdown {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--accent);
+  text-align: center;
+  margin: 15px 0;
+}
+
+.logout-btn {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.logout-btn:hover {
+  background: #312e2e;
+}
+
+/* --- FILTROS --- */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.filter-header label {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  font-size: 14px;
+}
+.toggle-btn:hover {
+  color: var(--accent);
+}
+
+.checkbox-group {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 14px;
+  color: #e6edf3;
+  cursor: pointer;
+}
+.checkbox-group input[type="checkbox"] {
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: 1fr 240px 240px repeat(3, 160px) 120px;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+.filtros input[type="text"] {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: white;
+}
+
+.filter-block {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+.filter-actions button {
+  flex: 1;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #cbd5e1;
+  cursor: pointer;
+  border: 1px solid #1f2937;
+  font-size: 14px;
+}
+.filter-actions button:hover {
+  filter: brightness(1.1);
+}
+
+.filtros select,
+.filtros input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: white;
+  border: 1px solid var(--border);
+}
+
+#btnAtualizar {
+  background: var(--accent);
+  color: #052e16;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+#btnAtualizar:hover {
+  filter: brightness(1.05);
+}
+
+/* --- TABELA --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+th, td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  background: var(--card-bg);
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: .02em;
+}
+tr:hover {
+  background: var(--hover);
+}
+
+.profit {
+  font-weight: 700;
+}
+.profit.low { color: var(--profit-low); }
+.profit.mid { color: var(--profit-mid); }
+.profit.high { color: var(--profit-high); }
+
+.badge-time {
+  font-size: 12px;
+  color: #cbd5e1;
+  background: #0f172a;
+  border: 1px solid #1f2937;
+  border-radius: 999px;
+  padding: 4px 8px;
+  display: inline-block;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+.action-btn {
+  background: var(--accent);
+  color: black;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.trash-btn {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.action-btn:hover, .trash-btn:hover {
+  filter: brightness(1.1);
+}
+
+.loading, .empty {
+  text-align: center;
+  color: #8b949e;
+  padding: 12px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  margin-top: 12px;
+}
+
+footer {
+  background: var(--card-bg);
+  text-align: center;
+  padding: 20px;
+  border-top: 2px solid var(--border);
+  margin-top: 30px;
+}
+.logo-rodape {
+  height: 30px;
+  margin-bottom: 8px;
+}
+
+/* --- STAKE BOX --- */
+.stake-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.stake-toggle {
+  background: var(--accent);
+  color: #052e16;
+  border: none;
+  padding: 12px 15px;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.stake-toggle:hover {
+  filter: brightness(1.1);
+}
+
+.stake-content {
+  display: none;
+  padding: 15px;
+  background: var(--bg);
+  border-top: 1px dashed var(--border);
+}
+
+.stake-content label {
+  display: block;
+  margin: 6px 0 4px;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.stake-content input,
+.stake-content select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.stake-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stake-result {
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--hover);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #e6edf3;
+}
+
+@media (max-width: 1100px) {
+  .filtros {
+    grid-template-columns: 1fr 1fr;
   }
-  function profitClass(p) { return p <= 2 ? "low" : p <= 5 ? "mid" : "high"; }
-  function timeAgo(ms) {
-    const sec = Math.max(0, Math.floor((Date.now() - ms) / 1000));
-    if (sec < 60) return `há ${sec}s`;
-    const min = Math.floor(sec / 60);
-    if (min < 60) return `há ${min} min`;
-    const h = Math.floor(min / 60);
-    return `há ${h} h`;
-  }
-  function parseStart(s) {
-    if (s.start_time_utc) {
-      const d = new Date(s.start_time_utc);
-      if (!isNaN(d.getTime())) return d;
-    }
-    if (s.start_time_br && /^\d{2}:\d{2}$/.test(s.start_time_br)) {
-      const [hh, mm] = s.start_time_br.split(":").map(Number);
-      const d = new Date();
-      d.setHours(hh, mm, 0, 0);
-      return d;
-    }
-    return null;
-  }
-  function withinWindow(startDate, windowVal) {
-    if (!startDate) return true;
-    const now = new Date();
-    const diff = (startDate - now);
-    if (windowVal === "any") return true;
-    if (windowVal === "12h") return diff >= 12 * 60 * 60 * 1000;
-    if (windowVal === "16h") return diff >= 16 * 60 * 60 * 1000;
-    if (windowVal === "1d")  return diff >= 24 * 60 * 60 * 1000;
-    if (windowVal === "2d")  return diff >= 48 * 60 * 60 * 1000;
-    return true;
-  }
-  function oddsChanged(baselineItem, currentItem) {
-    if (!baselineItem || !currentItem) return false;
-    const a0 = baselineItem.outcomes?.[0]?.odd ?? null;
-    const b0 = baselineItem.outcomes?.[1]?.odd ?? null;
-    const a1 = currentItem.outcomes?.[0]?.odd ?? null;
-    const b1 = currentItem.outcomes?.[1]?.odd ?? null;
-    const p0 = baselineItem.profit ?? null;
-    const p1 = currentItem.profit ?? null;
-    const eps = 1e-6;
-    const changed = (a0 == null || a1 == null ? false : Math.abs(Number(a0) - Number(a1)) > eps) || (b0 == null || b1 == null ? false : Math.abs(Number(b0) - Number(b1)) > eps) || (p0 == null || p1 == null ? false : Math.abs(Number(p0) - Number(p1)) > eps);
-    return changed;
-  }
-
-  // DADOS FALSOS
-  const DEMO = {
-    last_updated: new Date().toISOString(),
-    count: 3,
-    surebets: [
-      { event: "Flamengo vs Palmeiras", sport: "Futebol", start_time_br: "21:00", profit: 3.2, outcomes: [ { team: "Flamengo", odd: 2.10, bookmaker: "Betfair" }, { team: "Palmeiras", odd: 2.05, bookmaker: "Pinnacle" } ] },
-      { event: "Barcelona vs Real Madrid", sport: "Futebol", start_time_br: "18:45", profit: 4.1, outcomes: [ { team: "Barcelona", odd: 1.95, bookmaker: "Betano" }, { team: "Real Madrid", odd: 2.10, bookmaker: "Pinnacle" } ] },
-      { event: "Corinthians vs São Paulo", sport: "Futebol", start_time_br: "20:30", profit: 5.6, outcomes: [ { team: "Corinthians", odd: 1.85, bookmaker: "Bet365" }, { team: "São Paulo", odd: 2.20, bookmaker: "Betano" } ] }
-    ]
-  };
-
-  // CÁLCULO DE STAKE
-  function calcularStakes(odd1, odd2, stakeTotal) {
-    const stake1 = (stakeTotal * odd2) / (odd1 + odd2);
-    const stake2 = (stakeTotal * odd1) / (odd1 + odd2);
-    return { stake1, stake2 };
-  }
-  function calcularComFixa(odd1, odd2, stakeFixa, casaFixa) {
-    if (casaFixa === "1") {
-      const stake1 = stakeFixa;
-      const stake2 = (stake1 * odd1) / odd2;
-      return { stake1, stake2 };
-    } else {
-      const stake2 = stakeFixa;
-      const stake1 = (stake2 * odd2) / odd1;
-      return { stake1, stake2 };
-    }
-  }
-
-  // RENDER
-  function renderSurebets(rows) {
-    $tbody.innerHTML = "";
-    lastRenderIds = new Set();
-    rows.forEach((s) => {
-      const id = buildId(s);
-      if (hiddenIds.has(id)) return;
-      if (!firstSeen.has(id)) firstSeen.set(id, Date.now());
-      if (!baseline.has(id)) baseline.set(id, JSON.parse(JSON.stringify(s)));
-      if (oddsChanged(baseline.get(id), s)) return;
-      lastRenderIds.add(id);
-      const o1 = s.outcomes?.[0] || {};
-      const o2 = s.outcomes?.[1] || {};
-      const profit = Number(s.profit || 0);
-      const pClass = `profit ${profitClass(profit)}`;
-      const sinceMs = firstSeen.get(id) || Date.now();
-      const sinceText = timeAgo(sinceMs);
-      const tr = document.createElement("tr");
-      tr.dataset.id = id;
-      tr.innerHTML = `
-        <td>${sanitize(s.event)}</td>
-        <td>${sanitize(s.sport)}</td>
-        <td>${sanitize(s.start_time_br || "")}</td>
-        <td>${sanitize(o1.team)}</td>
-        <td class="${pClass}">${o1.odd ?? ""}</td>
-        <td>${sanitize(o1.bookmaker)}</td>
-        <td>${sanitize(o2.team)}</td>
-        <td class="${pClass}">${o2.odd ?? ""}</td>
-        <td>${sanitize(o2.bookmaker)}</td>
-        <td class="${pClass}">${profit}%</td>
-        <td><span class="badge-time" data-time="${sinceMs}">${sinceText}</span></td>
-        <td>
-          <div class="actions">
-            <button class="action-btn" data-act="open">Abrir Casas</button>
-            <button class="trash-btn" data-act="trash">🗑️</button>
-          </div>
-        </td>
-      `;
-      $tbody.appendChild(tr);
-    });
-    $empty.style.display = rows.length === 0 || lastRenderIds.size === 0 ? "block" : "none";
-  }
-
-  // CHECKBOXES
-  function createCheckboxes(items, containerId, selectedStorageKey) {
-    const container = document.getElementById(containerId);
-    const selected = JSON.parse(localStorage.getItem(selectedStorageKey) || "[]");
-    items.forEach(name => {
-      const label = document.createElement("label");
-      const input = document.createElement("input");
-      input.type = "checkbox";
-      input.value = name;
-      input.checked = selected.includes(name);
-      input.addEventListener("change", () => {
-        const current = JSON.parse(localStorage.getItem(selectedStorageKey) || "[]");
-        if (input.checked) {
-          if (!current.includes(name)) current.push(name);
-        } else {
-          const idx = current.indexOf(name);
-          if (idx > -1) current.splice(idx, 1);
-        }
-        localStorage.setItem(selectedStorageKey, JSON.stringify(current));
-        renderSurebets(applyFilters(lastFetched));
-      });
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(name));
-      container.appendChild(label);
-    });
-  }
-  createCheckboxes(["Futebol", "Basquete", "Tênis"], "sports-list", "selectedSports");
-  createCheckboxes(["Betfair", "Pinnacle", "Betano", "Bet365"], "bookmakers-list", "selectedBookmakers");
-
-  // FILTROS
-  function applyFilters(list) {
-    const q = (document.getElementById("buscar").value || "").toLowerCase();
-    const selectedSports = JSON.parse(localStorage.getItem("selectedSports") || "[]");
-    const selectedBookmakers = JSON.parse(localStorage.getItem("selectedBookmakers") || "[]");
-    const pMin = parseFloat(document.getElementById("profitMin").value) || 0;
-    const pMax = parseFloat(document.getElementById("profitMax").value) || Infinity;
-    const timeWin = document.getElementById("timeWindow").value;
-    return list.filter(s => {
-      if (q) {
-        const hay = [s.event, s.sport, s.outcomes?.[0]?.team, s.outcomes?.[1]?.team, s.outcomes?.[0]?.bookmaker, s.outcomes?.[1]?.bookmaker]
-          .map(x => (x || "").toString().toLowerCase()).join(" ");
-        if (!hay.includes(q)) return false;
-      }
-      if (selectedSports.length > 0 && !selectedSports.includes(s.sport)) return false;
-      if (selectedBookmakers.length > 0) {
-        const b1 = s.outcomes?.[0]?.bookmaker, b2 = s.outcomes?.[1]?.bookmaker;
-        if (!(selectedBookmakers.includes(b1) || selectedBookmakers.includes(b2))) return false;
-      }
-      const p = Number(s.profit || 0);
-      if (p < pMin) return false;
-      if (p > pMax) return false;
-      const start = parseStart(s);
-      if (!withinWindow(start, timeWin)) return false;
-      return true;
-    });
-  }
-
-  // FETCH
-  async function fetchData() {
-    $loading.style.display = "block";
-    try {
-      const resp = await fetch(DATA_URL, { cache: "no-store" });
-      if (!resp.ok) throw new Error("Falha ao carregar o JSON");
-      const data = await resp.json();
-      let list = Array.isArray(data?.surebets) ? data.surebets : [];
-      if (list.length === 0 && USE_DEMO_WHEN_EMPTY) {
-        list = DEMO.surebets;
-      }
-      const fetchedById = new Map(list.map(s => [buildId(s), s]));
-      for (const id of Array.from(firstSeen.keys())) {
-        if (!fetchedById.has(id)) {
-          firstSeen.delete(id);
-          baseline.delete(id);
-        }
-      }
-      lastFetched = list;
-      const filtered = applyFilters(list);
-      renderSurebets(filtered);
-    } catch (e) {
-      console.error(e);
-      $tbody.innerHTML = "";
-      $empty.style.display = "block";
-    } finally {
-      $loading.style.display = "none";
-    }
-  }
-
-  // BOTÃO RETRÁTIL
-  document.querySelectorAll(".toggle-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const targetId = btn.dataset.target;
-      const target = document.getElementById(targetId);
-      const isExpanded = target.style.display !== "none";
-      if (isExpanded) {
-        target.style.display = "none";
-        btn.textContent = "▶️ Mostrar";
-        btn.classList.remove("expanded");
-        btn.classList.add("collapsed");
-      } else {
-        target.style.display = "block";
-        btn.textContent = "🔽 Esconder";
-        btn.classList.remove("collapsed");
-        btn.classList.add("expanded");
-      }
-    });
-  });
-
-  ["buscar", "profitMin", "profitMax", "timeWindow"].forEach(id => {
-    document.getElementById(id)?.addEventListener("input", () => renderSurebets(applyFilters(lastFetched)));
-  });
-
-  ["sportsSelectAll", "sportsClear", "bookiesSelectAll", "bookiesClear", "btnAtualizar"].forEach(id => {
-    document.getElementById(id)?.addEventListener("click", () => {
-      if (id === "btnAtualizar") fetchData();
-      else {
-        const isSelect = id.includes("SelectAll");
-        const isSports = id.includes("sports");
-        const container = isSports ? "sports-list" : "bookmakers-list";
-        document.querySelectorAll(`#${container} input[type="checkbox"]`).forEach(cb => cb.checked = isSelect);
-        localStorage.setItem(isSports ? "selectedSports" : "selectedBookmakers", JSON.stringify(isSelect ? (isSports ? ["Futebol", "Basquete", "Tênis"] : ["Betfair", "Pinnacle", "Betano", "Bet365"]) : []));
-        renderSurebets(applyFilters(lastFetched));
-      }
-    });
-  });
-
-  // AÇÕES POR LINHA
-  $tbody.addEventListener("click", (e) => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-    const tr = e.target.closest("tr");
-    const id = tr?.dataset?.id;
-    if (!id) return;
-    const act = btn.dataset.act;
-    const item = lastFetched.find(s => buildId(s) === id);
-    if (!item) return;
-
-    if (act === "trash") {
-      hiddenIds.add(id);
-      localStorage.setItem("hiddenIds", JSON.stringify(Array.from(hiddenIds)));
-      tr.remove();
-      if ($tbody.children.length === 0) $empty.style.display = "block";
-      return;
-    }
-
-    if (act === "open") {
-      const o1 = item.outcomes?.[0];
-      const o2 = item.outcomes?.[1];
-      const stakeTotal = parseFloat($stakeTotal.value) || 100;
-      const casaPrincipal = $casaPrincipal.value;
-      const stakeFixa = parseFloat($stakeFixa.value) || 0;
-
-      let stake1, stake2;
-
-      if (casaPrincipal === o1.bookmaker && stakeFixa > 0) {
-        const { stake1: s1, stake2: s2 } = calcularComFixa(o1.odd, o2.odd, stakeFixa, "1");
-        stake1 = s1;
-        stake2 = s2;
-      } else if (casaPrincipal === o2.bookmaker && stakeFixa > 0) {
-        const { stake1: s1, stake2: s2 } = calcularComFixa(o1.odd, o2.odd, stakeFixa, "2");
-        stake1 = s1;
-        stake2 = s2;
-      } else {
-        const { stake1: s1, stake2: s2 } = calcularStakes(o1.odd, o2.odd, stakeTotal);
-        stake1 = s1;
-        stake2 = s2;
-      }
-
-      const dados = {
-        event: item.event,
-        sport: item.sport,
-        start_time_br: item.start_time_br,
-        team1: o1.team,
-        odd1: o1.odd,
-        bookmaker1: o1.bookmaker,
-        team2: o2.team,
-        odd2: o2.odd,
-        bookmaker2: o2.bookmaker,
-        profit: item.profit,
-        stake1: parseFloat(stake1.toFixed(2)),
-        stake2: parseFloat(stake2.toFixed(2))
-      };
-
-      try {
-        chrome.runtime.sendMessage("ndbogpmkbjgkbgiiijenoiooeanmahjm", {
-          action: "openSurebet",
-          dados
-        }, (response) => {
-          if (chrome.runtime.lastError) {
-            alert("❌ Extensão não respondeu. Confira se está instalada.");
-          } else {
-            alert(`✅ Dados enviados!\n${o1.bookmaker}: R$ ${dados.stake1}\n${o2.bookmaker}: R$ ${dados.stake2}`);
-          }
-        });
-      } catch (err) {
-        console.warn("Extensão não disponível:", err);
-        alert(`Prévia de stakes:\n${o1.bookmaker}: R$ ${dados.stake1}\n${o2.bookmaker}: R$ ${dados.stake2}`);
-      }
-    }
-  });
-
-  // ATUALIZA TEMPO REAL
-  setInterval(() => {
-    document.querySelectorAll(".badge-time").forEach(el => {
-      const t = Number(el.getAttribute("data-time"));
-      if (!isNaN(t)) el.textContent = timeAgo(t);
-    });
-  }, 5000);
-
-  // ATUALIZAÇÃO AUTOMÁTICA
-  setInterval(fetchData, REFRESH_MS);
-  fetchData();
-
-  // 🔐 SISTEMA DE LOGIN
-  function initLoginSystem() {
-    const loginBtn = document.getElementById("loginBtn");
-    const loginModal = document.getElementById("loginModal");
-    const closeModal = document.getElementById("closeModal");
-    const tabs = document.querySelectorAll(".tab-btn");
-    const tabContents = document.querySelectorAll(".tab-content");
-
-    if (!loginBtn || !loginModal) return;
-
-    loginBtn.addEventListener("click", () => {
-      loginModal.style.display = "flex";
-      showTab("login");
-    });
-
-    closeModal.addEventListener("click", () => {
-      loginModal.style.display = "none";
-    });
-
-    tabs.forEach(btn => {
-      btn.addEventListener("click", () => {
-        tabs.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        const tab = btn.dataset.tab;
-        showTab(tab);
-      });
-    });
-  }
-
-  function showTab(tab) {
-    document.querySelectorAll(".tab-content").forEach(content => {
-      content.style.display = "none";
-    });
-    const tabElement = document.getElementById(`${tab}Tab`);
-    if (tabElement) tabElement.style.display = "block";
-  }
-
-  // STAKE BOX
-  const stakeToggle = document.querySelector(".stake-toggle");
-  const stakeContent = document.querySelector(".stake-content");
-
-  stakeToggle.addEventListener("click", () => {
-    const isHidden = stakeContent.style.display !== "block";
-    stakeContent.style.display = isHidden ? "block" : "none";
-    stakeToggle.textContent = isHidden ? "💰 Stake Principal ▼" : "💰 Stake Principal ▲";
-  });
-
-  function calcularStake() {
-    const total = parseFloat($stakeTotal.value) || 100;
-    const fixa = parseFloat($stakeFixa.value) || 0;
-    const casa = $casaPrincipal.value;
-
-    if (total <= 0) {
-      $resultadoStake.innerHTML = "⚠️ Stake total deve ser maior que 0.";
-      return;
-    }
-
-    if (fixa > total) {
-      $resultadoStake.innerHTML = "⚠️ Valor fixo não pode ser maior que o total.";
-      return;
-    }
-
-    if (!casa) {
-      $resultadoStake.innerHTML = `✅ Stake total: R$ ${total.toFixed(2)}<br>➡️ Escolha uma casa para definir valor fixo.`;
-      return;
-    }
-
-    const odd1 = 2.10;
-    const odd2 = 2.05;
-
-    let stake1, stake2;
-
-    if (casa === "Betfair") {
-      const { stake1: s1, stake2: s2 } = calcularComFixa(odd1, odd2, fixa, "1");
-      stake1 = s1;
-      stake2 = s2;
-    } else if (casa === "Pinnacle") {
-      const { stake1: s1, stake2: s2 } = calcularComFixa(odd1, odd2, fixa, "2");
-      stake1 = s1;
-      stake2 = s2;
-    } else {
-      const { stake1: s1, stake2: s2 } = calcularStakes(odd1, odd2, total);
-      stake1 = s1;
-      stake2 = s2;
-    }
-
-    $resultadoStake.innerHTML = `
-      <strong>🎯 ${casa}:</strong> R$ ${fixa > 0 ? fixa.toFixed(2) : stake1.toFixed(2)}<br>
-      <strong>➡️ Outra casa:</strong> R$ ${stake2.toFixed(2)}<br>
-      <strong>✅ Total:</strong> R$ ${(stake1 + stake2).toFixed(2)}
-    `;
-  }
-
-  $stakeTotal.addEventListener("input", calcularStake);
-  $stakeFixa.addEventListener("input", calcularStake);
-  $casaPrincipal.addEventListener("change", calcularStake);
-  calcularStake();
-
-  // Inicializa login
-  initLoginSystem();
-
-  // Verifica login
-  window.addEventListener("load", () => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      const sub = JSON.parse(localStorage.getItem("subscription"));
-      if (sub && new Date().getTime() < sub.expiry) {
-        document.getElementById("activePlan").textContent = sub.plan;
-        showTab("timer");
-        startCountdown();
-      } else {
-        showTab("plans");
-      }
-    }
-  });
-
-  // Timer
-  function startCountdown() {
-    const sub = JSON.parse(localStorage.getItem("subscription"));
-    if (!sub) return;
-    const timer = document.getElementById("countdown");
-    const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = sub.expiry - now;
-      if (distance < 0) {
-        clearInterval(interval);
-        timer.textContent = "Expirado";
-        localStorage.removeItem("subscription");
-        alert("Seu plano expirou. Renove para continuar usando.");
-        showTab("plans");
-        return;
-      }
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      timer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }, 1000);
-  }
-
-  // Eventos de login
-  document.getElementById("registerSubmit")?.addEventListener("click", () => {
-    const name = document.getElementById("registerName").value;
-    const email = document.getElementById("registerEmail").value;
-    const password = document.getElementById("registerPassword").value;
-    if (!name || !email || !password) {
-      alert("Preencha todos os campos");
-      return;
-    }
-    localStorage.setItem("user", JSON.stringify({ name, email, password }));
-    alert("Cadastro realizado! Escolha seu plano.");
-    showTab("plans");
-  });
-
-  document.getElementById("loginSubmit")?.addEventListener("click", () => {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-    const savedUser = JSON.parse(localStorage.getItem("user"));
-    if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
-      alert("E-mail ou senha incorretos");
-      return;
-    }
-    alert("Login realizado!");
-    const sub = JSON.parse(localStorage.getItem("subscription"));
-    if (sub && new Date().getTime() < sub.expiry) {
-      document.getElementById("activePlan").textContent = sub.plan;
-      showTab("timer");
-      startCountdown();
-    } else {
-      showTab("plans");
-    }
-  });
-
-  document.querySelectorAll(".plan-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const plan = btn.dataset.plan;
-      let days;
-      if (plan === "semanal") days = 7;
-      else if (plan === "mensal") days = 30;
-      else if (plan === "trimestral") days = 90;
-      document.getElementById("pixValue").textContent = `R$ ${plan === "semanal" ? "29,90" : plan === "mensal" ? "79,90" : "199,90"}`;
-      showTab("pix");
-      const expiry = new Date();
-      expiry.setDate(expiry.getDate() + days);
-      localStorage.setItem("subscription", JSON.stringify({
-        plan: plan.charAt(0).toUpperCase() + plan.slice(1),
-        expiry: expiry.getTime()
-      }));
-      startCountdown();
-    });
-  });
-
-  document.getElementById("copyPix")?.addEventListener("click", () => {
-    navigator.clipboard.writeText("pix@surebetpro.com.br").then(() => {
-      alert("Chave PIX copiada!");
-    });
-  });
-
-  document.getElementById("logoutBtn")?.addEventListener("click", () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("subscription");
-    document.getElementById("loginModal").style.display = "none";
-    alert("Sessão encerrada.");
-  });
-});
-
+}
