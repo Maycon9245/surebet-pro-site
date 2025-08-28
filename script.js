@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return changed;
   }
 
-  // DADOS FALSOS
+  // DADOS FALSOS (se JSON falhar)
   const DEMO = {
     last_updated: new Date().toISOString(),
     count: 3,
@@ -181,8 +181,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const q = (document.getElementById("buscar").value || "").toLowerCase();
     const selectedSports = JSON.parse(localStorage.getItem("selectedSports") || "[]");
     const selectedBookmakers = JSON.parse(localStorage.getItem("selectedBookmakers") || "[]");
-    const pMin = parseFloat(document.getElementById("profitMin").value) || 0;
-    const pMax = parseFloat(document.getElementById("profitMax").value) || Infinity;
+    const pMinInput = document.getElementById("profitMin").value;
+    const pMaxInput = document.getElementById("profitMax").value;
+    const pMin = pMinInput ? parseFloat(pMinInput) : 0;
+    const pMax = pMaxInput ? parseFloat(pMaxInput) : Infinity;
     const timeWin = document.getElementById("timeWindow").value;
     return list.filter(s => {
       if (q) {
@@ -329,20 +331,19 @@ document.addEventListener("DOMContentLoaded", function () {
         stake2: parseFloat(stake2.toFixed(2))
       };
 
-      try {
+      // ✅ Mostra alerta mesmo sem extensão
+      alert(`Prévia de Stake:\n${o1.bookmaker}: R$ ${stake1.toFixed(2)}\n${o2.bookmaker}: R$ ${stake2.toFixed(2)}`);
+
+      // Tenta enviar para extensão (opcional)
+      if (typeof chrome !== 'undefined' && chrome.runtime) {
         chrome.runtime.sendMessage("ndbogpmkbjgkbgiiijenoiooeanmahjm", {
           action: "openSurebet",
           dados
         }, (response) => {
           if (chrome.runtime.lastError) {
-            alert("❌ Extensão não respondeu. Confira se está instalada.");
-          } else {
-            alert(`✅ Dados enviados!\n${o1.bookmaker}: R$ ${dados.stake1}\n${o2.bookmaker}: R$ ${dados.stake2}`);
+            console.error("Extensão não respondeu:", chrome.runtime.lastError);
           }
         });
-      } catch (err) {
-        console.warn("Extensão não disponível:", err);
-        alert(`Prévia de stakes:\n${o1.bookmaker}: R$ ${dados.stake1}\n${o2.bookmaker}: R$ ${dados.stake2}`);
       }
     }
   });
