@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return changed;
   }
 
-  // DADOS FALSOS (se JSON falhar)
+  // DADOS FALSOS
   const DEMO = {
     last_updated: new Date().toISOString(),
     count: 3,
@@ -331,10 +331,8 @@ document.addEventListener("DOMContentLoaded", function () {
         stake2: parseFloat(stake2.toFixed(2))
       };
 
-      // ✅ Mostra alerta mesmo sem extensão
       alert(`Prévia de Stake:\n${o1.bookmaker}: R$ ${stake1.toFixed(2)}\n${o2.bookmaker}: R$ ${stake2.toFixed(2)}`);
 
-      // Tenta enviar para extensão (opcional)
       if (typeof chrome !== 'undefined' && chrome.runtime) {
         chrome.runtime.sendMessage("ndbogpmkbjgkbgiiijenoiooeanmahjm", {
           action: "openSurebet",
