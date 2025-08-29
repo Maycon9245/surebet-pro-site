@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🚀 Surebet PRO</title>
   <link rel="stylesheet" href="style.css"/>
-  <script src="script.js" defer></script>
 </head>
 <body>
   <header>
@@ -15,6 +14,14 @@
   <main>
     <h1>🚀 Surebet PRO</h1>
     <p>Encontre apostas garantidas com lucro matemático — atualizado automaticamente</p>
+
+    <!-- 🔔 ÍCONE DE SOM -->
+    <div class="sound-toggle">
+      🔊
+      <div class="volume-slider">
+        <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.5">
+      </div>
+    </div>
 
     <!-- 🔐 BOTÃO DE LOGIN -->
     <button id="loginBtn" class="login-btn">🔑 Login / Assinar</button>
@@ -115,14 +122,10 @@
               <option value="888sport">888sport</option>
             </select>
           </div>
-          <div>
-            <label for="stakeFixa">Valor fixo (R$):</label>
-            <input type="number" id="stakeFixa" value="0" min="0" step="0.1" />
-          </div>
         </div>
 
         <div id="resultadoStake" class="stake-result">
-          ➡️ Defina os valores para calcular a distribuição.
+          ➡️ Defina o valor total para calcular a distribuição.
         </div>
       </div>
     </div>
@@ -167,16 +170,28 @@
 
       <!-- Formulário de Login -->
       <div id="loginTab" class="tab-content active">
-        <input type="email" id="loginEmail" placeholder="E-mail" required />
-        <input type="password" id="loginPassword" placeholder="Senha" required />
+        <div class="input-with-eye">
+          <input type="email" id="loginEmail" placeholder="E-mail" required />
+          <span class="eye-icon" onclick="toggleVisibility('loginEmail', this)">👁️</span>
+        </div>
+        <div class="input-with-eye">
+          <input type="password" id="loginPassword" placeholder="Senha" required />
+          <span class="eye-icon" onclick="toggleVisibility('loginPassword', this)">👁️</span>
+        </div>
         <button id="loginSubmit" class="action-btn">Entrar</button>
       </div>
 
       <!-- Formulário de Cadastro -->
       <div id="registerTab" class="tab-content">
         <input type="text" id="registerName" placeholder="Nome" required />
-        <input type="email" id="registerEmail" placeholder="E-mail" required />
-        <input type="password" id="registerPassword" placeholder="Senha" required />
+        <div class="input-with-eye">
+          <input type="email" id="registerEmail" placeholder="E-mail" required />
+          <span class="eye-icon" onclick="toggleVisibility('registerEmail', this)">👁️</span>
+        </div>
+        <div class="input-with-eye">
+          <input type="password" id="registerPassword" placeholder="Senha" required />
+          <span class="eye-icon" onclick="toggleVisibility('registerPassword', this)">👁️</span>
+        </div>
         <button id="registerSubmit" class="action-btn">Cadastrar</button>
       </div>
 
@@ -205,7 +220,9 @@
         <h3>💳 Pagar via PIX</h3>
         <p>Chave PIX: <code>pix@surebetpro.com.br</code></p>
         <p><strong>Valor:</strong> <span id="pixValue">R$ 0,00</span></p>
-        <div class="qrcode" id="qrcode"></div>
+        <div class="qrcode" id="qrcode">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PIX:pix@surebetpro.com.br" alt="QR Code PIX" />
+        </div>
         <button id="copyPix" class="action-btn">📋 Copiar Chave PIX</button>
         <p><small>Após o pagamento, o acesso será liberado em até 5 minutos.</small></p>
       </div>
@@ -225,7 +242,9 @@
     <img src="img/logo.png" alt="Surebet PRO" class="logo-rodape"/>
     <p>© 2025 Surebet PRO — Todos os direitos reservados</p>
   </footer>
+
+  <!-- ÁUDIO DE ALERTA -->
+  <audio id="alert-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" preload="auto"></audio>
+  <script src="script.js"></script>
 </body>
 </html>
-
-
