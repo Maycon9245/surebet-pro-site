@@ -1,10 +1,36 @@
 document.addEventListener("DOMContentLoaded", function () {
-  /** CONFIG **/
-  const DATA_URL = "https://maycon9245.github.io/surebet-data/surebets.json";
-  const USE_DEMO_WHEN_EMPTY = true;
-  const REFRESH_MS = 30000;
+  // 🔊 ÁUDIO DE ALERTA (só toca se houver nova surebet)
+  const alertSound = document.getElementById("alert-sound");
+  const volumeControl = document.getElementById("volumeControl");
 
-  // ELEMENTOS
+  if (alertSound && volumeControl) {
+    alertSound.volume = 0.5; // volume inicial
+    volumeControl.addEventListener("input", () => {
+      alertSound.volume = volumeControl.value;
+    });
+  }
+
+  // Função para tocar som quando nova surebet aparecer
+  function tocarAlerta() {
+    if (alertSound) {
+      alertSound.currentTime = 0;
+      alertSound.play().catch(e => console.log("Áudio bloqueado (usuário não interagiu)", e));
+    }
+  }
+
+  // 👁️ Alternar visibilidade de campos (email e senha)
+  window.toggleVisibility = function(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === "password" || input.type === "email") {
+      input.type = "text";
+      icon.textContent = "🙈"; // muda para "escondido"
+    } else {
+      input.type = input.id.includes("Password") ? "password" : "email";
+      icon.textContent = "👁️"; // muda para "visível"
+    }
+  };
+
+  // ELEMENTOS DO DOM
   const $tbody = document.getElementById("linhas");
   const $loading = document.getElementById("loading");
   const $empty = document.getElementById("empty");
@@ -12,31 +38,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const $casaPrincipal = document.getElementById("casaPrincipal");
   const $resultadoStake = document.getElementById("resultadoStake");
 
-  // ÁUDIO DE ALERTA
-  const alertSound = document.getElementById("alert-sound");
-  const volumeControl = document.getElementById("volumeControl");
-
-  if (alertSound && volumeControl) {
-    alertSound.volume = 0.5;
-    volumeControl.addEventListener("input", () => {
-      alertSound.volume = volumeControl.value;
-    });
-  }
-
-  // Função para tocar alerta quando nova surebet aparecer
-  function tocarAlerta() {
-    if (alertSound) {
-      alertSound.currentTime = 0;
-      alertSound.play().catch(e => console.log("Áudio bloqueado", e));
-    }
-  }
-
   // STATE
   const hiddenIds = new Set(JSON.parse(localStorage.getItem("hiddenIds") || "[]"));
   const firstSeen = new Map();
   const baseline = new Map();
   let lastRenderIds = new Set();
   let lastFetched = [];
+
+  // CONFIG
+  const DATA_URL = "https://maycon9245.github.io/surebet-data/surebets.json";
+  const USE_DEMO_WHEN_EMPTY = true;
+  const REFRESH_MS = 30000;
 
   // HELPERS
   function sanitize(str) { return (str || "").toString().trim(); }
@@ -93,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return changed;
   }
 
-  // DADOS FALSOS
+  // DADOS FALSOS (se JSON falhar)
   const DEMO = {
     last_updated: new Date().toISOString(),
     count: 3,
@@ -185,8 +197,8 @@ document.addEventListener("DOMContentLoaded", function () {
       container.appendChild(label);
     });
   }
-  createCheckboxes(["Futebol", "Basquete", "Tênis"], "sports-list", "selectedSports");
-  createCheckboxes(["Betfair", "Pinnacle", "Betano", "Bet365"], "bookmakers-list", "selectedBookmakers");
+  createCheckboxes(["Futebol", "Basquete", "Tênis", "Vôlei", "Tênis de Mesa", "Futebol Americano", "Hóquei", "Rugby", "Dardos", "Críquete", "eSports"], "sports-list", "selectedSports");
+  createCheckboxes(["Betfair", "Pinnacle", "Betano", "Bet365", "1xBet", "PixBet", "KTO", "Sportingbet", "Betway", "Betpix365", "LeoVegas", "Bodog", "Parimatch", "Betsson", "22Bet", "Galera.Bet", "Esportes da Sorte", "Rivalo", "EstrelaBet", "Casa de Apostas", "MrJack.bet", "Viebett", "F12.bet", "Betcris", "BetWarrior", "BetNational", "BetMais", "Marathonbet", "Blaze", "Ivibet", "Bwin", "888sport"], "bookmakers-list", "selectedBookmakers");
 
   // FILTROS
   function applyFilters(list) {
@@ -392,18 +404,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (tabElement) tabElement.style.display = "block";
   }
 
-  // 👁️ Alternar visibilidade de campos
-  window.toggleVisibility = function(id, icon) {
-    const input = document.getElementById(id);
-    if (input.type === "password" || input.type === "email") {
-      input.type = "text";
-      icon.textContent = "🙈";
-    } else {
-      input.type = input.id.includes("Password") ? "password" : "email";
-      icon.textContent = "👁️";
-    }
-  };
-
   // STAKE BOX
   const stakeToggle = document.querySelector(".stake-toggle");
   const stakeContent = document.querySelector(".stake-content");
@@ -414,6 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
     stakeToggle.textContent = isHidden ? "💰 Stake Principal ▼" : "💰 Stake Principal ▲";
   });
 
+  // CÁLCULO DE STAKE (sem fixa)
   function calcularStake() {
     const total = parseFloat($stakeTotal.value) || 100;
     const casa = $casaPrincipal.value;
