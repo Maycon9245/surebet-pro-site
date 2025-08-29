@@ -10,8 +10,26 @@ document.addEventListener("DOMContentLoaded", function () {
   const $empty = document.getElementById("empty");
   const $stakeTotal = document.getElementById("stakeTotal");
   const $casaPrincipal = document.getElementById("casaPrincipal");
-  const $stakeFixa = document.getElementById("stakeFixa");
   const $resultadoStake = document.getElementById("resultadoStake");
+
+  // ÁUDIO DE ALERTA
+  const alertSound = document.getElementById("alert-sound");
+  const volumeControl = document.getElementById("volumeControl");
+
+  if (alertSound && volumeControl) {
+    alertSound.volume = 0.5;
+    volumeControl.addEventListener("input", () => {
+      alertSound.volume = volumeControl.value;
+    });
+  }
+
+  // Função para tocar alerta quando nova surebet aparecer
+  function tocarAlerta() {
+    if (alertSound) {
+      alertSound.currentTime = 0;
+      alertSound.play().catch(e => console.log("Áudio bloqueado", e));
+    }
+  }
 
   // STATE
   const hiddenIds = new Set(JSON.parse(localStorage.getItem("hiddenIds") || "[]"));
@@ -86,22 +104,11 @@ document.addEventListener("DOMContentLoaded", function () {
     ]
   };
 
-  // CÁLCULO DE STAKE
+  // CÁLCULO DE STAKE (sem fixa)
   function calcularStakes(odd1, odd2, stakeTotal) {
     const stake1 = (stakeTotal * odd2) / (odd1 + odd2);
     const stake2 = (stakeTotal * odd1) / (odd1 + odd2);
     return { stake1, stake2 };
-  }
-  function calcularComFixa(odd1, odd2, stakeFixa, casaFixa) {
-    if (casaFixa === "1") {
-      const stake1 = stakeFixa;
-      const stake2 = (stake1 * odd1) / odd2;
-      return { stake1, stake2 };
-    } else {
-      const stake2 = stakeFixa;
-      const stake1 = (stake2 * odd2) / odd1;
-      return { stake1, stake2 };
-    }
   }
 
   // RENDER
@@ -145,6 +152,11 @@ document.addEventListener("DOMContentLoaded", function () {
       $tbody.appendChild(tr);
     });
     $empty.style.display = rows.length === 0 || lastRenderIds.size === 0 ? "block" : "none";
+
+    // Toca som se houver surebets novas
+    if (rows.length > 0 && lastRenderIds.size > 0) {
+      tocarAlerta();
+    }
   }
 
   // CHECKBOXES
@@ -298,23 +310,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const o2 = item.outcomes?.[1];
       const stakeTotal = parseFloat($stakeTotal.value) || 100;
       const casaPrincipal = $casaPrincipal.value;
-      const stakeFixa = parseFloat($stakeFixa.value) || 0;
 
-      let stake1, stake2;
-
-      if (casaPrincipal === o1.bookmaker && stakeFixa > 0) {
-        const { stake1: s1, stake2: s2 } = calcularComFixa(o1.odd, o2.odd, stakeFixa, "1");
-        stake1 = s1;
-        stake2 = s2;
-      } else if (casaPrincipal === o2.bookmaker && stakeFixa > 0) {
-        const { stake1: s1, stake2: s2 } = calcularComFixa(o1.odd, o2.odd, stakeFixa, "2");
-        stake1 = s1;
-        stake2 = s2;
-      } else {
-        const { stake1: s1, stake2: s2 } = calcularStakes(o1.odd, o2.odd, stakeTotal);
-        stake1 = s1;
-        stake2 = s2;
-      }
+      const { stake1, stake2 } = calcularStakes(o1.odd, o2.odd, stakeTotal);
 
       const dados = {
         event: item.event,
@@ -395,6 +392,18 @@ document.addEventListener("DOMContentLoaded", function () {
     if (tabElement) tabElement.style.display = "block";
   }
 
+  // 👁️ Alternar visibilidade de campos
+  window.toggleVisibility = function(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === "password" || input.type === "email") {
+      input.type = "text";
+      icon.textContent = "🙈";
+    } else {
+      input.type = input.id.includes("Password") ? "password" : "email";
+      icon.textContent = "👁️";
+    }
+  };
+
   // STAKE BOX
   const stakeToggle = document.querySelector(".stake-toggle");
   const stakeContent = document.querySelector(".stake-content");
@@ -407,7 +416,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function calcularStake() {
     const total = parseFloat($stakeTotal.value) || 100;
-    const fixa = parseFloat($stakeFixa.value) || 0;
     const casa = $casaPrincipal.value;
 
     if (total <= 0) {
@@ -415,44 +423,20 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    if (fixa > total) {
-      $resultadoStake.innerHTML = "⚠️ Valor fixo não pode ser maior que o total.";
-      return;
-    }
-
-    if (!casa) {
-      $resultadoStake.innerHTML = `✅ Stake total: R$ ${total.toFixed(2)}<br>➡️ Escolha uma casa para definir valor fixo.`;
-      return;
-    }
-
+    // Simulação de odds (depois vem do item real)
     const odd1 = 2.10;
     const odd2 = 2.05;
 
-    let stake1, stake2;
-
-    if (casa === "Betfair") {
-      const { stake1: s1, stake2: s2 } = calcularComFixa(odd1, odd2, fixa, "1");
-      stake1 = s1;
-      stake2 = s2;
-    } else if (casa === "Pinnacle") {
-      const { stake1: s1, stake2: s2 } = calcularComFixa(odd1, odd2, fixa, "2");
-      stake1 = s1;
-      stake2 = s2;
-    } else {
-      const { stake1: s1, stake2: s2 } = calcularStakes(odd1, odd2, total);
-      stake1 = s1;
-      stake2 = s2;
-    }
+    const { stake1, stake2 } = calcularStakes(odd1, odd2, total);
 
     $resultadoStake.innerHTML = `
-      <strong>🎯 ${casa}:</strong> R$ ${fixa > 0 ? fixa.toFixed(2) : stake1.toFixed(2)}<br>
+      <strong>🎯 ${casa || 'Casa 1'}:</strong> R$ ${stake1.toFixed(2)}<br>
       <strong>➡️ Outra casa:</strong> R$ ${stake2.toFixed(2)}<br>
-      <strong>✅ Total:</strong> R$ ${(stake1 + stake2).toFixed(2)}
+      <strong>✅ Total:</strong> R$ ${total.toFixed(2)}
     `;
   }
 
   $stakeTotal.addEventListener("input", calcularStake);
-  $stakeFixa.addEventListener("input", calcularStake);
   $casaPrincipal.addEventListener("change", calcularStake);
   calcularStake();
 
