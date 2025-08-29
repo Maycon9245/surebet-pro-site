@@ -50,7 +50,7 @@ p {
   margin-bottom: 20px;
 }
 
-/* --- ÍCONE DE SOM --- */
+/* --- SOM AO LADO DO LOGIN --- */
 .sound-toggle {
   position: fixed;
   top: 24px;
@@ -97,24 +97,6 @@ p {
   cursor: pointer;
 }
 
-/* --- BOTÃO DE LOGIN --- */
-.login-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: var(--accent);
-  color: #052e16;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  z-index: 1000;
-}
-.login-btn:hover {
-  filter: brightness(1.1);
-}
-
 /* --- OLHO NOS CAMPOS --- */
 .input-with-eye {
   position: relative;
@@ -144,8 +126,27 @@ p {
   color: #8b949e;
   user-select: none;
 }
+
 .eye-icon:hover {
   color: var(--accent);
+}
+
+/* --- BOTÃO DE LOGIN --- */
+.login-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: #052e16;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 1000;
+}
+.login-btn:hover {
+  filter: brightness(1.1);
 }
 
 /* --- MODAL --- */
