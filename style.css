@@ -50,6 +50,53 @@ p {
   margin-bottom: 20px;
 }
 
+/* --- ÍCONE DE SOM --- */
+.sound-toggle {
+  position: fixed;
+  top: 24px;
+  right: 80px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border-radius: 50%;
+}
+
+.sound-toggle:hover .volume-slider {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.sound-toggle .volume-slider {
+  position: absolute;
+  top: 40px;
+  right: -10px;
+  width: 60px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.sound-toggle .volume-slider input {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 /* --- BOTÃO DE LOGIN --- */
 .login-btn {
   position: fixed;
@@ -63,10 +110,42 @@ p {
   font-weight: 700;
   cursor: pointer;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 .login-btn:hover {
   filter: brightness(1.1);
+}
+
+/* --- OLHO NOS CAMPOS --- */
+.input-with-eye {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.input-with-eye input {
+  width: 100%;
+  padding: 10px;
+  padding-right: 40px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  color: #8b949e;
+  user-select: none;
+}
+.eye-icon:hover {
+  color: var(--accent);
 }
 
 /* --- MODAL --- */
@@ -188,8 +267,10 @@ p {
   font-size: 12px;
   color: #000;
 }
-.qrcode::before {
-  content: "QR CODE";
+.qrcode img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* --- TIMER --- */
@@ -467,7 +548,7 @@ footer {
 
 .stake-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 
