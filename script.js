@@ -1,36 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // 🔊 ÁUDIO DE ALERTA (só toca se houver nova surebet)
+  // 🔊 ÁUDIO DE ALERTA
   const alertSound = document.getElementById("alert-sound");
   const volumeControl = document.getElementById("volumeControl");
 
   if (alertSound && volumeControl) {
-    alertSound.volume = 0.5; // volume inicial
+    alertSound.volume = 0.5;
     volumeControl.addEventListener("input", () => {
       alertSound.volume = volumeControl.value;
     });
   }
 
-  // Função para tocar som quando nova surebet aparecer
   function tocarAlerta() {
     if (alertSound) {
       alertSound.currentTime = 0;
-      alertSound.play().catch(e => console.log("Áudio bloqueado (usuário não interagiu)", e));
+      alertSound.play().catch(e => console.log("Áudio bloqueado", e));
     }
   }
 
-  // 👁️ Alternar visibilidade de campos (email e senha)
+  // 👁️ Alternar visibilidade de campos
   window.toggleVisibility = function(id, icon) {
     const input = document.getElementById(id);
     if (input.type === "password" || input.type === "email") {
       input.type = "text";
-      icon.textContent = "🙈"; // muda para "escondido"
+      icon.textContent = "🙈";
     } else {
       input.type = input.id.includes("Password") ? "password" : "email";
-      icon.textContent = "👁️"; // muda para "visível"
+      icon.textContent = "👁️";
     }
   };
 
-  // ELEMENTOS DO DOM
+  // ELEMENTOS
   const $tbody = document.getElementById("linhas");
   const $loading = document.getElementById("loading");
   const $empty = document.getElementById("empty");
@@ -105,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return changed;
   }
 
-  // DADOS FALSOS (se JSON falhar)
+  // DADOS FALSOS
   const DEMO = {
     last_updated: new Date().toISOString(),
     count: 3,
@@ -116,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ]
   };
 
-  // CÁLCULO DE STAKE (sem fixa)
+  // CÁLCULO DE STAKE
   function calcularStakes(odd1, odd2, stakeTotal) {
     const stake1 = (stakeTotal * odd2) / (odd1 + odd2);
     const stake2 = (stakeTotal * odd1) / (odd1 + odd2);
@@ -171,6 +170,40 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // FILTROS
+  function applyFilters(list) {
+    const q = (document.getElementById("buscar").value || "").toLowerCase();
+    const selectedSports = JSON.parse(localStorage.getItem("selectedSports") || "[]");
+    const selectedBookmakers = JSON.parse(localStorage.getItem("selectedBookmakers") || "[]");
+    
+    // ✅ CORREÇÃO: Removido bloqueio do campo de lucro máximo
+    const pMinInput = document.getElementById("profitMin")?.value;
+    const pMaxInput = document.getElementById("profitMax")?.value;
+    const pMin = pMinInput ? parseFloat(pMinInput) : 0;
+    const pMax = pMaxInput ? parseFloat(pMaxInput) : Infinity;
+    
+    const timeWin = document.getElementById("timeWindow")?.value;
+    
+    return list.filter(s => {
+      if (q) {
+        const hay = [s.event, s.sport, s.outcomes?.[0]?.team, s.outcomes?.[1]?.team, s.outcomes?.[0]?.bookmaker, s.outcomes?.[1]?.bookmaker]
+          .map(x => (x || "").toString().toLowerCase()).join(" ");
+        if (!hay.includes(q)) return false;
+      }
+      if (selectedSports.length > 0 && !selectedSports.includes(s.sport)) return false;
+      if (selectedBookmakers.length > 0) {
+        const b1 = s.outcomes?.[0]?.bookmaker, b2 = s.outcomes?.[1]?.bookmaker;
+        if (!(selectedBookmakers.includes(b1) || selectedBookmakers.includes(b2))) return false;
+      }
+      const p = Number(s.profit || 0);
+      if (p < pMin) return false;
+      if (p > pMax) return false;
+      const start = parseStart(s);
+      if (!withinWindow(start, timeWin)) return false;
+      return true;
+    });
+  }
+
   // CHECKBOXES
   function createCheckboxes(items, containerId, selectedStorageKey) {
     const container = document.getElementById(containerId);
@@ -197,38 +230,10 @@ document.addEventListener("DOMContentLoaded", function () {
       container.appendChild(label);
     });
   }
+  
+  // LISTAS COMPLETAS DE ESPORTES E CASAS
   createCheckboxes(["Futebol", "Basquete", "Tênis", "Vôlei", "Tênis de Mesa", "Futebol Americano", "Hóquei", "Rugby", "Dardos", "Críquete", "eSports"], "sports-list", "selectedSports");
   createCheckboxes(["Betfair", "Pinnacle", "Betano", "Bet365", "1xBet", "PixBet", "KTO", "Sportingbet", "Betway", "Betpix365", "LeoVegas", "Bodog", "Parimatch", "Betsson", "22Bet", "Galera.Bet", "Esportes da Sorte", "Rivalo", "EstrelaBet", "Casa de Apostas", "MrJack.bet", "Viebett", "F12.bet", "Betcris", "BetWarrior", "BetNational", "BetMais", "Marathonbet", "Blaze", "Ivibet", "Bwin", "888sport"], "bookmakers-list", "selectedBookmakers");
-
-  // FILTROS
-  function applyFilters(list) {
-    const q = (document.getElementById("buscar").value || "").toLowerCase();
-    const selectedSports = JSON.parse(localStorage.getItem("selectedSports") || "[]");
-    const selectedBookmakers = JSON.parse(localStorage.getItem("selectedBookmakers") || "[]");
-    const pMinInput = document.getElementById("profitMin").value;
-    const pMaxInput = document.getElementById("profitMax").value;
-    const pMin = pMinInput ? parseFloat(pMinInput) : 0;
-    const pMax = pMaxInput ? parseFloat(pMaxInput) : Infinity;
-    const timeWin = document.getElementById("timeWindow").value;
-    return list.filter(s => {
-      if (q) {
-        const hay = [s.event, s.sport, s.outcomes?.[0]?.team, s.outcomes?.[1]?.team, s.outcomes?.[0]?.bookmaker, s.outcomes?.[1]?.bookmaker]
-          .map(x => (x || "").toString().toLowerCase()).join(" ");
-        if (!hay.includes(q)) return false;
-      }
-      if (selectedSports.length > 0 && !selectedSports.includes(s.sport)) return false;
-      if (selectedBookmakers.length > 0) {
-        const b1 = s.outcomes?.[0]?.bookmaker, b2 = s.outcomes?.[1]?.bookmaker;
-        if (!(selectedBookmakers.includes(b1) || selectedBookmakers.includes(b2))) return false;
-      }
-      const p = Number(s.profit || 0);
-      if (p < pMin) return false;
-      if (p > pMax) return false;
-      const start = parseStart(s);
-      if (!withinWindow(start, timeWin)) return false;
-      return true;
-    });
-  }
 
   // FETCH
   async function fetchData() {
@@ -280,6 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // EVENTOS DE FILTRO
   ["buscar", "profitMin", "profitMax", "timeWindow"].forEach(id => {
     document.getElementById(id)?.addEventListener("input", () => renderSurebets(applyFilters(lastFetched)));
   });
@@ -320,8 +326,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (act === "open") {
       const o1 = item.outcomes?.[0];
       const o2 = item.outcomes?.[1];
-      const stakeTotal = parseFloat($stakeTotal.value) || 100;
-      const casaPrincipal = $casaPrincipal.value;
+      const stakeTotal = parseFloat($stakeTotal.value) || 0; // ✅ Inicia vazio
+      
+      if (stakeTotal <= 0) {
+        alert("⚠️ Defina um valor de stake total válido!");
+        return;
+      }
 
       const { stake1, stake2 } = calcularStakes(o1.odd, o2.odd, stakeTotal);
 
@@ -414,13 +424,13 @@ document.addEventListener("DOMContentLoaded", function () {
     stakeToggle.textContent = isHidden ? "💰 Stake Principal ▼" : "💰 Stake Principal ▲";
   });
 
-  // CÁLCULO DE STAKE (sem fixa)
+  // CÁLCULO DE STAKE (✅ Inicia vazio)
   function calcularStake() {
-    const total = parseFloat($stakeTotal.value) || 100;
+    const total = parseFloat($stakeTotal.value) || 0; // ✅ Inicia vazio
     const casa = $casaPrincipal.value;
 
     if (total <= 0) {
-      $resultadoStake.innerHTML = "⚠️ Stake total deve ser maior que 0.";
+      $resultadoStake.innerHTML = "➡️ Defina um valor de stake total válido.";
       return;
     }
 
@@ -439,7 +449,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   $stakeTotal.addEventListener("input", calcularStake);
   $casaPrincipal.addEventListener("change", calcularStake);
-  calcularStake();
+  // ✅ Não chama calcularStake() aqui para iniciar vazio
 
   // Inicializa login
   initLoginSystem();
