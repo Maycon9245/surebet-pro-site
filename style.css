@@ -67,6 +67,12 @@ p {
   justify-content: center;
   font-size: 18px;
   border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.sound-toggle:hover {
+  color: var(--accent);
+  transform: scale(1.1);
 }
 
 .sound-toggle:hover .volume-slider {
@@ -95,6 +101,24 @@ p {
   width: 100%;
   accent-color: var(--accent);
   cursor: pointer;
+}
+
+/* --- BOTÃO DE LOGIN --- */
+.login-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: #052e16;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 1000;
+}
+.login-btn:hover {
+  filter: brightness(1.1);
 }
 
 /* --- OLHO NOS CAMPOS --- */
@@ -129,24 +153,6 @@ p {
 
 .eye-icon:hover {
   color: var(--accent);
-}
-
-/* --- BOTÃO DE LOGIN --- */
-.login-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: var(--accent);
-  color: #052e16;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  z-index: 1000;
-}
-.login-btn:hover {
-  filter: brightness(1.1);
 }
 
 /* --- MODAL --- */
@@ -561,6 +567,21 @@ footer {
   font-size: 14px;
   line-height: 1.5;
   color: #e6edf3;
+}
+
+/* --- CORREÇÃO DO LUCRO MÁXIMO --- */
+#profitMax {
+  background: var(--card-bg) !important;
+  color: white !important;
+  border: 1px solid var(--border) !important;
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+  font-size: 14px;
+}
+
+#profitMax::placeholder {
+  color: #8b949e !important;
 }
 
 @media (max-width: 1100px) {
