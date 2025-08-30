@@ -1,37 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // 🔊 INJEÇÃO FORÇADA DO BOTÃO DE SOM
-  const soundToggle = document.createElement("div");
-  soundToggle.className = "sound-toggle";
-  soundToggle.style.cssText = `
-    position: fixed !important;
-    top: 24px !important;
-    right: 100px !important;
-    width: 32px !important;
-    height: 32px !important;
-    background: transparent !important;
-    border: none !important;
-    color: #4ade80 !important;
-    cursor: pointer !important;
-    z-index: 2000 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 20px !important;
-    border-radius: 50% !important;
-    box-shadow: 0 0 0 2px #0d1117, 0 0 0 4px #30363d !important;
-    transition: all 0.2s ease !important;
-    font-family: sans-serif;
-  `;
-  soundToggle.innerHTML = `🔊
-    <div class="volume-slider" style="position: absolute; top: 40px; right: -10px; width: 60px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 8px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 2001; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-      <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.5" style="width: 100%; accent-color: #4ade80; cursor: pointer; margin: 0;">
-    </div>
-  `;
-  document.body.appendChild(soundToggle);
-
-  // Controle de volume
+  // 🔊 ÁUDIO DE ALERTA
   const alertSound = document.getElementById("alert-sound");
   const volumeControl = document.getElementById("volumeControl");
+
   if (alertSound && volumeControl) {
     alertSound.volume = 0.5;
     volumeControl.addEventListener("input", () => {
@@ -39,21 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Hover para mostrar volume
-  soundToggle.addEventListener("mouseenter", () => {
-    const slider = soundToggle.querySelector(".volume-slider");
-    slider.style.opacity = "1";
-    slider.style.visibility = "visible";
-    slider.style.transform = "translateY(0)";
-  });
-  soundToggle.addEventListener("mouseleave", () => {
-    const slider = soundToggle.querySelector(".volume-slider");
-    slider.style.opacity = "0";
-    slider.style.visibility = "hidden";
-    slider.style.transform = "translateY(-10px)";
-  });
-
-  // Função para tocar som
   function tocarAlerta() {
     if (alertSound) {
       alertSound.currentTime = 0;
@@ -220,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectedSports = JSON.parse(localStorage.getItem("selectedSports") || "[]");
     const selectedBookmakers = JSON.parse(localStorage.getItem("selectedBookmakers") || "[]");
     
-    // ✅ CORREÇÃO FORÇADA: Lucro máx. não bloqueia
+    // ✅ CORREÇÃO: Lucro máx. não bloqueia
     const pMinInput = document.getElementById("profitMin")?.value || "";
     const pMaxInput = document.getElementById("profitMax")?.value || "";
     const pMin = pMinInput ? parseFloat(pMinInput) : 0;
