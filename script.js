@@ -446,7 +446,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   $stakeTotal.addEventListener("input", calcularStake);
   $casaPrincipal.addEventListener("change", calcularStake);
-  // Não chama calcularStake() aqui para iniciar vazio
 
   // Inicializa login
   initLoginSystem();
