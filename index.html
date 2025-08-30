@@ -9,16 +9,18 @@
 <body>
   <header>
     <img src="img/logo.png" alt="Surebet PRO" class="logo-topo"/>
-  </header>
-
-  <!-- 🔔 SINAL SONORO AO LADO DO LOGIN -->
-  <div class="sound-toggle">
-    🔊
-    <div class="volume-slider">
-      <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.5">
+    <div class="header-actions">
+      <!-- 🔔 SINAL SONORO -->
+      <div class="sound-btn" title="Ajustar volume">
+        🔊
+        <div class="volume-slider">
+          <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.5">
+        </div>
+      </div>
+      <!-- 🔐 BOTÃO DE LOGIN -->
+      <button id="loginBtn" class="login-btn">🔑 Login / Assinar</button>
     </div>
-  </div>
-  <button id="loginBtn" class="login-btn">🔑 Login / Assinar</button>
+  </header>
 
   <main>
     <h1>🚀 Surebet PRO</h1>
