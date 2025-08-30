@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>🔐 Admin Surebet PRO</title>
+  <style>
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    .login-box {
+      max-width: 400px;
+      margin: auto;
+      background: #161b22;
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #30363d;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #30363d;
+      background: #0d1117;
+      color: white;
+      border-radius: 6px;
+    }
+    button {
+      background: #4ade80;
+      color: #052e16;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>🔐 Acesso Administrativo</h2>
+    <p>Controle total sobre assinantes e sistema</p>
+    <input type="password" id="adminPassword" placeholder="Senha do Admin" />
+    <button onclick="entrarAdmin()">Entrar</button>
+  </div>
+
+  <script>
+    function entrarAdmin() {
+      const senha = document.getElementById("adminPassword").value;
+      if (senha === "admin123") {
+        window.location.href = "admin.html";
+      } else {
+        alert("Senha incorreta!");
+      }
+    }
+  </script>
+</body>
+</html>
