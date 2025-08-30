@@ -28,9 +28,78 @@ header {
   padding: 18px 12px;
   text-align: center;
   border-bottom: 2px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .logo-topo {
   height: 60px;
+}
+
+/* --- CONTAINER DOS BOTÕES NO TOPO --- */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* --- BOTÃO DE SOM --- */
+.sound-btn {
+  position: relative;
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 6px;
+  border-radius: 8px;
+  transition: color 0.2s ease;
+}
+.sound-btn:hover {
+  color: #4ade80;
+}
+.sound-btn:hover .volume-slider {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* --- SLIDER DE VOLUME --- */
+.volume-slider {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 60px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+.volume-slider input {
+  width: 100%;
+  accent-color: #4ade80;
+  cursor: pointer;
+  margin: 0;
+}
+
+/* --- BOTÃO DE LOGIN --- */
+.login-btn {
+  background: var(--accent);
+  color: #052e16;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+}
+.login-btn:hover {
+  filter: brightness(1.1);
 }
 
 main {
@@ -50,80 +119,6 @@ p {
   margin-bottom: 20px;
 }
 
-/* --- SOM AO LADO DO LOGIN (CORRIGIDO) --- */
-.sound-toggle {
-  position: fixed !important;
-  top: 24px !important;
-  right: 100px !important;
-  width: 32px !important;
-  height: 32px !important;
-  background: transparent !important;
-  border: none !important;
-  color: #4ade80 !important;
-  cursor: pointer !important;
-  z-index: 2000 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 20px !important;
-  border-radius: 50% !important;
-  box-shadow: 0 0 0 2px #0d1117, 0 0 0 4px #30363d !important;
-  transition: all 0.2s ease !important;
-}
-
-.sound-toggle:hover {
-  transform: scale(1.15) !important;
-  color: #6ee7b7 !important;
-}
-
-.sound-toggle:hover .volume-slider {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: translateY(0) !important;
-}
-
-.sound-toggle .volume-slider {
-  position: absolute !important;
-  top: 40px !important;
-  right: -10px !important;
-  width: 60px !important;
-  background: #161b22 !important;
-  border: 1px solid #30363d !important;
-  border-radius: 8px !important;
-  padding: 8px !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  transform: translateY(-10px) !important;
-  transition: all 0.3s ease !important;
-  z-index: 2001 !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-}
-
-.sound-toggle .volume-slider input {
-  width: 100% !important;
-  accent-color: #4ade80 !important;
-  cursor: pointer !important;
-  margin: 0 !important;
-}
-
-/* --- BOTÃO DE LOGIN --- */
-.login-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: var(--accent);
-  color: #052e16;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  z-index: 1000;
-}
-.login-btn:hover {
-  filter: brightness(1.1);
-}
-
 /* --- OLHO NOS CAMPOS --- */
 .input-with-eye {
   position: relative;
@@ -131,7 +126,6 @@ p {
   width: 100%;
   margin: 8px 0;
 }
-
 .input-with-eye input {
   width: 100%;
   padding: 10px;
@@ -142,7 +136,6 @@ p {
   border-radius: 6px;
   font-size: 14px;
 }
-
 .eye-icon {
   position: absolute;
   right: 10px;
@@ -153,7 +146,6 @@ p {
   color: #8b949e;
   user-select: none;
 }
-
 .eye-icon:hover {
   color: var(--accent);
 }
@@ -570,21 +562,6 @@ footer {
   font-size: 14px;
   line-height: 1.5;
   color: #e6edf3;
-}
-
-/* --- CORREÇÃO DO LUCRO MÁXIMO --- */
-#profitMax {
-  background: var(--card-bg) !important;
-  color: white !important;
-  border: 1px solid var(--border) !important;
-  padding: 10px;
-  border-radius: 6px;
-  width: 100%;
-  font-size: 14px;
-}
-
-#profitMax::placeholder {
-  color: #8b949e !important;
 }
 
 @media (max-width: 1100px) {
