@@ -50,11 +50,11 @@ p {
   margin-bottom: 20px;
 }
 
-/* --- SOM AO LADO DO LOGIN (FORÇA BRUTA) --- */
+/* --- SOM AO LADO DO LOGIN (CORRIGIDO) --- */
 .sound-toggle {
   position: fixed !important;
   top: 24px !important;
-  right: 80px !important;
+  right: 100px !important;
   width: 32px !important;
   height: 32px !important;
   background: transparent !important;
