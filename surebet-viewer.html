@@ -1,0 +1,215 @@
+<!-- surebet-viewer.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surebet PRO - Visualizar Odds</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background: #0f9d58;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      height: 60vh;
+      padding: 10px;
+      gap: 10px;
+    }
+
+    .casa {
+      flex: 1;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 15px;
+      overflow-y: auto;
+    }
+
+    .casa h2 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .odds {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .odd-item {
+      display: flex;
+      justify-content: space-between;
+      background: #f9f9f9;
+      padding: 8px;
+      border-radius: 5px;
+      border-left: 4px solid #0f9d58;
+    }
+
+    /* Calculadora */
+    .calculadora {
+      margin: 20px auto;
+      width: 70%;
+      max-width: 800px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .calculadora h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #0f9d58;
+    }
+
+    .calculadora label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .calculadora input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .calculadora button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background: #0f9d58;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .calculadora button:hover {
+      background: #0c7d43;
+    }
+
+    .resultado {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>📊 Surebet PRO - Visualização de Odds</header>
+
+  <div class="container">
+    <!-- Casa 1 -->
+    <div class="casa" id="casa1">
+      <h2>🏠 <span id="nome-casa1">Casa 1</span></h2>
+      <div class="odds" id="odds-casa1">
+        <!-- Preenchido via JS -->
+      </div>
+    </div>
+
+    <!-- Casa 2 -->
+    <div class="casa" id="casa2">
+      <h2>🏠 <span id="nome-casa2">Casa 2</span></h2>
+      <div class="odds" id="odds-casa2">
+        <!-- Preenchido via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Calculadora -->
+  <div class="calculadora">
+    <h3>🧮 Calculadora de Stake</h3>
+    <label for="stake">Valor da Aposta Total (R$):</label>
+    <input type="number" id="stake" placeholder="Ex: 100">
+
+    <button onclick="calcularSurebet()">Calcular Distribuição</button>
+
+    <div class="resultado" id="resultado"></div>
+  </div>
+
+  <script>
+    // Recebe os dados do localStorage
+    const dados = JSON.parse(localStorage.getItem("currentSurebet"));
+
+    function carregarOdds() {
+      if (!dados) {
+        document.getElementById("resultado").innerHTML = "<span style='color: red;'>Nenhuma surebet selecionada!</span>";
+        return;
+      }
+
+      const { event, outcomes } = dados;
+      const [time1, time2] = event.split(" vs ");
+
+      const casa1 = outcomes[0];
+      const casa2 = outcomes[1];
+
+      document.getElementById("nome-casa1").textContent = casa1.bookmaker;
+      document.getElementById("nome-casa2").textContent = casa2.bookmaker;
+
+      const odds1 = document.getElementById("odds-casa1");
+      const odds2 = document.getElementById("odds-casa2");
+
+      odds1.innerHTML = `
+        <div class="odd-item"><span>${time1}</span><span>${casa1.odd}</span></div>
+        <div class="odd-item"><span>${time2}</span><span>--</span></div>
+      `;
+
+      odds2.innerHTML = `
+        <div class="odd-item"><span>${time1}</span><span>--</span></div>
+        <div class="odd-item"><span>${time2}</span><span>${casa2.odd}</span></div>
+      `;
+    }
+
+    function calcularSurebet() {
+      const stakeTotal = parseFloat(document.getElementById('stake').value);
+      const dados = JSON.parse(localStorage.getItem("currentSurebet"));
+
+      if (!stakeTotal || stakeTotal <= 0) {
+        document.getElementById('resultado').innerHTML = "<span style='color: red;'>Insira um valor válido!</span>";
+        return;
+      }
+
+      const odd1 = dados.outcomes[0].odd;
+      const odd2 = dados.outcomes[1].odd;
+
+      const stake1 = (stakeTotal * odd2) / (odd1 + odd2);
+      const stake2 = (stakeTotal * odd1) / (odd1 + odd2);
+
+      const retorno = stake1 * odd1;
+      const lucro = retorno - stakeTotal;
+
+      document.getElementById('resultado').innerHTML = `
+        ✅ Aposte:
+        <br>🔹 <strong>${dados.outcomes[0].bookmaker}:</strong> R$ ${stake1.toFixed(2)}
+        <br>🔹 <strong>${dados.outcomes[1].bookmaker}:</strong> R$ ${stake2.toFixed(2)}
+        <br>💰 <strong>Retorno:</strong> R$ ${retorno.toFixed(2)}
+        <br>🟢 <strong>Lucro:</strong> R$ ${lucro.toFixed(2)} (${dados.profit}%)
+      `;
+    }
+
+    window.onload = carregarOdds;
+  </script>
+</body>
+</html>
