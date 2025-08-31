@@ -62,6 +62,15 @@
       border-left: 4px solid #0f9d58;
     }
 
+    .odd-item input {
+      width: 60px;
+      padding: 5px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
     /* Calculadora */
     .calculadora {
       margin: 20px auto;
@@ -144,6 +153,12 @@
     <label for="stake">Valor da Aposta Total (R$):</label>
     <input type="number" id="stake" placeholder="Ex: 100">
 
+    <label for="odd1">Odd da Casa 1:</label>
+    <input type="number" id="odd1" step="0.01" placeholder="Ex: 2.10">
+
+    <label for="odd2">Odd da Casa 2:</label>
+    <input type="number" id="odd2" step="0.01" placeholder="Ex: 2.05">
+
     <button onclick="calcularSurebet()">Calcular Distribuição</button>
 
     <div class="resultado" id="resultado"></div>
@@ -168,47 +183,82 @@
       document.getElementById("nome-casa1").textContent = casa1.bookmaker;
       document.getElementById("nome-casa2").textContent = casa2.bookmaker;
 
+      // Preenche as odds com input editável
       const odds1 = document.getElementById("odds-casa1");
       const odds2 = document.getElementById("odds-casa2");
 
       odds1.innerHTML = `
-        <div class="odd-item"><span>${time1}</span><span>${casa1.odd}</span></div>
-        <div class="odd-item"><span>${time2}</span><span>--</span></div>
+        <div class="odd-item">
+          <span>${time1}</span>
+          <input type="number" id="input-odd1" value="${casa1.odd}" step="0.01" onchange="atualizarOdd1()">
+        </div>
+        <div class="odd-item">
+          <span>${time2}</span>
+          <span>--</span>
+        </div>
       `;
 
       odds2.innerHTML = `
-        <div class="odd-item"><span>${time1}</span><span>--</span></div>
-        <div class="odd-item"><span>${time2}</span><span>${casa2.odd}</span></div>
+        <div class="odd-item">
+          <span>${time1}</span>
+          <span>--</span>
+        </div>
+        <div class="odd-item">
+          <span>${time2}</span>
+          <input type="number" id="input-odd2" value="${casa2.odd}" step="0.01" onchange="atualizarOdd2()">
+        </div>
       `;
+
+      // Inicializa os valores na calculadora
+      document.getElementById("odd1").value = casa1.odd;
+      document.getElementById("odd2").value = casa2.odd;
     }
 
+    // Atualiza a odd 1
+    function atualizarOdd1() {
+      const valor = document.getElementById("input-odd1").value;
+      document.getElementById("odd1").value = valor;
+    }
+
+    // Atualiza a odd 2
+    function atualizarOdd2() {
+      const valor = document.getElementById("input-odd2").value;
+      document.getElementById("odd2").value = valor;
+    }
+
+    // Calcula o stake
     function calcularSurebet() {
       const stakeTotal = parseFloat(document.getElementById('stake').value);
-      const dados = JSON.parse(localStorage.getItem("currentSurebet"));
+      const odd1 = parseFloat(document.getElementById('odd1').value);
+      const odd2 = parseFloat(document.getElementById('odd2').value);
 
       if (!stakeTotal || stakeTotal <= 0) {
         document.getElementById('resultado').innerHTML = "<span style='color: red;'>Insira um valor válido!</span>";
         return;
       }
+      if (!odd1 || !odd2 || odd1 <= 1 || odd2 <= 1) {
+        document.getElementById('resultado').innerHTML = "<span style='color: red;'>Insira odds válidas!</span>";
+        return;
+      }
 
-      const odd1 = dados.outcomes[0].odd;
-      const odd2 = dados.outcomes[1].odd;
-
+      // Fórmula da surebet
       const stake1 = (stakeTotal * odd2) / (odd1 + odd2);
       const stake2 = (stakeTotal * odd1) / (odd1 + odd2);
-
-      const retorno = stake1 * odd1;
+      const retorno = stake1 * odd1; // ou stake2 * odd2
       const lucro = retorno - stakeTotal;
+      const probTotal = (1/odd1) + (1/odd2);
+      const lucroPercent = (1 - probTotal) * 100;
 
       document.getElementById('resultado').innerHTML = `
         ✅ Aposte:
-        <br>🔹 <strong>${dados.outcomes[0].bookmaker}:</strong> R$ ${stake1.toFixed(2)}
-        <br>🔹 <strong>${dados.outcomes[1].bookmaker}:</strong> R$ ${stake2.toFixed(2)}
+        <br>🔹 <strong>${document.getElementById("nome-casa1").textContent}:</strong> R$ ${stake1.toFixed(2)}
+        <br>🔹 <strong>${document.getElementById("nome-casa2").textContent}:</strong> R$ ${stake2.toFixed(2)}
         <br>💰 <strong>Retorno:</strong> R$ ${retorno.toFixed(2)}
-        <br>🟢 <strong>Lucro:</strong> R$ ${lucro.toFixed(2)} (${dados.profit}%)
+        <br>🟢 <strong>Lucro:</strong> R$ ${lucro.toFixed(2)} (${lucroPercent.toFixed(2)}%)
       `;
     }
 
+    // Carrega ao abrir
     window.onload = carregarOdds;
   </script>
 </body>
