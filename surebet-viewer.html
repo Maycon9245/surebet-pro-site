@@ -1,4 +1,3 @@
-<!-- surebet-viewer.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -47,12 +46,6 @@
       color: #333;
     }
 
-    .odds {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
     .odd-item {
       display: flex;
       justify-content: space-between;
@@ -60,6 +53,7 @@
       padding: 8px;
       border-radius: 5px;
       border-left: 4px solid #0f9d58;
+      margin-bottom: 8px;
     }
 
     .odd-item input {
@@ -102,26 +96,15 @@
       border-radius: 5px;
     }
 
-    .calculadora button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background: #0f9d58;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .calculadora button:hover {
-      background: #0c7d43;
-    }
-
     .resultado {
       margin-top: 10px;
       text-align: center;
       font-size: 1rem;
       font-weight: bold;
+      padding: 10px;
+      background: #e8f5e8;
+      border-radius: 6px;
+      color: #0f9d58;
     }
   </style>
 </head>
@@ -133,16 +116,30 @@
     <!-- Casa 1 -->
     <div class="casa" id="casa1">
       <h2>🏠 <span id="nome-casa1">Casa 1</span></h2>
-      <div class="odds" id="odds-casa1">
-        <!-- Preenchido via JS -->
+      <div class="odds">
+        <div class="odd-item">
+          <span id="time1-casa1">Time A</span>
+          <input type="number" id="odd-casa1" step="0.01" value="0.00" onchange="atualizarCalculadora()">
+        </div>
+        <div class="odd-item">
+          <span id="time2-casa1">Time B</span>
+          <span>--</span>
+        </div>
       </div>
     </div>
 
     <!-- Casa 2 -->
     <div class="casa" id="casa2">
       <h2>🏠 <span id="nome-casa2">Casa 2</span></h2>
-      <div class="odds" id="odds-casa2">
-        <!-- Preenchido via JS -->
+      <div class="odds">
+        <div class="odd-item">
+          <span>--</span>
+          <span>--</span>
+        </div>
+        <div class="odd-item">
+          <span id="time2-casa2">Time B</span>
+          <input type="number" id="odd-casa2" step="0.01" value="0.00" onchange="atualizarCalculadora()">
+        </div>
       </div>
     </div>
   </div>
@@ -150,18 +147,12 @@
   <!-- Calculadora -->
   <div class="calculadora">
     <h3>🧮 Calculadora de Stake</h3>
-    <label for="stake">Valor da Aposta Total (R$):</label>
-    <input type="number" id="stake" placeholder="Ex: 100">
+    <label for="stakeTotal">Valor da Aposta Total (R$):</label>
+    <input type="number" id="stakeTotal" placeholder="Ex: 200" oninput="atualizarCalculadora()">
 
-    <label for="odd1">Odd da Casa 1:</label>
-    <input type="number" id="odd1" step="0.01" placeholder="Ex: 2.10">
-
-    <label for="odd2">Odd da Casa 2:</label>
-    <input type="number" id="odd2" step="0.01" placeholder="Ex: 2.05">
-
-    <button onclick="calcularSurebet()">Calcular Distribuição</button>
-
-    <div class="resultado" id="resultado"></div>
+    <div class="resultado" id="resultado">
+      ⬅️ Insira os dados para calcular
+    </div>
   </div>
 
   <script>
@@ -175,81 +166,46 @@
       }
 
       const { event, outcomes } = dados;
-      const [time1, time2] = event.split(" vs ");
+      const [time1, time2] = event.split(" vs ") || ["Time A", "Time B"];
 
       const casa1 = outcomes[0];
       const casa2 = outcomes[1];
 
+      // Atualiza nomes
       document.getElementById("nome-casa1").textContent = casa1.bookmaker;
       document.getElementById("nome-casa2").textContent = casa2.bookmaker;
 
-      // Preenche as odds com input editável
-      const odds1 = document.getElementById("odds-casa1");
-      const odds2 = document.getElementById("odds-casa2");
+      // Atualiza times
+      document.getElementById("time1-casa1").textContent = time1;
+      document.getElementById("time2-casa1").textContent = time2;
+      document.getElementById("time2-casa2").textContent = time2;
 
-      odds1.innerHTML = `
-        <div class="odd-item">
-          <span>${time1}</span>
-          <input type="number" id="input-odd1" value="${casa1.odd}" step="0.01" onchange="atualizarOdd1()">
-        </div>
-        <div class="odd-item">
-          <span>${time2}</span>
-          <span>--</span>
-        </div>
-      `;
+      // Atualiza valores iniciais
+      document.getElementById("odd-casa1").value = casa1.odd;
+      document.getElementById("odd-casa2").value = casa2.odd;
 
-      odds2.innerHTML = `
-        <div class="odd-item">
-          <span>${time1}</span>
-          <span>--</span>
-        </div>
-        <div class="odd-item">
-          <span>${time2}</span>
-          <input type="number" id="input-odd2" value="${casa2.odd}" step="0.01" onchange="atualizarOdd2()">
-        </div>
-      `;
-
-      // Inicializa os valores na calculadora
-      document.getElementById("odd1").value = casa1.odd;
-      document.getElementById("odd2").value = casa2.odd;
+      // Inicia cálculo
+      atualizarCalculadora();
     }
 
-    // Atualiza a odd 1
-    function atualizarOdd1() {
-      const valor = document.getElementById("input-odd1").value;
-      document.getElementById("odd1").value = valor;
-    }
+    // Atualiza a calculadora em tempo real
+    function atualizarCalculadora() {
+      const odd1 = parseFloat(document.getElementById("odd-casa1").value) || 0;
+      const odd2 = parseFloat(document.getElementById("odd-casa2").value) || 0;
+      const stakeTotal = parseFloat(document.getElementById("stakeTotal").value) || 0;
 
-    // Atualiza a odd 2
-    function atualizarOdd2() {
-      const valor = document.getElementById("input-odd2").value;
-      document.getElementById("odd2").value = valor;
-    }
-
-    // Calcula o stake
-    function calcularSurebet() {
-      const stakeTotal = parseFloat(document.getElementById('stake').value);
-      const odd1 = parseFloat(document.getElementById('odd1').value);
-      const odd2 = parseFloat(document.getElementById('odd2').value);
-
-      if (!stakeTotal || stakeTotal <= 0) {
-        document.getElementById('resultado').innerHTML = "<span style='color: red;'>Insira um valor válido!</span>";
-        return;
-      }
-      if (!odd1 || !odd2 || odd1 <= 1 || odd2 <= 1) {
-        document.getElementById('resultado').innerHTML = "<span style='color: red;'>Insira odds válidas!</span>";
+      if (!odd1 || !odd2 || !stakeTotal || odd1 <= 1 || odd2 <= 1 || stakeTotal <= 0) {
+        document.getElementById("resultado").innerHTML = "⬅️ Preencha valores válidos";
         return;
       }
 
-      // Fórmula da surebet
       const stake1 = (stakeTotal * odd2) / (odd1 + odd2);
       const stake2 = (stakeTotal * odd1) / (odd1 + odd2);
-      const retorno = stake1 * odd1; // ou stake2 * odd2
+      const retorno = stake1 * odd1;
       const lucro = retorno - stakeTotal;
-      const probTotal = (1/odd1) + (1/odd2);
-      const lucroPercent = (1 - probTotal) * 100;
+      const lucroPercent = (1 - (1/odd1 + 1/odd2)) * 100;
 
-      document.getElementById('resultado').innerHTML = `
+      document.getElementById("resultado").innerHTML = `
         ✅ Aposte:
         <br>🔹 <strong>${document.getElementById("nome-casa1").textContent}:</strong> R$ ${stake1.toFixed(2)}
         <br>🔹 <strong>${document.getElementById("nome-casa2").textContent}:</strong> R$ ${stake2.toFixed(2)}
