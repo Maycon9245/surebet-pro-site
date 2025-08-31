@@ -348,18 +348,9 @@ document.addEventListener("DOMContentLoaded", function () {
         stake2: parseFloat(stake2.toFixed(2))
       };
 
-      alert(`Prévia de Stake:\n${o1.bookmaker}: R$ ${stake1.toFixed(2)}\n${o2.bookmaker}: R$ ${stake2.toFixed(2)}`);
-
-      if (typeof chrome !== 'undefined' && chrome.runtime) {
-        chrome.runtime.sendMessage("ndbogpmkbjgkbgiiijenoiooeanmahjm", {
-          action: "openSurebet",
-          dados
-        }, (response) => {
-          if (chrome.runtime.lastError) {
-            console.error("Extensão não respondeu:", chrome.runtime.lastError);
-          }
-        });
-      }
+      // Salva no localStorage e abre nova janela
+      localStorage.setItem("currentSurebet", JSON.stringify(dados));
+      window.open("surebet-viewer.html", "_blank", "width=1000,height=700");
     }
   });
 
