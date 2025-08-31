@@ -331,8 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      const { stake1, stake2 } = calcularStakes(o1.odd, o2.odd, stakeTotal);
-
+      // Dados da surebet
       const dados = {
         event: item.event,
         sport: item.sport,
@@ -343,14 +342,26 @@ document.addEventListener("DOMContentLoaded", function () {
         team2: o2.team,
         odd2: o2.odd,
         bookmaker2: o2.bookmaker,
-        profit: item.profit,
-        stake1: parseFloat(stake1.toFixed(2)),
-        stake2: parseFloat(stake2.toFixed(2))
+        profit: item.profit
       };
 
-      // Salva no localStorage e abre nova janela
-      localStorage.setItem("currentSurebet", JSON.stringify(dados));
-      window.open("surebet-viewer.html", "_blank", "width=1000,height=700");
+      // Função para gerar URL de busca
+      function gerarUrl(casa, time1, time2) {
+        const t1 = encodeURIComponent(time1);
+        const t2 = encodeURIComponent(time2);
+        const query = encodeURIComponent(`${casa} ${t1} vs ${t2}`);
+        return `https://www.google.com/search?q=${query}`;
+      }
+
+      // Abre as duas casas em abas separadas
+      const url1 = gerarUrl(dados.bookmaker1, dados.team1, dados.team2);
+      const url2 = gerarUrl(dados.bookmaker2, dados.team1, dados.team2);
+
+      window.open(url1, "_blank");
+      window.open(url2, "_blank");
+
+      // Alerta de confirmação
+      alert(`✅ Aberto:\n- ${dados.bookmaker1}\n- ${dados.bookmaker2}\n\nAgora vá e faça a aposta!`);
     }
   });
 
