@@ -6,164 +6,166 @@
   <title>Painel Administrativo</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #121212;
-      color: #f1f1f1;
-    }
-    header {
-      background: #1f1f2e;
-      padding: 20px;
-      text-align: center;
-      border-bottom: 2px solid #2e2e40;
-    }
-    header h1 {
       margin: 0;
-      font-size: 28px;
-      color: #00ff88;
-    }
-    header p {
-      margin: 5px 0 0;
-      color: #aaa;
+      padding: 0;
+      background: #f4f6f8;
+      color: #333;
     }
 
-    /* Cards indicadores */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
+    header {
+      background: #1e293b;
+      color: #fff;
       padding: 20px;
-    }
-    .card {
-      background: #1e1e2f;
-      padding: 20px;
-      border-radius: 12px;
       text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-    .card h3 {
-      margin: 0;
-      font-size: 18px;
-      color: #bbb;
-    }
-    .card p {
-      margin: 8px 0 0;
       font-size: 22px;
       font-weight: bold;
-      color: #00ff88;
     }
 
-    /* Filtros */
-    .filters {
-      background: #1f1f2e;
-      padding: 15px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      border-top: 2px solid #2e2e40;
-      border-bottom: 2px solid #2e2e40;
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
     }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #555;
+    }
+
+    .card p {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #111;
+    }
+
+    .filters {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: #fff;
+      margin: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+    }
+
     .filters input, .filters select, .filters button {
       padding: 8px 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    .filters input, .filters select {
-      background: #2a2a3d;
-      color: #fff;
-    }
-    .filters button {
-      background: #00ff88;
-      color: #000;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .filters button:hover {
-      background: #00cc6d;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
     }
 
-    /* Tabela */
+    .filters button {
+      background: #1e293b;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .filters button:hover {
+      background: #0f172a;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 20px 0;
+      margin: 20px;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
     }
+
     table thead {
-      background: #1f1f2e;
+      background: #1e293b;
+      color: white;
     }
+
     table th, table td {
-      padding: 12px;
+      padding: 14px;
       text-align: left;
-      border-bottom: 1px solid #2e2e40;
     }
-    table th {
-      color: #00ff88;
+
+    table tr:nth-child(even) {
+      background: #f9f9f9;
     }
-    table td button {
-      padding: 6px 10px;
-      border: none;
+
+    .btn {
+      padding: 6px 12px;
       border-radius: 6px;
+      border: none;
       cursor: pointer;
-      font-size: 13px;
-      font-weight: bold;
+      font-size: 14px;
     }
+
     .btn-block {
-      background: #ff4444;
+      background: #dc2626;
       color: #fff;
     }
+
     .btn-unblock {
-      background: #44ff44;
-      color: #000;
+      background: #16a34a;
+      color: #fff;
     }
+
+    .btn-block:hover { background: #b91c1c; }
+    .btn-unblock:hover { background: #15803d; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Painel Administrativo</h1>
-    <p>Gerencie assinantes, planos e relatórios</p>
-  </header>
+  <header>Painel Administrativo</header>
 
-  <!-- Indicadores -->
-  <div class="cards-grid">
+  <section class="dashboard">
     <div class="card">
-      <h3>Assinantes Ativos</h3>
+      <h2>Assinantes Ativos</h2>
       <p id="ativos">0</p>
     </div>
     <div class="card">
-      <h3>Faturamento (Mês)</h3>
-      <p id="faturamento">R$ 0</p>
+      <h2>Faturamento (Mês)</h2>
+      <p id="faturamento">R$ 0,00</p>
     </div>
     <div class="card">
-      <h3>Cancelamentos</h3>
+      <h2>Cancelamentos</h2>
       <p id="cancelamentos">0</p>
     </div>
     <div class="card">
-      <h3>LTV Médio</h3>
-      <p id="ltv">R$ 0</p>
+      <h2>LTV Médio</h2>
+      <p id="ltv">R$ 0,00</p>
     </div>
-  </div>
+  </section>
 
-  <!-- Filtros -->
-  <div class="filters">
-    <input type="text" id="buscar" placeholder="Buscar por nome ou email" aria-label="Buscar usuário">
-    <select id="filtroPlano">
-      <option value="">Todos os planos</option>
-      <option value="Semanal">Semanal</option>
-      <option value="Mensal">Mensal</option>
-      <option value="Trimestral">Trimestral</option>
-    </select>
-    <select id="filtroStatus">
-      <option value="">Todos os status</option>
-      <option value="Ativo">Ativo</option>
-      <option value="Bloqueado">Bloqueado</option>
-    </select>
-    <button onclick="filtrar()">🔎 Filtrar</button>
+  <section class="filters">
+    <div>
+      <input type="text" id="buscar" placeholder="Buscar por nome ou email">
+      <select id="filtroPlano">
+        <option value="">Todos os planos</option>
+        <option value="Semanal">Semanal</option>
+        <option value="Mensal">Mensal</option>
+        <option value="Trimestral">Trimestral</option>
+      </select>
+      <select id="filtroStatus">
+        <option value="">Todos os status</option>
+        <option value="Ativo">Ativo</option>
+        <option value="Bloqueado">Bloqueado</option>
+      </select>
+      <button onclick="filtrar()">🔎 Filtrar</button>
+    </div>
     <button onclick="exportarCSV()">📥 Exportar CSV</button>
-  </div>
+  </section>
 
-  <!-- Tabela -->
   <table>
     <thead>
       <tr>
@@ -180,14 +182,14 @@
   </table>
 
   <script>
-    // Dados dos assinantes
+    // Dados dos assinantes (vem do localStorage)
     let assinantes = JSON.parse(localStorage.getItem("assinantes")) || [
       { name: "João Silva", email: "joao@email.com", plan: "Mensal", active: true },
-      { name: "Maria Souza", email: "maria@email.com", plan: "Semanal", active: false },
-      { name: "Carlos Lima", email: "carlos@email.com", plan: "Trimestral", active: true }
+      { name: "Maria Oliveira", email: "maria@email.com", plan: "Semanal", active: false },
+      { name: "Carlos Souza", email: "carlos@email.com", plan: "Trimestral", active: false }
     ];
 
-    // Salva no localStorage
+    // Função para salvar
     function salvar() {
       localStorage.setItem("assinantes", JSON.stringify(assinantes));
     }
@@ -205,7 +207,7 @@
           <td>${user.plan}</td>
           <td>${user.active ? "Ativo" : "Bloqueado"}</td>
           <td>
-            <button class="btn-${user.active ? 'block' : 'unblock'}" 
+            <button class="btn ${user.active ? 'btn-block' : 'btn-unblock'}" 
                     onclick="toggleStatus('${user.email}')">
               ${user.active ? 'Bloquear' : 'Desbloquear'}
             </button>
