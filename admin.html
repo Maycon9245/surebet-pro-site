@@ -1,264 +1,4 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Administrativo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f4f6f8;
-      color: #333;
-    }
-
-    header {
-      background: #1e293b;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    .card h2 {
-      margin: 0;
-      font-size: 20px;
-      color: #555;
-    }
-
-    .card p {
-      margin-top: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #111;
-    }
-
-    .filters {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      background: #fff;
-      margin: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
-    }
-
-    .filters input, .filters select, .filters button {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      margin-right: 10px;
-    }
-
-    .filters button {
-      background: #1e293b;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    .filters button:hover {
-      background: #0f172a;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px;
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
-    }
-
-    table thead {
-      background: #1e293b;
-      color: white;
-    }
-
-    table th, table td {
-      padding: 14px;
-      text-align: left;
-    }
-
-    table tr:nth-child(even) {
-      background: #f9f9f9;
-    }
-
-    .btn {
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .btn-block {
-      background: #dc2626;
-      color: #fff;
-    }
-
-    .btn-unblock {
-      background: #16a34a;
-      color: #fff;
-    }
-
-    .btn-block:hover { background: #b91c1c; }
-    .btn-unblock:hover { background: #15803d; }
-  </style>
-</head>
-<body>
-  <header>Painel Administrativo</header>
-
-  <section class="dashboard">
-    <div class="card">
-      <h2>Assinantes Ativos</h2>
-      <p id="ativos">0</p>
-    </div>
-    <div class="card">
-      <h2>Faturamento (Mês)</h2>
-      <p id="faturamento">R$ 0,00</p>
-    </div>
-    <div class="card">
-      <h2>Cancelamentos</h2>
-      <p id="cancelamentos">0</p>
-    </div>
-    <div class="card">
-      <h2>LTV Médio</h2>
-      <p id="ltv">R$ 0,00</p>
-    </div>
-  </section>
-
-  <section class="filters">
-    <div>
-      <input type="text" id="buscar" placeholder="Buscar por nome ou email">
-      <select id="filtroPlano">
-        <option value="">Todos os planos</option>
-        <option value="Semanal">Semanal</option>
-        <option value="Mensal">Mensal</option>
-        <option value="Trimestral">Trimestral</option>
-      </select>
-      <select id="filtroStatus">
-        <option value="">Todos os status</option>
-        <option value="Ativo">Ativo</option>
-        <option value="Bloqueado">Bloqueado</option>
-      </select>
-      <button onclick="filtrar()">🔎 Filtrar</button>
-    </div>
-    <button onclick="exportarCSV()">📥 Exportar CSV</button>
-  </section>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Email</th>
-        <th>Plano</th>
-        <th>Status</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="tabela">
-      <!-- Preenchido via JS -->
-    </tbody>
-  </table>
-
-  <script>
-    // Dados dos assinantes (vem do localStorage)
-    let assinantes = JSON.parse(localStorage.getItem("assinantes")) || [
-      { name: "João Silva", email: "joao@email.com", plan: "Mensal", active: true },
-      { name: "Maria Oliveira", email: "maria@email.com", plan: "Semanal", active: false },
-      { name: "Carlos Souza", email: "carlos@email.com", plan: "Trimestral", active: false }
-    ];
-
-    // Função para salvar
-    function salvar() {
-      localStorage.setItem("assinantes", JSON.stringify(assinantes));
-    }
-
-    // Renderiza a tabela
-    function renderizar(dados = assinantes) {
-      const tbody = document.getElementById("tabela");
-      tbody.innerHTML = "";
-
-      dados.forEach(user => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td>${user.plan}</td>
-          <td>${user.active ? "Ativo" : "Bloqueado"}</td>
-          <td>
-            <button class="btn ${user.active ? 'btn-block' : 'btn-unblock'}" 
-                    onclick="toggleStatus('${user.email}')">
-              ${user.active ? 'Bloquear' : 'Desbloquear'}
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      atualizarEstatisticas();
-    }
-
-    // Alterna status
-    function toggleStatus(email) {
-      const user = assinantes.find(u => u.email === email);
-      if (user) {
-        user.active = !user.active;
-        salvar();
-        filtrar();
-      }
-    }
-
-    // Filtra os assinantes
-    function filtrar() {
-      const busca = document.getElementById("buscar").value.toLowerCase();
-      const plano = document.getElementById("filtroPlano").value;
-      const status = document.getElementById("filtroStatus").value;
-
-      const filtrados = assinantes.filter(u => {
-        const matchBusca = !busca || u.name.toLowerCase().includes(busca) || u.email.toLowerCase().includes(busca);
-        const matchPlano = !plano || u.plan === plano;
-        const matchStatus = !status || (status === "Ativo" ? u.active : !u.active);
-        return matchBusca && matchPlano && matchStatus;
-      });
-
-      renderizar(filtrados);
-    }
-
-    // Exportar para CSV
-    function exportarCSV() {
-      let csv = [["Nome","Email","Plano","Status"]];
-      assinantes.forEach(u => {
-        csv.push([u.name, u.email, u.plan, u.active ? "Ativo" : "Bloqueado"]);
-      });
-
-      const blob = new Blob([csv.map(r => r.join(",")).join("\n")], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `assinantes-${new Date().toISOString().split("T")[0]}.csv`;
-      a.click();
-    }
 
     // Atualiza estatísticas
     function atualizarEstatisticas() {
@@ -273,6 +13,48 @@
       document.getElementById("cancelamentos").textContent = inativos;
       document.getElementById("faturamento").textContent = `R$ ${faturamento.toFixed(2)}`;
       document.getElementById("ltv").textContent = `R$ ${ltvMedio.toFixed(2)}`;
+    }
+
+    // Gráfico
+    let chart;
+    function atualizarGrafico() {
+      const ctx = document.getElementById('assinantesChart').getContext('2d');
+      const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+      const data = [0, 0, 0, 0, 0, 0];
+      const ativosPorMes = assinantes
+        .filter(u => u.active)
+        .map(u => new Date().getMonth() + 1); // Simulação: todos ativos agora
+
+      ativosPorMes.forEach(mes => {
+        if (mes <= 6) data[mes-1]++;
+      });
+
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Assinantes',
+            data: data,
+            borderColor: '#4caf50',
+            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#fff' } }
+          },
+          scales: {
+            x: { ticks: { color: '#aaa' } },
+            y: { ticks: { color: '#aaa' } }
+          }
+        }
+      });
     }
 
     // Inicializa
