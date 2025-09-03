@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -93,6 +94,13 @@
       .cards{grid-template-columns:1fr}
       .toolbar{grid-template-columns:1fr}
     }
+
+    /* ====== EXPANSIBLE AREAS (ADICIONADO) ====== */
+    .expand { display: none; margin: 18px 0 6px; padding: 14px; background: var(--panel-2); border:1px solid var(--ring); border-radius:12px; box-shadow:var(--shadow); }
+    .expand.active { display: block; }
+    .expand .mini-title { color: #cbd5e1; font-weight:700; margin-bottom:8px; }
+    .expand .small-note { color: var(--muted); font-size:13px; margin-bottom:10px; }
+    .chart-small { width:100%; height:200px; }
   </style>
 </head>
 <body>
@@ -102,30 +110,30 @@
       <p class="sub">Gerencie assinantes, planos e relatorios</p>
     </header>
 
-    <!-- cards de resumo -->
+    <!-- cards de resumo (adicionados data-target para acionar as expansões) -->
     <section class="cards">
-      <article class="card green">
+      <article class="card green" data-target="expand-assinantes">
         <div class="pill" aria-hidden="true">👤</div>
         <div>
           <h4>Assinantes</h4>
           <div class="big">Ativos</div>
         </div>
       </article>
-      <article class="card blue">
+      <article class="card blue" data-target="expand-faturamento">
         <div class="pill" aria-hidden="true">📈</div>
         <div>
           <h4>Faturamento</h4>
-          <div class="big">(Mes)</div>
+          <div class="big">(Mês)</div>
         </div>
       </article>
-      <article class="card red">
+      <article class="card red" data-target="expand-cancelamentos">
         <div class="pill" aria-hidden="true">✖️</div>
         <div>
           <h4>Cancelamemtos</h4>
           <div class="big">2</div>
         </div>
       </article>
-      <article class="card purple">
+      <article class="card purple" data-target="expand-ltv">
         <div class="pill" aria-hidden="true">●</div>
         <div>
           <h4>LTV Médio</h4>
@@ -134,7 +142,50 @@
       </article>
     </section>
 
-    <!-- linha de gráficos -->
+    <!-- ===== ÁREAS EXPANDÍVEIS (ADICIONADAS) ===== -->
+    <div id="expand-assinantes" class="expand">
+      <div class="mini-title">Detalhes — Assinantes</div>
+      <div class="small-note">Últimas inscrições, status e ações rápidas.</div>
+      <table style="margin-bottom:12px;">
+        <thead>
+          <tr><th>Nome</th><th>Email</th><th>Plano</th><th>Status</th><th>Ações</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>João Silva</td><td>joao@email.com</td><td>Mensal</td><td class="status">Ativo</td><td><button class="pill-btn block" data-action="toggle">Bloquear</button></td></tr>
+          <tr><td>Maria Oliveira</td><td>maria@email.com</td><td>Semanal</td><td class="status">Bloqueado</td><td><button class="pill-btn unlock" data-action="toggle">Desbloquear</button></td></tr>
+        </tbody>
+      </table>
+      <div class="chart-small">
+        <canvas id="assinaturasMiniChart"></canvas>
+      </div>
+    </div>
+
+    <div id="expand-faturamento" class="expand">
+      <div class="mini-title">Detalhes — Faturamento</div>
+      <div class="small-note">Distribuição de planos e receita por período.</div>
+      <div class="chart-small">
+        <canvas id="planosMiniChart"></canvas>
+      </div>
+      <div style="margin-top:10px; color:var(--muted)">Faturamento mês atual: <strong>R$ 79,90</strong></div>
+    </div>
+
+    <div id="expand-cancelamentos" class="expand">
+      <div class="mini-title">Detalhes — Cancelamentos</div>
+      <div class="small-note">Lista histórica de cancelamentos com motivos (se disponíveis).</div>
+      <ul style="color:var(--muted); margin-top:8px;">
+        <li>Maria Oliveira — Semanal — 02/04/2025 — Motivo: Inatividade</li>
+        <li>Carlos Souza — Trimestral — 15/03/2025 — Motivo: Problema pagamento</li>
+      </ul>
+    </div>
+
+    <div id="expand-ltv" class="expand">
+      <div class="mini-title">Detalhes — LTV</div>
+      <div class="small-note">Lifetime Value médio e como é calculado.</div>
+      <p style="color:var(--muted)">LTV médio: <strong>R$ 26,63</strong></p>
+      <p style="color:var(--muted)">Cálculo: receita média por usuário × tempo médio de retenção.</p>
+    </div>
+
+    <!-- linha de gráficos (mantive seu grid original) -->
     <section class="grid-2">
       <div class="panel">
         <div class="hd">Novas Assinaturas <small style="color:#94a3b8;font-weight:600">Últimos 30 dias</small></div>
@@ -275,6 +326,24 @@
       }
     });
 
+    // Mini-charts nas expansões (reaproveitando dados)
+    const miniCtx1 = document.getElementById('assinaturasMiniChart');
+    if (miniCtx1) {
+      new Chart(miniCtx1, {
+        type:'line',
+        data:{ labels:days, datasets:[{ data:values, fill:true, backgroundColor:'rgba(59,130,246,.20)', borderColor:'#3b82f6', tension:.3, pointRadius:0 }]},
+        options:{ plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} }
+      });
+    }
+    const miniCtx2 = document.getElementById('planosMiniChart');
+    if (miniCtx2) {
+      new Chart(miniCtx2, {
+        type:'doughnut',
+        data:{ labels:['Mensal','Semanal','Trimestral','Bloqueados'], datasets:[{ data:[42,24,18,16], backgroundColor:['#2563eb','#3b82f6','#16a34a','#b91c1c'], borderWidth:2 }]},
+        options:{ plugins:{legend:{display:false}}, cutout:'55%' }
+      });
+    }
+
     // Busca + filtro
     const input = document.getElementById('search');
     const tbody = document.getElementById('tbody');
@@ -302,7 +371,7 @@
       URL.revokeObjectURL(url);
     });
 
-    // Toggle Bloquear / Desbloquear
+    // Toggle Bloquear / Desbloquear (mantive)
     tbody.addEventListener('click', (e)=>{
       const btn = e.target.closest('[data-action="toggle"]');
       if(!btn) return;
@@ -327,6 +396,30 @@
       const checked = ev.target.checked;
       tbody.querySelectorAll('input[type="checkbox"]').forEach(cb=> cb.checked = checked);
     });
+
+    /* ====== NOVO: Comportamento das expansões (cards clicáveis) ====== */
+    document.querySelectorAll('.card[data-target]').forEach(card=>{
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        const targetId = card.getAttribute('data-target');
+        // fechar outras expansões e abrir a selecionada (comportamento atual)
+        document.querySelectorAll('.expand').forEach(el=>{
+          if (el.id === targetId) {
+            el.classList.toggle('active');
+          } else {
+            el.classList.remove('active');
+          }
+        });
+        // rolar suavemente até a área expandida quando abrir
+        const el = document.getElementById(targetId);
+        if (el && el.classList.contains('active')) {
+          setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+        }
+      });
+    });
+
+    // (Opcional) Você pode permitir múltiplas expansões removendo o fechamento das outras acima.
+
   </script>
 </body>
 </html>
