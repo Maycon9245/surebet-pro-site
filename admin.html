@@ -4,10 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Painel Administrativo</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com  ">
+  <link rel="preconnect" href="https://fonts.gstatic.com  " crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="  https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js  "></script>
   <style>
     :root{
       --bg:#0f172a;           /* fundo geral (slate-900) */
@@ -166,8 +166,9 @@
         <thead>
           <tr><th>Nome</th><th>Email</th><th>Plano</th><th>Status</th><th>Ações</th></tr>
         </thead>
-        <tbody id="expand-tbody">
-          <!-- Preenchido via JS -->
+        <tbody>
+          <tr><td>João Silva</td><td>joao@email.com</td><td>Mensal</td><td class="status">Ativo</td><td><button class="pill-btn block" data-action="toggle">Bloquear</button></td></tr>
+          <tr><td>Maria Oliveira</td><td>maria@email.com</td><td>Semanal</td><td class="status">Bloqueado</td><td><button class="pill-btn unlock" data-action="toggle">Desbloquear</button></td></tr>
         </tbody>
       </table>
       <div class="chart-small">
@@ -256,13 +257,42 @@
         </tr>
       </thead>
       <tbody id="tbody">
-        <!-- Preenchido via JS -->
+        <tr data-email="joao@email.com">
+          <td><input type="checkbox"></td>
+          <td class="user-name" style="cursor:pointer; color:#dbeafe; text-decoration:underline;">João Siiva</td>
+          <td>joao@email.com</td>
+          <td class="plan-cell">Mensal</td>
+          <td class="status">Ativo</td>
+          <td>
+            <button class="pill-btn block" data-action="toggle">Bloquear</button>
+          </td>
+        </tr>
+        <tr data-email="maria@email.com">
+          <td><input type="checkbox"></td>
+          <td class="user-name" style="cursor:pointer; color:#dbeafe; text-decoration:underline;">María Oliveira</td>
+          <td>maria@email.com</td>
+          <td class="plan-cell">Semanal</td>
+          <td class="status">Bloqueado</td>
+          <td>
+            <button class="pill-btn unlock" data-action="toggle">Desbloquear</button>
+          </td>
+        </tr>
+        <tr data-email="carios@email.com">
+          <td><input type="checkbox"></td>
+          <td class="user-name" style="cursor:pointer; color:#dbeafe; text-decoration:underline;">Cários Souza</td>
+          <td>carios@email.com</td>
+          <td class="plan-cell">Trimestral</td>
+          <td class="status">Bloqueado</td>
+          <td>
+            <button class="pill-btn unlock" data-action="toggle">Desbloquear</button>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
 
   <script>
-    // === 1. LEITURA DOS ASSINANTES DO LOCALSTORAGE ===
+    // ======== 🔽 ADIÇÃO 1: LER ASSINANTES DO LOCALSTORAGE 🔽 ========
     function getAssinantes() {
       const saved = localStorage.getItem("assinantes");
       return saved ? JSON.parse(saved) : [
@@ -272,7 +302,7 @@
       ];
     }
 
-    // === 2. ATUALIZAR A TABELA PRINCIPAL ===
+    // ======== 🔽 ADIÇÃO 2: RENDERIZAR TABELA COM DADOS REAIS 🔽 ========
     function renderizarTabela() {
       const tbody = document.getElementById("tbody");
       const assinantes = getAssinantes();
@@ -295,28 +325,9 @@
         `;
         tbody.appendChild(tr);
       });
-
-      // Atualiza também a tabela expandida
-      const expandTbody = document.getElementById("expand-tbody");
-      if (expandTbody) {
-        expandTbody.innerHTML = "";
-        assinantes.forEach(user => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.plan}</td>
-            <td class="status">${user.active ? "Ativo" : "Bloqueado"}</td>
-            <td><button class="pill-btn ${user.active ? 'block' : 'unlock'}" data-action="toggle">${user.active ? 'Bloquear' : 'Desbloquear'}</button></td>
-          `;
-          expandTbody.appendChild(tr);
-        });
-      }
-
-      attachEvents();
     }
 
-    // === 3. TOGGLE BLOQUEAR/DESBLOQUEAR ===
+    // ======== 🔽 ADIÇÃO 3: SALVAR STATUS (BLOQUEAR/DESBLOQUEAR) 🔽 ========
     function toggleStatus(email) {
       const lista = getAssinantes();
       const user = lista.find(u => u.email === email);
@@ -327,125 +338,238 @@
       }
     }
 
-    // === 4. BUSCA + FILTRO ===
+    // ======== 🔽 ADIÇÃO 4: INICIAR AO CARREGAR 🔽 ========
+    document.addEventListener("DOMContentLoaded", () => {
+      renderizarTabela(); // Atualiza a tabela com os dados reais
+    });
+
+    // Sparkline de novas assinaturas (30 dias)
+    const ctxLine = document.getElementById('assinaturasChart');
+    const days = Array.from({length:30}, (_,i)=> i+1);
+    const values = [2,3,3,5,4,6,6,7,6,7,8,7,8,9,8,9,9,10,9,9,10,9,8,9,10,11,9,10,13,12];
+    const gradient = ctxLine.getContext('2d').createLinearGradient(0,0,0,120);
+    gradient.addColorStop(0,'rgba(59,130,246,.35)');
+    gradient.addColorStop(1,'rgba(59,130,246,0)');
+
+    new Chart(ctxLine, {
+      type:'line',
+      {
+        labels:days,
+        datasets:[{
+          values,
+          fill:true,
+          backgroundColor:gradient,
+          borderColor:'#3b82f6',
+          borderWidth:2,
+          tension:.35,
+          pointRadius:0
+        }]
+      },
+      options:{
+        responsive:true,
+        plugins:{legend:{display:false}, tooltip:{enabled:true, displayColors:false}},
+        scales:{
+          x:{display:false},
+          y:{display:false, suggestedMin:0, suggestedMax:14}
+        }
+      }
+    });
+
+    // Doughnut de planos
+    const planosCtx = document.getElementById('planosChart');
+    new Chart(planosCtx, {
+      type:'doughnut',
+      {
+        labels:['Mensal','Simanal','Trimestral','Bloquear'],
+        datasets:[{
+          data:[42,24,18,16],
+          backgroundColor:['#2563eb','#3b82f6','#16a34a','#60a5fa'],
+          borderColor:'#0b1222', borderWidth:4, hoverOffset:6
+        }]
+      },
+      options:{
+        plugins:{legend:{display:false}},
+        cutout:'55%'
+      }
+    });
+
+    // Mini-charts nas expansões (reaproveitando dados)
+    const miniCtx1 = document.getElementById('assinaturasMiniChart');
+    if (miniCtx1) {
+      new Chart(miniCtx1, {
+        type:'line',
+        data:{ labels:days, datasets:[{ values, fill:true, backgroundColor:'rgba(59,130,246,.20)', borderColor:'#3b82f6', tension:.3, pointRadius:0 }]},
+        options:{ plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} }
+      });
+    }
+    const miniCtx2 = document.getElementById('planosMiniChart');
+    if (miniCtx2) {
+      new Chart(miniCtx2, {
+        type:'doughnut',
+        { labels:['Mensal','Semanal','Trimestral','Bloqueados'], datasets:[{ [42,24,18,16], backgroundColor:['#2563eb','#3b82f6','#16a34a','#b91c1c'], borderWidth:2 }]},
+        options:{ plugins:{legend:{display:false}}, cutout:'55%' }
+      });
+    }
+
+    // Busca + filtro
     const input = document.getElementById('search');
     const tbody = document.getElementById('tbody');
-
-    function filter() {
+    const filter = () => {
       const q = (input.value || '').toLowerCase();
-      [...tbody.querySelectorAll('tr')].forEach(tr => {
+      [...tbody.querySelectorAll('tr')].forEach(tr=>{
+        // hide detail rows too: detail rows have class detail-row
         if (tr.classList.contains('detail-row')) return;
         const t = tr.innerText.toLowerCase();
         tr.style.display = t.includes(q) ? '' : 'none';
+        // if hidden, also close any detail row below it
         if (!t.includes(q)) {
           const next = tr.nextElementSibling;
           if (next && next.classList.contains('detail-row')) next.remove();
         }
       });
-    }
-
+    };
     document.getElementById('filterBtn').addEventListener('click', filter);
     input.addEventListener('input', filter);
 
-    // === 5. EXPORTAR CSV ===
+    // Exportar CSV
     document.getElementById('exportBtn').addEventListener('click', () => {
-      const assinantes = getAssinantes();
       let csv = 'Nome,Email,Plano,Status\n';
-      assinantes.forEach(u => {
-        csv += [u.name, u.email, u.plan, u.active ? "Ativo" : "Bloqueado"].join(',') + '\n';
+      [...tbody.querySelectorAll('tr')].forEach(tr=>{
+        if (tr.classList.contains('detail-row')) return;
+        const cols = tr.querySelectorAll('td');
+        csv += [cols[1].innerText, cols[2].innerText, cols[3].innerText, cols[4].innerText].join(',') + '\n';
       });
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = 'assinantes.csv';
-      a.click();
+      a.href = url; a.download = 'assinantes.csv'; a.click();
       URL.revokeObjectURL(url);
     });
 
-    // === 6. EVENTOS (toggle e detalhes) ===
-    function attachEvents() {
-      // Toggle status
-      tbody.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-action="toggle"]');
-        if (!btn || btn.closest('.detail-row')) return;
-        const row = btn.closest('tr');
-        const email = row.getAttribute('data-email');
-        toggleStatus(email);
+    // Toggle Bloquear / Desbloquear (mantive)
+    tbody.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-action="toggle"]');
+      if(!btn) return;
+      const row = btn.closest('tr');
+      // ignore clicks on detail rows
+      if (row.classList.contains('detail-row')) return;
+      const status = row.querySelector('.status');
+      const isAtivo = status.textContent.trim() === 'Ativo';
+      if(isAtivo){
+        status.textContent = 'Bloqueado';
+        btn.textContent = 'Desbloquear';
+        btn.classList.remove('block');
+        btn.classList.add('unlock');
+      } else {
+        status.textContent = 'Ativo';
+        btn.textContent = 'Bloquear';
+        btn.classList.remove('unlock');
+        btn.classList.add('block');
+      }
+    });
+
+    // Selecionar todos
+    document.getElementById('checkAll').addEventListener('change', (ev)=>{
+      const checked = ev.target.checked;
+      tbody.querySelectorAll('tr').forEach(tr => {
+        if (tr.classList.contains('detail-row')) return;
+        const cb = tr.querySelector('input[type="checkbox"]');
+        if (cb) cb.checked = checked;
       });
+    });
 
-      // Abrir detalhes por nome
-      tbody.addEventListener('click', (e) => {
-        const nameCell = e.target.closest('.user-name');
-        if (!nameCell) return;
-        const mainRow = nameCell.closest('tr');
-        if (!mainRow) return;
-
-        const next = mainRow.nextElementSibling;
-        if (next && next.classList.contains('detail-row')) {
-          next.remove();
-          return;
+    /* ====== NOVO: Comportamento das expansões (cards clicáveis) ====== */
+    document.querySelectorAll('.card[data-target]').forEach(card=>{
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        const targetId = card.getAttribute('data-target');
+        // fechar outras expansões e abrir a selecionada (comportamento atual)
+        document.querySelectorAll('.expand').forEach(el=>{
+          if (el.id === targetId) {
+            el.classList.toggle('active');
+          } else {
+            el.classList.remove('active');
+          }
+        });
+        // rolar suavemente até a área expandida quando abrir
+        const el = document.getElementById(targetId);
+        if (el && el.classList.contains('active')) {
+          setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
         }
-
-        closeAnyDetailRow();
-        const detailRow = createDetailRow(mainRow);
-        mainRow.parentNode.insertBefore(detailRow, mainRow.nextSibling);
-        setTimeout(() => detailRow.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
       });
-    }
+    });
 
-    // === 7. DETALHES DO ASSINANTE (com data de início e WhatsApp) ===
-    const PLAN_DURATIONS = { 'Semanal': 7, 'Mensal': 30, 'Trimestral': 90 };
+    /* ====== NOVO: EXPANSÃO DE LINHA (DETALHES DO ASSINANTE) ====== */
 
+    // Plan durations (days)
+    const PLAN_DURATIONS = {
+      'Semanal': 7,
+      'Mensal': 30,
+      'Trimestral': 90
+    };
+
+    // helper: format date dd/mm/yyyy
     function formatDateISOToBR(iso) {
       if (!iso) return '';
       const d = new Date(iso);
       if (isNaN(d)) return '';
-      return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const yyyy = d.getFullYear();
+      return ${dd}/${mm}/${yyyy};
     }
-
     function formatDateToISOInput(dateStrOrISO) {
       if (!dateStrOrISO) return '';
       const d = new Date(dateStrOrISO);
-      if (isNaN(d)) return '';
+      if (isNaN(d)) {
+        // maybe already dd/mm/yyyy
+        const parts = dateStrOrISO.split('/');
+        if (parts.length===3) {
+          const iso = ${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')};
+          return iso;
+        }
+        return '';
+      }
       return d.toISOString().slice(0,10);
     }
-
     function addDaysISO(isoDate, days) {
       const d = new Date(isoDate);
       d.setDate(d.getDate() + Number(days));
       return d.toISOString().slice(0,10);
     }
-
     function daysBetween(isoDateA, isoDateB) {
       const a = new Date(isoDateA);
       const b = new Date(isoDateB);
-      return Math.ceil((b - a) / (1000 * 60 * 60 * 24));
+      return Math.ceil( (b - a) / (1000*60*60*24) );
     }
 
+    // read saved details from localStorage
     function getSavedDetails(email) {
       try {
         const raw = localStorage.getItem('user_details_' + email);
-        return raw ? JSON.parse(raw) : null;
+        if (!raw) return null;
+        return JSON.parse(raw);
       } catch { return null; }
     }
-
     function saveDetails(email, details) {
       localStorage.setItem('user_details_' + email, JSON.stringify(details));
     }
 
+    // Close any open detail rows (we keep only one open at a time)
     function closeAnyDetailRow() {
       const open = tbody.querySelector('.detail-row');
       if (open) open.remove();
     }
 
+    // Create detail row element
     function createDetailRow(mainRow) {
-      const email = mainRow.getAttribute('data-email') || '';
-      const plan = mainRow.querySelector('.plan-cell')?.innerText || '';
+      const email = (mainRow.getAttribute('data-email') || mainRow.cells[2]?.innerText || '').trim();
+      const plan = (mainRow.querySelector('.plan-cell')?.innerText || '').trim();
       const saved = getSavedDetails(email) || {};
       const startISO = saved.startDate ? formatDateToISOInput(saved.startDate) : '';
       const whatsapp = saved.whatsapp || '';
 
+      // compute expiry if startISO present and plan known
       let expiryISO = '';
       let daysLeftText = '';
       if (startISO && plan) {
@@ -453,7 +577,7 @@
         expiryISO = addDaysISO(startISO, dur);
         const nowISO = new Date().toISOString().slice(0,10);
         const daysLeft = daysBetween(nowISO, expiryISO);
-        daysLeftText = `${formatDateISOToBR(expiryISO)} (${daysLeft} dias restantes)`;
+        daysLeftText = ${formatDateISOToBR(expiryISO)} (${daysLeft} dias restantes);
       }
 
       const tr = document.createElement('tr');
@@ -484,39 +608,74 @@
 
       tr.appendChild(td);
 
-      td.querySelector('.cancel-btn').addEventListener('click', () => tr.remove());
+      // events for save/cancel
+      td.querySelector('.cancel-btn').addEventListener('click', () => {
+        tr.remove();
+      });
 
       td.querySelector('.save-btn').addEventListener('click', () => {
         const startVal = td.querySelector('.detail-start').value;
         const waVal = td.querySelector('.detail-whatsapp').value.trim();
+        // compute expiry
         let expiry = '';
-        if (startVal && plan) {
+        let daysLeft = null;
+        if (startVal) {
           const dur = PLAN_DURATIONS[plan] || 30;
-          expiry = addDaysISO(startVal, dur);
+          const expiryISO2 = addDaysISO(startVal, dur);
+          expiry = expiryISO2;
+          const nowISO = new Date().toISOString().slice(0,10);
+          daysLeft = daysBetween(nowISO, expiryISO2);
         }
-        saveDetails(email, { startDate: startVal || '', whatsapp: waVal, expiry });
+        // persist
+        saveDetails(email, { startDate: startVal || '', whatsapp: waVal, expiry: expiry || '' });
+        // update UI: show days text
         const daysBox = td.querySelector('.days-box');
         if (expiry) {
-          const nowISO = new Date().toISOString().slice(0,10);
-          const daysLeft = daysBetween(nowISO, expiry);
-          daysBox.innerHTML = `<span class="days-left">${formatDateISOToBR(expiry)}</span> <div class="small-muted">(${daysLeft} dias restantes)</div>`;
+          daysBox.innerHTML = <span class="days-left">${formatDateISOToBR(expiry)}</span> <div class="small-muted">(${daysLeft} dias restantes)</div>;
         } else {
-          daysBox.innerHTML = '<span class="small-muted">Sem data de início</span>';
+          daysBox.innerHTML = <span class="small-muted">Sem data de início</span>;
         }
+        // small feedback: change background briefly
         td.style.transition = 'background .25s';
         td.style.background = 'linear-gradient(90deg, rgba(34,197,94,.06), transparent)';
-        setTimeout(() => td.style.background = '', 600);
+        setTimeout(()=> td.style.background = '', 600);
       });
 
       return tr;
     }
 
+    // clicking on name opens detail row
+    tbody.addEventListener('click', (e) => {
+      const nameCell = e.target.closest('.user-name');
+      if (!nameCell) return;
+      const mainRow = nameCell.closest('tr');
+      if (!mainRow) return;
+
+      // if next row is already detail-row for this main row, remove it (toggle)
+      const next = mainRow.nextElementSibling;
+      if (next && next.classList.contains('detail-row')) {
+        next.remove();
+        return;
+      }
+
+      // close any open detail row first (to keep single open)
+      closeAnyDetailRow();
+
+      // insert new created detail row after mainRow
+      const detailRow = createDetailRow(mainRow);
+      mainRow.parentNode.insertBefore(detailRow, mainRow.nextSibling);
+      // scroll into view a bit
+      setTimeout(()=> detailRow.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
+    });
+
+    // On load: if saved details exist, show small indicator in the row (e.g., append small icon)
     function annotateRowsWithSavedData() {
       [...tbody.querySelectorAll('tr')].forEach(tr => {
         if (tr.classList.contains('detail-row')) return;
-        const email = tr.getAttribute('data-email');
+        const email = tr.getAttribute('data-email') || tr.cells[2]?.innerText;
         if (!email) return;
         const saved = getSavedDetails(email.trim());
+        // remove previous marker if any
         const prev = tr.querySelector('.saved-marker');
         if (prev) prev.remove();
         if (saved && (saved.startDate || saved.whatsapp)) {
@@ -527,100 +686,19 @@
             span.style.marginLeft = '8px';
             span.style.fontSize = '12px';
             span.style.color = 'var(--muted)';
-            span.textContent = '• salvo';
+            span.textContent = '• saved';
             tdName.appendChild(span);
           }
         }
       });
     }
+    annotateRowsWithSavedData();
 
-    // === 8. INICIALIZAÇÃO ===
-    renderizarTabela();
-    window.addEventListener('focus', annotateRowsWithSavedData);
-    setInterval(annotateRowsWithSavedData, 10000);
+    // (Optional) If user edits plan in table, we could update expiry calculation accordingly —
+    // left for next step if you want inline plan editing.
 
-    // === 9. GRÁFICOS (mantidos) ===
-    const ctxLine = document.getElementById('assinaturasChart');
-    const days = Array.from({length:30}, (_,i)=> i+1);
-    const values = [2,3,3,5,4,6,6,7,6,7,8,7,8,9,8,9,9,10,9,9,10,9,8,9,10,11,9,10,13,12];
-    const gradient = ctxLine.getContext('2d').createLinearGradient(0,0,0,120);
-    gradient.addColorStop(0,'rgba(59,130,246,.35)');
-    gradient.addColorStop(1,'rgba(59,130,246,0)');
+    // (Optional) Provide ability to pre-fill using "example" values — left intentionally out so user must edit.
 
-    new Chart(ctxLine, {
-      type:'line',
-      {
-        labels:days,
-        datasets:[{
-          data:values,
-          fill:true,
-          backgroundColor:gradient,
-          borderColor:'#3b82f6',
-          borderWidth:2,
-          tension:.35,
-          pointRadius:0
-        }]
-      },
-      options:{
-        responsive:true,
-        plugins:{legend:{display:false}, tooltip:{enabled:true, displayColors:false}},
-        scales:{
-          x:{display:false},
-          y:{display:false, suggestedMin:0, suggestedMax:14}
-        }
-      }
-    });
-
-    const planosCtx = document.getElementById('planosChart');
-    new Chart(planosCtx, {
-      type:'doughnut',
-      {
-        labels:['Mensal','Simanal','Trimestral','Bloquear'],
-        datasets:[{
-          [42,24,18,16],
-          backgroundColor:['#2563eb','#3b82f6','#16a34a','#60a5fa'],
-          borderColor:'#0b1222', borderWidth:4, hoverOffset:6
-        }]
-      },
-      options:{
-        plugins:{legend:{display:false}},
-        cutout:'55%'
-      }
-    });
-
-    // Mini-charts
-    const miniCtx1 = document.getElementById('assinaturasMiniChart');
-    if (miniCtx1) {
-      new Chart(miniCtx1, {
-        type:'line',
-        data:{ labels:days, datasets:[{ values, fill:true, backgroundColor:'rgba(59,130,246,.20)', borderColor:'#3b82f6', tension:.3, pointRadius:0 }]},
-        options:{ plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} }
-      });
-    }
-    const miniCtx2 = document.getElementById('planosMiniChart');
-    if (miniCtx2) {
-      new Chart(miniCtx2, {
-        type:'doughnut',
-        { labels:['Mensal','Semanal','Trimestral','Bloqueados'], datasets:[{ [42,24,18,16], backgroundColor:['#2563eb','#3b82f6','#16a34a','#b91c1c'], borderWidth:2 }]},
-        options:{ plugins:{legend:{display:false}}, cutout:'55%' }
-      });
-    }
-
-    // Comportamento dos cards
-    document.querySelectorAll('.card[data-target]').forEach(card=>{
-      card.style.cursor = 'pointer';
-      card.addEventListener('click', () => {
-        const targetId = card.getAttribute('data-target');
-        document.querySelectorAll('.expand').forEach(el=>{
-          if (el.id === targetId) el.classList.toggle('active');
-          else el.classList.remove('active');
-        });
-        const el = document.getElementById(targetId);
-        if (el && el.classList.contains('active')) {
-          setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
-        }
-      });
-    });
   </script>
 </body>
 </html>
