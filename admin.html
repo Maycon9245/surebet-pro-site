@@ -4,10 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Painel Administrativo</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com  ">
-  <link rel="preconnect" href="https://fonts.gstatic.com  " crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="  https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js  "></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     :root{
       --bg:#0f172a;           /* fundo geral (slate-900) */
@@ -292,57 +292,6 @@
   </div>
 
   <script>
-    // ======== 🔽 ADIÇÃO 1: LER ASSINANTES DO LOCALSTORAGE 🔽 ========
-    function getAssinantes() {
-      const saved = localStorage.getItem("assinantes");
-      return saved ? JSON.parse(saved) : [
-        { name: "João Silva", email: "joao@email.com", plan: "Mensal", active: true },
-        { name: "Maria Oliveira", email: "maria@email.com", plan: "Semanal", active: false },
-        { name: "Carlos Souza", email: "carlos@email.com", plan: "Trimestral", active: false }
-      ];
-    }
-
-    // ======== 🔽 ADIÇÃO 2: RENDERIZAR TABELA COM DADOS REAIS 🔽 ========
-    function renderizarTabela() {
-      const tbody = document.getElementById("tbody");
-      const assinantes = getAssinantes();
-      tbody.innerHTML = "";
-
-      assinantes.forEach(user => {
-        const tr = document.createElement("tr");
-        tr.setAttribute("data-email", user.email);
-        tr.innerHTML = `
-          <td><input type="checkbox"></td>
-          <td class="user-name" style="cursor:pointer; color:#dbeafe; text-decoration:underline;">${user.name}</td>
-          <td>${user.email}</td>
-          <td class="plan-cell">${user.plan}</td>
-          <td class="status">${user.active ? "Ativo" : "Bloqueado"}</td>
-          <td>
-            <button class="pill-btn ${user.active ? 'block' : 'unlock'}" data-action="toggle">
-              ${user.active ? 'Bloquear' : 'Desbloquear'}
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // ======== 🔽 ADIÇÃO 3: SALVAR STATUS (BLOQUEAR/DESBLOQUEAR) 🔽 ========
-    function toggleStatus(email) {
-      const lista = getAssinantes();
-      const user = lista.find(u => u.email === email);
-      if (user) {
-        user.active = !user.active;
-        localStorage.setItem("assinantes", JSON.stringify(lista));
-        renderizarTabela();
-      }
-    }
-
-    // ======== 🔽 ADIÇÃO 4: INICIAR AO CARREGAR 🔽 ========
-    document.addEventListener("DOMContentLoaded", () => {
-      renderizarTabela(); // Atualiza a tabela com os dados reais
-    });
-
     // Sparkline de novas assinaturas (30 dias)
     const ctxLine = document.getElementById('assinaturasChart');
     const days = Array.from({length:30}, (_,i)=> i+1);
@@ -353,10 +302,10 @@
 
     new Chart(ctxLine, {
       type:'line',
-      {
+      data:{
         labels:days,
         datasets:[{
-          values,
+          data:values,
           fill:true,
           backgroundColor:gradient,
           borderColor:'#3b82f6',
@@ -375,11 +324,11 @@
       }
     });
 
-    // Doughnut de planos
+    // Doughnut de planos (mantive)
     const planosCtx = document.getElementById('planosChart');
     new Chart(planosCtx, {
       type:'doughnut',
-      {
+      data:{
         labels:['Mensal','Simanal','Trimestral','Bloquear'],
         datasets:[{
           data:[42,24,18,16],
@@ -398,7 +347,7 @@
     if (miniCtx1) {
       new Chart(miniCtx1, {
         type:'line',
-        data:{ labels:days, datasets:[{ values, fill:true, backgroundColor:'rgba(59,130,246,.20)', borderColor:'#3b82f6', tension:.3, pointRadius:0 }]},
+        data:{ labels:days, datasets:[{ data:values, fill:true, backgroundColor:'rgba(59,130,246,.20)', borderColor:'#3b82f6', tension:.3, pointRadius:0 }]},
         options:{ plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} }
       });
     }
@@ -406,7 +355,7 @@
     if (miniCtx2) {
       new Chart(miniCtx2, {
         type:'doughnut',
-        { labels:['Mensal','Semanal','Trimestral','Bloqueados'], datasets:[{ [42,24,18,16], backgroundColor:['#2563eb','#3b82f6','#16a34a','#b91c1c'], borderWidth:2 }]},
+        data:{ labels:['Mensal','Semanal','Trimestral','Bloqueados'], datasets:[{ data:[42,24,18,16], backgroundColor:['#2563eb','#3b82f6','#16a34a','#b91c1c'], borderWidth:2 }]},
         options:{ plugins:{legend:{display:false}}, cutout:'55%' }
       });
     }
@@ -693,6 +642,11 @@
       });
     }
     annotateRowsWithSavedData();
+
+    // Whenever saving details, re-annotate rows (we did visual feedback in save handler, but ensure annotation)
+    // To keep it simple, re-run annotation when page gets focus or every 10s
+    window.addEventListener('focus', annotateRowsWithSavedData);
+    setInterval(annotateRowsWithSavedData, 10000);
 
     // (Optional) If user edits plan in table, we could update expiry calculation accordingly —
     // left for next step if you want inline plan editing.
