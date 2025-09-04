@@ -465,7 +465,7 @@
       const dd = String(d.getDate()).padStart(2,'0');
       const mm = String(d.getMonth()+1).padStart(2,'0');
       const yyyy = d.getFullYear();
-      return ${dd}/${mm}/${yyyy};
+      return `${dd}/${mm}/${yyyy}`;
     }
     function formatDateToISOInput(dateStrOrISO) {
       if (!dateStrOrISO) return '';
@@ -474,7 +474,7 @@
         // maybe already dd/mm/yyyy
         const parts = dateStrOrISO.split('/');
         if (parts.length===3) {
-          const iso = ${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')};
+          const iso = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
           return iso;
         }
         return '';
@@ -526,7 +526,7 @@
         expiryISO = addDaysISO(startISO, dur);
         const nowISO = new Date().toISOString().slice(0,10);
         const daysLeft = daysBetween(nowISO, expiryISO);
-        daysLeftText = ${formatDateISOToBR(expiryISO)} (${daysLeft} dias restantes);
+        daysLeftText = `${formatDateISOToBR(expiryISO)} (${daysLeft} dias restantes)`;
       }
 
       const tr = document.createElement('tr');
@@ -580,9 +580,9 @@
         // update UI: show days text
         const daysBox = td.querySelector('.days-box');
         if (expiry) {
-          daysBox.innerHTML = <span class="days-left">${formatDateISOToBR(expiry)}</span> <div class="small-muted">(${daysLeft} dias restantes)</div>;
+          daysBox.innerHTML = `<span class="days-left">${formatDateISOToBR(expiry)}</span> <div class="small-muted">(${daysLeft} dias restantes)</div>`;
         } else {
-          daysBox.innerHTML = <span class="small-muted">Sem data de início</span>;
+          daysBox.innerHTML = `<span class="small-muted">Sem data de início</span>`;
         }
         // small feedback: change background briefly
         td.style.transition = 'background .25s';
