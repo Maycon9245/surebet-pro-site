@@ -1,6 +1,5 @@
 // api/odds.js
 export default async function handler(req, res) {
-  // Usa a chave da Vercel
   const API_KEY = process.env.ODDS_API_KEY;
   const { sport = 'soccer_brazil_campeonato' } = req.query;
 
@@ -29,4 +28,3 @@ export default async function handler(req, res) {
 export const config = {
   runtime: 'edge',
 };
-
