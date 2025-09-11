@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
   // 🔊 ÁUDIO DE ALERTA
   const alertSound = document.getElementById("alert-sound");
@@ -561,4 +562,3 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Sessão encerrada.");
   });
 });
-
