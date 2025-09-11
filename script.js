@@ -44,8 +44,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let lastRenderIds = new Set();
   let lastFetched = [];
 
-  // CONFIG
-  const DATA_URL = "https://maycon9245.github.io/surebet-data/surebets.json";
+  // CONFIG - ✅ ALTERAÇÃO PRINCIPAL: usar sua API da Vercel
+  const DATA_URL = "/api/odds";
   const USE_DEMO_WHEN_EMPTY = true;
   const REFRESH_MS = 30000;
 
