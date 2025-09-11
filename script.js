@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let lastRenderIds = new Set();
   let lastFetched = [];
 
-  // CONFIG - ✅ ALTERAÇÃO PRINCIPAL: usar sua API da Vercel
+  // CONFIG
   const DATA_URL = "/api/odds";
   const USE_DEMO_WHEN_EMPTY = true;
   const REFRESH_MS = 30000;
@@ -477,7 +477,8 @@ document.addEventListener("DOMContentLoaded", function () {
         clearInterval(interval);
         timer.textContent = "Expirado";
         localStorage.removeItem("subscription");
-        alert("Seu plano expirou. Renove para continuar usando.");
+        // Substituindo alert() por um modal ou console.log para evitar o erro do iframe
+        console.log("Seu plano expirou. Renove para continuar usando.");
         showTab("plans");
         return;
       }
@@ -495,11 +496,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const email = document.getElementById("registerEmail").value;
     const password = document.getElementById("registerPassword").value;
     if (!name || !email || !password) {
-      alert("Preencha todos os campos");
+      // Substituindo alert() por um modal ou console.log para evitar o erro do iframe
+      console.log("Preencha todos os campos");
       return;
     }
     localStorage.setItem("user", JSON.stringify({ name, email, password }));
-    alert("Cadastro realizado! Escolha seu plano.");
+    // Substituindo alert() por um modal ou console.log para evitar o erro do iframe
+    console.log("Cadastro realizado! Escolha seu plano.");
     showTab("plans");
   });
 
@@ -508,10 +511,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const password = document.getElementById("loginPassword").value;
     const savedUser = JSON.parse(localStorage.getItem("user"));
     if (!savedUser || savedUser.email !== email || savedUser.password !== password) {
-      alert("E-mail ou senha incorretos");
+      // Substituindo alert() por um modal ou console.log para evitar o erro do iframe
+      console.log("E-mail ou senha incorretos");
       return;
     }
-    alert("Login realizado!");
+    // Substituindo alert() por um modal ou console.log para evitar o erro do iframe
+    console.log("Login realizado!");
     const sub = JSON.parse(localStorage.getItem("subscription"));
     if (sub && new Date().getTime() < sub.expiry) {
       document.getElementById("activePlan").textContent = sub.plan;
@@ -543,7 +548,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById("copyPix")?.addEventListener("click", () => {
     navigator.clipboard.writeText("pix@surebetpro.com.br").then(() => {
-      alert("Chave PIX copiada!");
+      // Substituindo alert() por um modal ou console.log para evitar o erro do iframe
+      console.log("Chave PIX copiada!");
     });
   });
 
@@ -551,6 +557,8 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.removeItem("user");
     localStorage.removeItem("subscription");
     document.getElementById("loginModal").style.display = "none";
-    alert("Sessão encerrada.");
+    // Substituindo alert() por um modal ou console.log para evitar o erro do iframe
+    console.log("Sessão encerrada.");
   });
 });
+
