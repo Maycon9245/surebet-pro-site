@@ -1,14 +1,17 @@
 // api/odds.js
-export default async function handler(req, res) {
+export default async function handler(req) {
   const API_KEY = process.env.ODDS_API_KEY;
 
   if (!API_KEY) {
-    return res.status(500).json({ 
-      error: 'Chave da API não configurada' 
-    });
+    return new Response(
+      JSON.stringify({ error: 'Chave da API não configurada' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 
-  const { sport = 'soccer_brazil_campeonato' } = req.query;
+  const { sport = 'soccer_brazil_campeonato' } = Object.fromEntries(
+    new URL(req.url).searchParams
+  );
 
   try {
     const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${API_KEY}&regions=br&markets=h2h&oddsFormat=decimal`;
@@ -26,16 +29,16 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    res.status(200).json(data);
+
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (error) {
     console.error('Erro no handler:', error);
-    res.status(500).json({ 
-      error: 'Falha ao buscar odds', 
-      details: error.message 
-    });
+    return new Response(
+      JSON.stringify({ error: 'Falha ao buscar odds', details: error.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 }
-
-export const config = {
-  runtime: 'edge',
-};
