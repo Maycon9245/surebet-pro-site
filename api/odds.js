@@ -14,7 +14,8 @@ export default async function handler(req) {
   );
 
   try {
-    const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${API_KEY}&regions=br&markets=h2h&oddsFormat=decimal`;
+    // MUDAMOS regions=br PARA regions=eu (ou us)
+    const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${API_KEY}&regions=eu&markets=h2h&oddsFormat=decimal`;
 
     const response = await fetch(url, {
       headers: { 
