@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surebet PRO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+    }
+
+    .propaganda-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .propaganda-bar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .icon {
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+      vertical-align: middle;
+      fill: currentColor;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid #fff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+  <!-- INJEÇÃO DIRETA DA CONFIGURAÇÃO DO FIREBASE -->
+  <script>
+    window.__app_id = "surebet-pro";
+    window.__firebase_config = JSON.stringify({
+      apiKey: "AIzaSyCLY4nfzu7UW26rRZ_rL_1kDgH_KN2q1n8",
+      authDomain: "surebet-pro-db.firebaseapp.com",
+      projectId: "surebet-pro-db",
+      storageBucket: "surebet-pro-db.appspot.com",
+      messagingSenderId: "478858557651",
+      appId: "1:478858557651:web:7018eaf2639e12f7477c26"
+    });
+  </script>
+
+  <!-- MODAL DE ERRO -->
+  <div id="modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm shadow-2xl border border-gray-700">
+      <h3 id="modal-title" class="text-xl font-bold mb-2"></h3>
+      <p id="modal-message" class="text-gray-300 mb-4"></p>
+      <div class="flex justify-end">
+        <button id="modal-ok-btn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CABEÇALHO -->
+  <header class="bg-gray-800 shadow-lg flex flex-col items-center py-4">
+    <!-- Barra de propaganda -->
+    <div class="w-full flex justify-center items-center py-2 bg-gray-700 rounded-lg">
+      <div class="w-full mx-4 overflow-x-auto whitespace-nowrap propaganda-bar flex items-center justify-start text-xs sm:text-sm text-gray-400">
+        <span class="inline-block px-4 py-1 rounded-full bg-gray-600 mx-2">Seu espaço de propaganda aqui!</span>
+      </div>
+    </div>
+
+    <!-- Logo e botões -->
+    <div class="w-full flex items-center justify-between px-4 sm:px-6 py-3 mt-4">
+      <div class="flex-grow flex justify-center">
+        <div class="flex items-center space-x-2">
+          <span class="text-3xl">🚀</span>
+          <span class="text-lg sm:text-2xl font-bold text-green-400">Surebet PRO</span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 sm:space-x-4 absolute right-4 sm:right-6">
+        <button id="sound-btn" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+          </svg>
+        </button>
+        <button id="login-btn" class="px-4 py-2 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-600 transition-colors">
+          <span id="login-text">Login / Assinar</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- FILTROS -->
+  <main class="container mx-auto p-4 flex-grow">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
+      <div class="relative">
+        <label for="search" class="text-gray-400 text-sm block mb-1">Pesquisar</label>
+        <input type="text" id="search" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" placeholder="Pesquisar...">
+      </div>
+      <div class="relative">
+        <label for="sports" class="text-gray-400 text-sm block mb-1">Esportes</label>
+        <select id="sports" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors">
+          <option value="">Todos</option>
+          <option value="futebol">Futebol</option>
+          <option value="basquete">Basquete</option>
+        </select>
+      </div>
+      <div class="relative">
+        <label for="bookmakers" class="text-gray-400 text-sm block mb-1">Casas de Apostas</label>
+        <select id="bookmakers" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors">
+          <option value="">Todas</option>
+          <option value="betano">Betano</option>
+          <option value="bet365">Bet365</option>
+          <option value="pinnacle">Pinnacle</option>
+          <option value="stake">Stake</option>
+        </select>
+      </div>
+      <div class="relative">
+        <label for="min-profit" class="text-gray-400 text-sm block mb-1">Lucro Mínimo %</label>
+        <input type="number" id="min-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="0">
+      </div>
+      <div class="relative">
+        <label for="max-profit" class="text-gray-400 text-sm block mb-1">Lucro Máximo %</label>
+        <input type="number" id="max-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="100">
+      </div>
+    </div>
+
+    <!-- TABELA DE SUREBETS -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-700">
+        <thead class="bg-gray-700">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tl-lg">Lucro %</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Esporte</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Evento</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Casas</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Lucro %</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tr-lg">Ação</th>
+          </tr>
+        </thead>
+        <tbody id="surebet-table-body" class="bg-gray-800 divide-y divide-gray-700">
+          <tr id="loading-row">
+            <td colspan="6" class="px-6 py-4 text-center text-sm font-medium text-gray-400">
+              <div class="flex items-center justify-center">
+                <div class="spinner"></div>
+                <span class="ml-2">Carregando surebets...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- MODAL DE LOGIN/CADASTRO -->
+  <div id="auth-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-700">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="auth-title" class="text-xl font-bold">Entrar</h3>
+        <button id="close-auth-modal" class="text-gray-400 hover:text-gray-300">×</button>
+      </div>
+
+      <!-- Abas -->
+      <div class="flex border-b border-gray-600 mb-4">
+        <button id="tab-login" class="px-4 py-2 font-medium text-green-400 border-b-2 border-green-400">Entrar</button>
+        <button id="tab-signup" class="px-4 py-2 font-medium text-gray-400 hover:text-green-400">Cadastrar</button>
+      </div>
+
+      <!-- Formulário de Login -->
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="text-gray-400 text-sm block mb-1">E-mail</label>
+          <input type="email" id="login-email" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500" required>
+        </div>
+        <div>
+          <label class="text-gray-400 text-sm block mb-1">Senha</label>
+          <input type="password" id="login-password" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500" required>
+        </div>
+        <button type="submit" class="w-full py-2 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-600 transition-colors">
+          Entrar
+        </button>
+        <div class="text-center">
+          <button type="button" id="forgot-password-btn" class="text-sm text-blue-400 hover:text-blue-600">Esqueci a senha</button>
+        </div>
+      </form>
+
+      <!-- Formulário de Cadastro -->
+      <form id="signup-form" class="space-y-4 hidden">
+        <div>
+          <label class="text-gray-400 text-sm block mb-1">Nome</label>
+          <input type="text" id="signup-name" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500" required>
+        </div>
+        <div>
+          <label class="text-gray-400 text-sm block mb-1">E-mail</label>
+          <input type="email" id="signup-email" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500" required>
+        </div>
+        <div>
+          <label class="text-gray-400 text-sm block mb-1">Senha</label>
+          <input type="password" id="signup-password" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500" required>
+        </div>
+        <div>
+          <label class="text-gray-400 text-sm block mb-1">Plano</label>
+          <select id="signup-plan" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500">
+            <option value="Semanal">Semanal - R$ 19,90</option>
+            <option value="Mensal">Mensal - R$ 39,90</option>
+            <option value="Trimestral">Trimestral - R$ 99,90</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full py-2 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-600 transition-colors">
+          Assinar Agora
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="my-4 flex items-center">
+        <div class="flex-1 border-t border-gray-600"></div>
+        <span class="mx-4 text-gray-400 text-sm">Ou entre com</span>
+        <div class="flex-1 border-t border-gray-600"></div>
+      </div>
+
+      <!-- Botão Google -->
+      <button id="google-login-btn" class="w-full py-2 bg-white text-gray-900 font-bold rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="icon">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continuar com Google
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL DE RECUPERAÇÃO DE SENHA -->
+  <div id="reset-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm shadow-2xl border border-gray-700">
+      <h3 class="text-xl font-bold mb-2">Recuperar Senha</h3>
+      <p class="text-gray-300 mb-4">Digite seu e-mail para receber o link de redefinição.</p>
+      <input type="email" id="reset-email" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 mb-4" placeholder="seu@email.com" required>
+      <div class="flex justify-end gap-2">
+        <button id="cancel-reset" class="px-4 py-2 bg-gray-600 text-white rounded-lg">Cancelar</button>
+        <button id="send-reset" class="px-4 py-2 bg-green-500 text-white rounded-lg">Enviar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT DO FIREBASE + THE ODDS API -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, onSnapshot, collection, addDoc, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log("Página carregada. Iniciando...");
+
+      // Configuração do Firebase
+      const __app_id = window.__app_id || 'surebet-pro';
+      const firebaseConfig = JSON.parse(window.__firebase_config);
+
+      let db, auth, currentUser, userHiddenSurebetsRef;
+      let userIsAuthenticated = false;
+      let allSurebets = [];
+      let hiddenSurebets = new Set();
+
+      // Elementos
+      const modal = document.getElementById('modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalMessage = document.getElementById('modal-message');
+      const modalOkBtn = document.getElementById('modal-ok-btn');
+      const loginBtn = document.getElementById('login-btn');
+      const loginText = document.getElementById('login-text');
+      const surebetTableBody = document.getElementById('surebet-table-body');
+      const loadingRow = document.getElementById('loading-row');
+      const searchInput = document.getElementById('search');
+      const sportsSelect = document.getElementById('sports');
+      const bookmakersSelect = document.getElementById('bookmakers');
+      const minProfitInput = document.getElementById('min-profit');
+      const maxProfitInput = document.getElementById('max-profit');
+
+      // Modais
+      const authModal = document.getElementById('auth-modal');
+      const resetModal = document.getElementById('reset-modal');
+      const closeAuthModal = document.getElementById('close-auth-modal');
+      const tabLogin = document.getElementById('tab-login');
+      const tabSignup = document.getElementById('tab-signup');
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const forgotPasswordBtn = document.getElementById('forgot-password-btn');
+      const cancelReset = document.getElementById('cancel-reset');
+      const sendReset = document.getElementById('send-reset');
+
+      // Função para mostrar modal
+      function showModal(title, message) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modal.classList.remove('hidden');
+      }
+
+      modalOkBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+
+      // === FUNÇÃO SPLIT-SCREEN ===
+      function openSplitScreen(bookmakers, event) {
+        const urls = {
+          betano: `https://www.betano.com/busca/?q=${encodeURIComponent(event)}`,
+          bet365: `https://www.bet365.com/#/Search?q=${encodeURIComponent(event)}`,
+          pinnacle: `https://www.pinnacle.com/pt/search?query=${encodeURIComponent(event)}`,
+          stake: `https://pt.stake.com/search?q=${encodeURIComponent(event)}`,
+          '1xbet': `https://1xbet.com/pt/search?q=${encodeURIComponent(event)}`,
+          pixbet: `https://www.pixbet.com/pt/search?query=${encodeURIComponent(event)}`
+        };
+
+        const validUrls = bookmakers
+          .split(',')
+          .map(b => urls[b.trim().toLowerCase()])
+          .filter(url => url);
+
+        if (validUrls.length === 0) {
+          showModal('Aviso', 'Nenhuma casa de aposta disponível para este evento.');
+          return;
+        }
+
+        const width = screen.width / 2;
+        const height = screen.height;
+
+        validUrls.forEach((url, index) => {
+          const left = index % 2 === 0 ? 0 : width;
+          const top = 0;
+          window.open(
+            url,
+            `_blank${index}`,
+            `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`
+          );
+        });
+      }
+
+      // === BUSCAR ODDS VIA API (Vercel Edge Function) ===
+      async function buscarOdds() {
+        try {
+          const response = await fetch('/api/odds');
+          const dados = await response.json();
+          
+          if (dados.error) {
+            throw new Error(dados.error);
+          }
+
+          console.log('Odds recebidas:', dados);
+          return dados;
+        } catch (error) {
+          console.error('Erro ao buscar odds:', error);
+          showModal('Erro', 'Falha ao buscar odds. Verifique sua conexão.');
+          return [];
+        }
+      }
+
+      // === CALCULAR SUREBETS ===
+      function calcularSurebets(oddsData) {
+        const surebets = [];
+
+        oddsData.forEach(evento => {
+          const { id, home_team, away_team, commence_time, bookmakers } = evento;
+
+          const h2hMarkets = bookmakers
+            .flatMap(bm => bm.markets)
+            .filter(m => m.key === 'h2h')
+            .flatMap(m => m.outcomes);
+
+          if (h2hMarkets.length < 2) return;
+
+          const casaA = h2hMarkets.find(o => o.name === home_team);
+          const empate = h2hMarkets.find(o => o.name === 'Draw');
+          const casaB = h2hMarkets.find(o => o.name === away_team);
+
+          if (!casaA || !empate || !casaB) return;
+
+          const oddA = casaA.price;
+          const oddB = empate.price;
+          const oddC = casaB.price;
+
+          const arbitrage = 1/oddA + 1/oddB + 1/oddC;
+
+          if (arbitrage < 1) {
+            const lucro = ((1 / arbitrage - 1) * 100).toFixed(2);
+
+            const stakeA = (1 / oddA) / arbitrage;
+            const stakeB = (1 / oddB) / arbitrage;
+            const stakeC = (1 / oddC) / arbitrage;
+
+            surebets.push({
+              id,
+              sport: 'futebol',
+              event: `${home_team} vs ${away_team}`,
+              bookmakers: `${casaA.bookmaker.key}, ${empate.bookmaker.key}, ${casaB.bookmaker.key}`,
+              profit_percent: lucro,
+              details: [
+                { casa: home_team, odd: oddA, bookmaker: casaA.bookmaker.key, stake: stakeA.toFixed(2) },
+                { casa: 'Empate', odd: oddB, bookmaker: empate.bookmaker.key, stake: stakeB.toFixed(2) },
+                { casa: away_team, odd: oddC, bookmaker: casaB.bookmaker.key, stake: stakeC.toFixed(2) }
+              ],
+              commence_time
+            });
+          }
+        });
+
+        return surebets;
+      }
+
+      try {
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        // Login anônimo
+        await signInAnonymously(auth);
+
+        // Estado de autenticação
+        onAuthStateChanged(auth, async (user) => {
+          currentUser = user;
+          if (user) {
+            userIsAuthenticated = true;
+            loginText.textContent = 'Minha Conta';
+            userHiddenSurebetsRef = collection(db, `artifacts/${__app_id}/users/${user.uid}/hidden_surebets`);
+          } else {
+            userIsAuthenticated = false;
+            loginText.textContent = 'Login / Assinar';
+          }
+        });
+
+        // Carrega surebets da API
+        async function atualizarSurebets() {
+          const oddsData = await buscarOdds();
+          const novasSurebets = calcularSurebets(oddsData);
+          allSurebets = novasSurebets;
+          filterAndRender();
+        }
+
+        // Renderiza surebets
+        function renderSurebets(surebets) {
+          surebetTableBody.innerHTML = '';
+          const filteredSurebets = surebets.filter(surebet => !hiddenSurebets.has(surebet.id));
+          if (filteredSurebets.length === 0) {
+            surebetTableBody.innerHTML = `
+              <tr><td colspan="6" class="px-6 py-4 text-center text-sm text-gray-400">
+                Nenhuma surebet encontrada.
+              </td></tr>`;
+          } else {
+            filteredSurebets.forEach(surebet => {
+              const row = document.createElement('tr');
+              row.className = 'hover:bg-gray-700 transition-colors';
+              row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-400">${surebet.profit_percent}%</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300 capitalize">${surebet.sport}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${surebet.event}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${surebet.bookmakers}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${surebet.profit_percent}%</td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <button class="open-split-btn text-blue-400 hover:text-blue-600 mr-2" 
+                          data-bookmakers="${surebet.bookmakers}" 
+                          data-event="${surebet.event}">
+                    🖥️ Abrir
+                  </button>
+                  <button class="hide-btn text-red-500 hover:text-red-700" data-id="${surebet.id}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </td>
+              `;
+              surebetTableBody.appendChild(row);
+            });
+
+            // Botão "Abrir em Split-Screen"
+            document.querySelectorAll('.open-split-btn').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                const bookmakers = e.currentTarget.getAttribute('data-bookmakers');
+                const event = e.currentTarget.getAttribute('data-event');
+                openSplitScreen(bookmakers, event);
+              });
+            });
+
+            // Botão "Esconder"
+            document.querySelectorAll('.hide-btn').forEach(btn => {
+              btn.addEventListener('click', async (e) => {
+                const surebetId = e.currentTarget.dataset.id;
+                if (!userIsAuthenticated) {
+                  showModal('Ação Bloqueada', 'Faça login para esconder.');
+                  hiddenSurebets.add(surebetId);
+                  filterAndRender();
+                  return;
+                }
+                try {
+                  await addDoc(userHiddenSurebetsRef, { surebetId, timestamp: new Date() });
+                  hiddenSurebets.add(surebetId);
+                  filterAndRender();
+                } catch (err) {
+                  showModal('Erro', 'Falha ao esconder. Tente novamente.');
+                }
+              });
+            });
+          }
+        }
+
+        // Função de filtro
+        function filterAndRender() {
+          const searchText = searchInput.value.toLowerCase();
+          const selectedSport = sportsSelect.value;
+          const selectedBookmaker = bookmakersSelect.value;
+          const minProfit = parseFloat(minProfitInput.value) || 0;
+          const maxProfit = parseFloat(maxProfitInput.value) || 100;
+
+          const filtered = allSurebets.filter(surebet => {
+            const matchesSearch = surebet.event.toLowerCase().includes(searchText);
+            const matchesSport = !selectedSport || surebet.sport === selectedSport;
+            const matchesBookmaker = !selectedBookmaker || surebet.bookmakers.includes(selectedBookmaker);
+            const matchesMinProfit = surebet.profit_percent >= minProfit;
+            const matchesMaxProfit = surebet.profit_percent <= maxProfit;
+            return matchesSearch && matchesSport && matchesBookmaker && matchesMinProfit && matchesMaxProfit;
+          });
+
+          renderSurebets(filtered);
+        }
+
+        // Eventos de filtro
+        searchInput.addEventListener('input', filterAndRender);
+        sportsSelect.addEventListener('change', filterAndRender);
+        bookmakersSelect.addEventListener('change', filterAndRender);
+        minProfitInput.addEventListener('input', filterAndRender);
+        maxProfitInput.addEventListener('input', filterAndRender);
+
+        // Atualiza ao carregar
+        atualizarSurebets();
+
+        // Atualiza a cada 60 segundos
+        setInterval(atualizarSurebets, 60000);
+
+        // === MODAL DE LOGIN/CADASTRO ===
+        loginBtn.addEventListener('click', () => {
+          authModal.classList.remove('hidden');
+        });
+
+        closeAuthModal.addEventListener('click', () => {
+          authModal.classList.add('hidden');
+        });
+
+        tabLogin.addEventListener('click', () => {
+          loginForm.classList.remove('hidden');
+          signupForm.classList.add('hidden');
+          tabLogin.classList.add('border-green-400', 'text-green-400');
+          tabSignup.classList.remove('border-green-400', 'text-green-400');
+        });
+
+        tabSignup.addEventListener('click', () => {
+          signupForm.classList.remove('hidden');
+          loginForm.classList.add('hidden');
+          tabSignup.classList.add('border-green-400', 'text-green-400');
+          tabLogin.classList.remove('border-green-400', 'text-green-400');
+        });
+
+        // Login com e-mail/senha
+        loginForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('login-email').value;
+          const password = document.getElementById('login-password').value;
+
+          try {
+            await signInWithEmailAndPassword(auth, email, password);
+            showModal('Sucesso!', 'Login realizado com sucesso!');
+            authModal.classList.add('hidden');
+          } catch (error) {
+            showModal('Erro', 'Falha no login: ' + error.message);
+          }
+        });
+
+        // Cadastro com plano
+        signupForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('signup-name').value;
+          const email = document.getElementById('signup-email').value;
+          const password = document.getElementById('signup-password').value;
+          const plan = document.getElementById('signup-plan').value;
+
+          try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            await setDoc(doc(db, 'assinantes', user.uid), {
+              name,
+              email,
+              plan,
+              active: true,
+              createdAt: new Date().toISOString()
+            });
+
+            showModal('Sucesso!', 'Cadastro realizado! Assinatura ativada.');
+            authModal.classList.add('hidden');
+          } catch (error) {
+            showModal('Erro', 'Falha no cadastro: ' + error.message);
+          }
+        });
+
+        // Login com Google
+        document.getElementById('google-login-btn').addEventListener('click', async () => {
+          try {
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider);
+            showModal('Sucesso!', 'Login realizado com sucesso!');
+            authModal.classList.add('hidden');
+          } catch (error) {
+            if (error.code === 'auth/popup-closed-by-user') {
+              showModal('Cancelado', 'Janela de login fechada.');
+            } else {
+              showModal('Erro', 'Falha no login: ' + error.message);
+            }
+          }
+        });
+
+        // Esqueci a senha
+        forgotPasswordBtn.addEventListener('click', () => {
+          authModal.classList.add('hidden');
+          resetModal.classList.remove('hidden');
+        });
+
+        cancelReset.addEventListener('click', () => {
+          resetModal.classList.add('hidden');
+          authModal.classList.remove('hidden');
+        });
+
+        sendReset.addEventListener('click', async () => {
+          const email = document.getElementById('reset-email').value;
+          if (!email) {
+            showModal('Erro', 'Digite seu e-mail.');
+            return;
+          }
+          try {
+            await sendPasswordResetEmail(auth, email);
+            showModal('Sucesso!', 'E-mail de recuperação enviado!');
+            resetModal.classList.add('hidden');
+          } catch (error) {
+            showModal('Erro', 'Falha ao enviar e-mail: ' + error.message);
+          }
+        });
+
+      } catch (error) {
+        console.error("Erro crítico:", error);
+        document.getElementById('surebet-table-body').innerHTML = `
+          <tr><td colspan="6" class="px-6 py-4 text-center text-sm text-red-400">
+            Erro: ${error.message}
+          </td></tr>`;
+      }
+    });
+  </script>
+</body>
+</html>
