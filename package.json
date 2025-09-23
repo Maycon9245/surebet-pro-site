@@ -1,11 +1,17 @@
 {
   "name": "surebet-pro-site",
   "version": "1.0.0",
+  "description": "Plataforma profissional para identificar e executar arbitragens esportivas (surebets) com lucro garantido.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2"
-  }
+  },
+  "engines": {
+    "node": ">=18.x"
+  },
+  "author": "SUREBET PRO",
+  "license": "MIT"
 }
