@@ -30,6 +30,7 @@
   function showToast(message, type = 'info', duration = 3500) {
     const toast = createEl('div', { class: 'toast toast-' + type }, `<div>${message}</div>`);
     document.body.appendChild(toast);
+    // small entrance
     toast.style.opacity = '1';
     setTimeout(() => {
       toast.style.opacity = '0';
@@ -63,6 +64,7 @@
       document.body.appendChild(overlay);
       const closeBtn = document.getElementById(`${this.id}-close`);
       if (closeBtn) closeBtn.addEventListener('click', () => this.hide());
+      // close on overlay click (except content)
       overlay.addEventListener('click', (ev) => {
         if (ev.target === overlay) this.hide();
       });
@@ -389,7 +391,6 @@
       if (refreshBtn) refreshBtn.addEventListener('click', () => this.loadSurebetsToDOM());
     }
 
-    // ✅ CORREÇÃO PRINCIPAL: URLs COM STAKES PRÉ-PREENCHIDAS
     buildBookmakerUrl(bookmakerId, stake = 0) {
       if (!bookmakerId) return '';
       const map = {
@@ -430,9 +431,9 @@
         const safeAway = escapeHtml(s.awayTeam || s.away || 'Time B');
         const sport = escapeHtml(s.sport || s.sport_title || '');
         const time = s.commenceTime ? new Date(s.commenceTime).toLocaleString('pt-BR') : '-';
-        // ✅ PASSAR STAKES PARA AS URLS
-        const url1 = this.buildBookmakerUrl(s.bookmaker1?.id, s.stake1 || 0);
-        const url2 = this.buildBookmakerUrl(s.bookmaker2?.id, s.stake2 || 0);
+        // Build URLs (fallback based on bookmaker id)
+        const url1 = this.buildBookmakerUrl(s.bookmaker1?.id, s.stake1);
+        const url2 = this.buildBookmakerUrl(s.bookmaker2?.id, s.stake2);
         const copyPayload = encodeURIComponent(JSON.stringify(s));
         const odd1 = s.bookmaker1?.odd ?? (s.bookmaker1 && s.bookmaker1.price) ?? '-';
         const odd2 = s.bookmaker2?.odd ?? (s.bookmaker2 && s.bookmaker2.price) ?? '-';
@@ -457,6 +458,7 @@
         `;
       }).join('');
 
+      // attach listeners to newly created buttons
       qsa('[data-open1]', list).forEach(btn => {
         btn.addEventListener('click', (e) => {
           const u1 = btn.getAttribute('data-open1');
@@ -541,6 +543,7 @@
     }
   }
 
+  // Initialize app when DOM ready
   document.addEventListener('DOMContentLoaded', () => {
     if (!qs('#app')) {
       const el = createEl('div', { id: 'app' });
