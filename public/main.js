@@ -30,7 +30,6 @@
   function showToast(message, type = 'info', duration = 3500) {
     const toast = createEl('div', { class: 'toast toast-' + type }, `<div>${message}</div>`);
     document.body.appendChild(toast);
-    // small entrance
     toast.style.opacity = '1';
     setTimeout(() => {
       toast.style.opacity = '0';
@@ -64,7 +63,6 @@
       document.body.appendChild(overlay);
       const closeBtn = document.getElementById(`${this.id}-close`);
       if (closeBtn) closeBtn.addEventListener('click', () => this.hide());
-      // close on overlay click (except content)
       overlay.addEventListener('click', (ev) => {
         if (ev.target === overlay) this.hide();
       });
@@ -89,7 +87,7 @@
       <header>
         <div class="container" style="display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:12px">
-            <img src="/logo-surebet-pro.png" alt="logo" class="logo-topo" />
+            <img src="logo.png" alt="logo" class="logo-topo" />
             <div>
               <div class="font-heading" style="font-weight:600">SUREBET PRO</div>
               <div style="font-size:12px;color:var(--text-muted)">Arbitragem esportiva</div>
@@ -181,7 +179,7 @@
   function escapeHtml(s) {
     if (s == null) return '';
     return String(s).replace(/[&<>"'`]/g, function (m) {
-      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' })[m];
+      return ({ '&': '&amp;', '<': '<', '>': '>', '"': '&quot;', "'": '&#39;', '`': '&#96;' })[m];
     });
   }
 
@@ -191,7 +189,6 @@
   class AuthService {
     async login(email, password) {
       if (!email || !password) throw new Error('Preencha email e senha');
-      // placeholder: retornamos objeto local
       return { email };
     }
     async register(email, password, name) {
@@ -253,7 +250,6 @@
     }
 
     setupGlobalListeners() {
-      // navigation & actions
       document.addEventListener('click', (e) => {
         const pageBtn = e.target.closest('[data-page]');
         if (pageBtn) {
@@ -272,7 +268,6 @@
         }
       });
 
-      // forms
       document.addEventListener('submit', async (e) => {
         const form = e.target;
         const formType = form.getAttribute('data-form');
@@ -376,7 +371,6 @@
         </main>
       `;
 
-      // small delay to ensure elements exist
       setTimeout(() => this.afterRender(), 0);
     }
 
@@ -395,16 +389,17 @@
       if (refreshBtn) refreshBtn.addEventListener('click', () => this.loadSurebetsToDOM());
     }
 
+    // ✅ CORREÇÃO PRINCIPAL: URLs COM STAKES PRÉ-PREENCHIDAS
     buildBookmakerUrl(bookmakerId, stake = 0) {
       if (!bookmakerId) return '';
       const map = {
-        bet365: `https://www.bet365.com/`,
-        sportingbet: `https://www.sportingbet.com/`,
-        betfair: `https://www.betfair.com/`,
-        pinnacle: `https://www.pinnacle.com/`,
-        '1xbet': `https://1xbet.com/`,
-        '22bet': `https://22bet.com/`,
-        betway: `https://www.betway.com/`
+        bet365: `https://www.bet365.com/#/AS/B${stake}/`,
+        sportingbet: `https://www.sportingbet.com/pt-br/aposta-rapida?stake=${stake}`,
+        betfair: `https://www.betfair.bet.br/apostas?stake=${stake}`,
+        pinnacle: `https://www.pinnacle.com/pt/sports?stake=${stake}`,
+        '1xbet': `https://1xbet.com/pt/live?amount=${stake}`,
+        '22bet': `https://22bet.com/pt/live?stake=${stake}`,
+        betway: `https://betway.com/sport?betamount=${stake}`
       };
       return map[bookmakerId] || `https://${bookmakerId}.com`;
     }
@@ -430,15 +425,14 @@
         return;
       }
 
-      // Build cards safely
       list.innerHTML = data.map((s, idx) => {
         const safeHome = escapeHtml(s.homeTeam || s.home || 'Time A');
         const safeAway = escapeHtml(s.awayTeam || s.away || 'Time B');
         const sport = escapeHtml(s.sport || s.sport_title || '');
         const time = s.commenceTime ? new Date(s.commenceTime).toLocaleString('pt-BR') : '-';
-        // Build URLs (fallback based on bookmaker id)
-        const url1 = this.buildBookmakerUrl(s.bookmaker1?.id);
-        const url2 = this.buildBookmakerUrl(s.bookmaker2?.id);
+        // ✅ PASSAR STAKES PARA AS URLS
+        const url1 = this.buildBookmakerUrl(s.bookmaker1?.id, s.stake1 || 0);
+        const url2 = this.buildBookmakerUrl(s.bookmaker2?.id, s.stake2 || 0);
         const copyPayload = encodeURIComponent(JSON.stringify(s));
         const odd1 = s.bookmaker1?.odd ?? (s.bookmaker1 && s.bookmaker1.price) ?? '-';
         const odd2 = s.bookmaker2?.odd ?? (s.bookmaker2 && s.bookmaker2.price) ?? '-';
@@ -463,14 +457,13 @@
         `;
       }).join('');
 
-      // attach listeners to newly created buttons
       qsa('[data-open1]', list).forEach(btn => {
         btn.addEventListener('click', (e) => {
           const u1 = btn.getAttribute('data-open1');
           const u2 = btn.getAttribute('data-open2');
           if (u1) window.open(u1, '_blank', 'noopener');
           if (u2) window.open(u2, '_blank', 'noopener');
-          showToast('Casas abertas em novas abas (se permitido)', 'success');
+          showToast('Casas abertas com stakes pré-preenchidas!', 'success');
         });
       });
 
@@ -539,25 +532,20 @@
     }
 
     startAutoUpdates() {
-      // Update every 30s in background (only fetch, don't re-render unless user navigates)
       setInterval(() => {
         if (['dashboard', 'surebets'].includes(this.currentPage)) {
           this.surebetService.fetchSurebets();
-          // refresh UI if on surebets
           if (this.currentPage === 'surebets') this.loadSurebetsToDOM();
         }
       }, 30_000);
     }
   }
 
-  // Initialize app when DOM ready
   document.addEventListener('DOMContentLoaded', () => {
-    // ensure root exists
     if (!qs('#app')) {
       const el = createEl('div', { id: 'app' });
       document.body.appendChild(el);
     }
-    // start
     try {
       new App();
     } catch (err) {
