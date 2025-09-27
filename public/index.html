@@ -45,32 +45,49 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Carrossel de Banners */
+    /* Banners Fixos - Scroll Horizontal */
     .banner-carousel {
-      width: 100%;
-      overflow: hidden;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 15px;
+      justify-content: center;
+      overflow-x: auto;
       padding: 1rem 0;
       background: var(--bg-secondary);
       border-radius: 12px;
       margin-bottom: 1.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: #6b7280 #1f2937;
     }
 
-    .banner-track {
-      display: flex;
-      gap: 10px;
-      transition: transform 0.5s ease-in-out;
-      padding: 0 1rem;
+    .banner-carousel::-webkit-scrollbar {
+      height: 8px;
     }
 
-    .banner-img {
-      width: 250px;
+    .banner-carousel::-webkit-scrollbar-thumb {
+      background: #6b7280;
+      border-radius: 8px;
+    }
+
+    .banner-carousel::-webkit-scrollbar-track {
+      background: #1f2937;
+      border-radius: 8px;
+    }
+
+    .banner {
+      flex: 0 0 calc(16.66% - 15px);
+      max-width: calc(16.66% - 15px);
+    }
+
+    .banner img {
+      width: 100%;
       height: auto;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       transition: transform 0.2s;
     }
 
-    .banner-img:hover {
+    .banner img:hover {
       transform: scale(1.02);
     }
   </style>
@@ -119,11 +136,14 @@
     </div>
   </header>
 
-  <!-- Carrossel de Banners -->
+  <!-- Banners Fixos (scroll horizontal no celular) -->
   <section class="banner-carousel">
-    <div class="banner-track">
-      <!-- Banners serão inseridos via JS -->
-    </div>
+    <div class="banner"><a href="https://anunciante1.com" target="_blank"><img src="imagens/banner1.jpg" alt="Banner 1"></a></div>
+    <div class="banner"><a href="https://anunciante2.com" target="_blank"><img src="imagens/banner2.jpg" alt="Banner 2"></a></div>
+    <div class="banner"><a href="https://anunciante3.com" target="_blank"><img src="imagens/banner3.jpg" alt="Banner 3"></a></div>
+    <div class="banner"><a href="https://anunciante4.com" target="_blank"><img src="imagens/banner4.jpg" alt="Banner 4"></a></div>
+    <div class="banner"><a href="https://anunciante5.com" target="_blank"><img src="imagens/banner5.jpg" alt="Banner 5"></a></div>
+    <div class="banner"><a href="https://anunciante6.com" target="_blank"><img src="imagens/banner6.jpg" alt="Banner 6"></a></div>
   </section>
 
   <!-- FILTROS -->
@@ -349,8 +369,5 @@
       setInterval(loadSurebets, 60000);
     });
   </script>
-
-  <!-- Carrossel de Banners -->
-  <script src="banners.js"></script>
 </body>
 </html>
