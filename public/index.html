@@ -44,6 +44,35 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* Carrossel de Banners */
+    .banner-carousel {
+      width: 100%;
+      overflow: hidden;
+      padding: 1rem 0;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .banner-track {
+      display: flex;
+      gap: 10px;
+      transition: transform 0.5s ease-in-out;
+      padding: 0 1rem;
+    }
+
+    .banner-img {
+      width: 250px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+
+    .banner-img:hover {
+      transform: scale(1.02);
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col">
@@ -89,6 +118,13 @@
       </div>
     </div>
   </header>
+
+  <!-- Carrossel de Banners -->
+  <section class="banner-carousel">
+    <div class="banner-track">
+      <!-- Banners serão inseridos via JS -->
+    </div>
+  </section>
 
   <!-- FILTROS -->
   <main class="container mx-auto p-4 flex-grow">
@@ -246,25 +282,18 @@
 
   <!-- SCRIPT PRINCIPAL -->
   <script>
-    // Função para buscar surebets reais
     async function loadSurebets() {
       const tbody = document.getElementById('surebet-table-body');
       const loadingRow = document.getElementById('loading-row');
       
       try {
         loadingRow.style.display = 'table-row';
-        
         const res = await fetch('/api/surebets');
-        if (!res.ok) throw new Error('Falha na API');
-        
         const surebets = await res.json();
         loadingRow.style.display = 'none';
         
         if (surebets.length === 0) {
-          tbody.innerHTML = `
-            <tr><td colspan="6" class="px-6 py-4 text-center text-sm text-gray-400">
-              Nenhuma surebet encontrada no momento.
-            </td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-sm text-gray-400">Nenhuma surebet encontrada.</td></tr>`;
           return;
         }
 
@@ -285,7 +314,6 @@
           </tr>
         `).join('');
 
-        // Adicionar evento aos botões "Abrir"
         document.querySelectorAll('.open-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const bm1 = e.currentTarget.dataset.bm1;
@@ -297,14 +325,10 @@
       } catch (err) {
         console.error(err);
         loadingRow.style.display = 'none';
-        tbody.innerHTML = `
-          <tr><td colspan="6" class="px-6 py-4 text-center text-sm text-red-400">
-            Erro ao carregar surebets. Tente novamente mais tarde.
-          </td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-sm text-red-400">Erro ao carregar surebets.</td></tr>`;
       }
     }
 
-    // Função para abrir casas de aposta em abas
     function openBookmakers(bm1, bm2) {
       const urls = {
         bet365: 'https://www.bet365.com/',
@@ -316,20 +340,17 @@
         '22bet': 'https://22bet.com/',
         betway: 'https://betway.com/'
       };
-
-      const url1 = urls[bm1] || 'https://google.com';
-      const url2 = urls[bm2] || 'https://google.com';
-
-      window.open(url1, '_blank');
-      window.open(url2, '_blank');
+      window.open(urls[bm1] || 'https://google.com', '_blank');
+      window.open(urls[bm2] || 'https://google.com', '_blank');
     }
 
-    // Carregar ao iniciar
     document.addEventListener('DOMContentLoaded', () => {
       loadSurebets();
-      // Atualizar a cada 60 segundos
       setInterval(loadSurebets, 60000);
     });
   </script>
+
+  <!-- Carrossel de Banners -->
+  <script src="banners.js"></script>
 </body>
 </html>
