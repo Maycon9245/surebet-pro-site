@@ -26,11 +26,11 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    /* Carrossel de Banners Full Width — REDUZIDO EM 30% */
+    /* Carrossel de Banners Full Width */
     .banner-carousel {
       position: relative;
       width: 100%;
-      height: 210px; /* ← 300px → 210px */
+      height: 300px;
       overflow: hidden;
     }
     .banner-slide {
@@ -63,7 +63,6 @@
         Clique aqui
       </a>
     </div>
-    <!-- Logo centralizado com foguete -->
     <div class="flex items-center justify-between px-4 py-3">
       <div class="flex items-center space-x-2 mx-auto">
         <img src="https://img.icons8.com/fluency/48/rocket.png" alt="Foguete" class="w-6 h-6">
@@ -100,7 +99,7 @@
     </div>
   </section>
 
-  <!-- FILTROS E TABELA (mantidos como antes) -->
+  <!-- FILTROS E TABELA -->
   <main class="container mx-auto p-4 flex-grow">
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
       <div class="relative">
@@ -175,7 +174,7 @@
     showSlide(current);
     setInterval(nextSlide, 5000);
 
-    // Surebets (mantenha sua lógica atual ou atualize depois)
+    // Surebets (dados reais)
     async function loadSurebets() {
       const tbody = document.getElementById('surebet-table-body');
       const loadingRow = document.getElementById('loading-row');
