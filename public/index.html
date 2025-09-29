@@ -26,11 +26,11 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    /* Carrossel de Banners Full Width */
+    /* Carrossel de Banners Full Width — REDUZIDO EM 30% */
     .banner-carousel {
       position: relative;
       width: 100%;
-      height: 300px;
+      height: 210px; /* ← 300px → 210px */
       overflow: hidden;
     }
     .banner-slide {
@@ -63,15 +63,21 @@
         Clique aqui
       </a>
     </div>
+    <!-- Logo centralizado com foguete -->
     <div class="flex items-center justify-between px-4 py-3">
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2 mx-auto">
+        <img src="https://img.icons8.com/fluency/48/rocket.png" alt="Foguete" class="w-6 h-6">
         <span class="text-lg sm:text-2xl font-bold text-green-400">Surebet PRO</span>
       </div>
-      <button class="px-4 py-2 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-600 transition-colors">
+      <button 
+        onclick="alert('Login / Assinar em breve!')"
+        class="px-4 py-2 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-600 transition-colors"
+      >
         Login / Assinar
       </button>
     </div>
   </header>
+
   <!-- Carrossel de banners full width -->
   <section class="banner-carousel">
     <div class="banner-slide active">
@@ -93,11 +99,8 @@
       <img src="imagens/banner6.jpg" alt="Banner 6">
     </div>
   </section>
-<<<<<<< HEAD
 
-=======
->>>>>>> 8686991 (Corrigir slider + garantir banners em /imagens/)
-  <!-- FILTROS -->
+  <!-- FILTROS E TABELA (mantidos como antes) -->
   <main class="container mx-auto p-4 flex-grow">
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
       <div class="relative">
@@ -131,7 +134,6 @@
         <input type="number" id="max-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="100">
       </div>
     </div>
-    <!-- TABELA DE SUREBETS -->
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-700">
         <thead class="bg-gray-700">
@@ -157,13 +159,9 @@
       </table>
     </div>
   </main>
-<<<<<<< HEAD
 
-=======
->>>>>>> 8686991 (Corrigir slider + garantir banners em /imagens/)
-  <!-- SCRIPT PRINCIPAL -->
   <script>
-    // Slider de banners
+    // Slider
     const slides = document.querySelectorAll('.banner-slide');
     let current = 0;
     function showSlide(index) {
@@ -174,13 +172,10 @@
       current = (current + 1) % slides.length;
       showSlide(current);
     }
-<<<<<<< HEAD
-=======
-    // Inicial
->>>>>>> 8686991 (Corrigir slider + garantir banners em /imagens/)
     showSlide(current);
     setInterval(nextSlide, 5000);
-    // Função para buscar surebets
+
+    // Surebets (mantenha sua lógica atual ou atualize depois)
     async function loadSurebets() {
       const tbody = document.getElementById('surebet-table-body');
       const loadingRow = document.getElementById('loading-row');
@@ -215,24 +210,7 @@
         tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-sm text-red-400">Erro ao carregar surebets.</td></tr>`;
       }
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> 8686991 (Corrigir slider + garantir banners em /imagens/)
-    function openBookmakers(bm1, bm2) {
-      const urls = {
-        bet365: 'https://www.bet365.com/',
-        betano: 'https://www.betano.com/',
-        sportingbet: 'https://www.sportingbet.com/',
-        betfair: 'https://www.betfair.com/',
-        pinnacle: 'https://www.pinnacle.com/',
-        '1xbet': 'https://1xbet.com/',
-        '22bet': 'https://22bet.com/',
-        betway: 'https://betway.com/'
-      };
-      window.open(urls[bm1] || 'https://google.com', '_blank');
-      window.open(urls[bm2] || 'https://google.com', '_blank');
-    }
     document.addEventListener('DOMContentLoaded', () => {
       loadSurebets();
       setInterval(loadSurebets, 60000);
