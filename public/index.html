@@ -14,7 +14,6 @@
       background-color: #1a1a2e;
       color: #e0e0e0;
     }
-
     .spinner {
       border: 4px solid rgba(255, 255, 255, 0.3);
       border-top: 4px solid #fff;
@@ -23,12 +22,10 @@
       height: 24px;
       animation: spin 1s linear infinite;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
     /* Carrossel de Banners Full Width */
     .banner-carousel {
       position: relative;
@@ -36,7 +33,6 @@
       height: 300px;
       overflow: hidden;
     }
-
     .banner-slide {
       position: absolute;
       top: 0;
@@ -46,13 +42,11 @@
       opacity: 0;
       transition: opacity 1s ease-in-out;
     }
-
     .banner-slide img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-
     .banner-slide.active {
       opacity: 1;
       z-index: 1;
@@ -60,7 +54,6 @@
   </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col">
-
   <!-- CABEÇALHO -->
   <header class="bg-gray-800 shadow-lg">
     <!-- Barra discreta -->
@@ -70,7 +63,6 @@
         Clique aqui
       </a>
     </div>
-
     <div class="flex items-center justify-between px-4 py-3">
       <div class="flex items-center space-x-2">
         <span class="text-lg sm:text-2xl font-bold text-green-400">Surebet PRO</span>
@@ -80,7 +72,6 @@
       </button>
     </div>
   </header>
-
   <!-- Carrossel de banners full width -->
   <section class="banner-carousel">
     <div class="banner-slide active">
@@ -102,7 +93,6 @@
       <img src="imagens/banner6.jpg" alt="Banner 6">
     </div>
   </section>
-
   <!-- FILTROS -->
   <main class="container mx-auto p-4 flex-grow">
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
@@ -137,7 +127,6 @@
         <input type="number" id="max-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="100">
       </div>
     </div>
-
     <!-- TABELA DE SUREBETS -->
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-700">
@@ -164,44 +153,36 @@
       </table>
     </div>
   </main>
-
   <!-- SCRIPT PRINCIPAL -->
   <script>
     // Slider de banners
     const slides = document.querySelectorAll('.banner-slide');
     let current = 0;
-
     function showSlide(index) {
       slides.forEach(slide => slide.classList.remove('active'));
       slides[index].classList.add('active');
     }
-
     function nextSlide() {
       current = (current + 1) % slides.length;
       showSlide(current);
     }
-
     // Inicial
     showSlide(current);
     // Troca a cada 5 segundos
     setInterval(nextSlide, 5000);
-
     // Função para buscar surebets
     async function loadSurebets() {
       const tbody = document.getElementById('surebet-table-body');
       const loadingRow = document.getElementById('loading-row');
-      
       try {
         loadingRow.style.display = 'table-row';
         const res = await fetch('/api/surebets');
         const surebets = await res.json();
         loadingRow.style.display = 'none';
-        
         if (surebets.length === 0) {
           tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-sm text-gray-400">Nenhuma surebet encontrada.</td></tr>`;
           return;
         }
-
         tbody.innerHTML = surebets.map(s => `
           <tr class="hover:bg-gray-700 transition-colors">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-400">${s.profitPercentage}%</td>
@@ -224,7 +205,6 @@
         tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-sm text-red-400">Erro ao carregar surebets.</td></tr>`;
       }
     }
-
     function openBookmakers(bm1, bm2) {
       const urls = {
         bet365: 'https://www.bet365.com/',
@@ -239,7 +219,6 @@
       window.open(urls[bm1] || 'https://google.com', '_blank');
       window.open(urls[bm2] || 'https://google.com', '_blank');
     }
-
     document.addEventListener('DOMContentLoaded', () => {
       loadSurebets();
       setInterval(loadSurebets, 60000);
