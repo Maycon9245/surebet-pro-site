@@ -72,6 +72,7 @@
       </button>
     </div>
   </header>
+
   <!-- Carrossel de banners full width -->
   <section class="banner-carousel">
     <div class="banner-slide active">
@@ -93,6 +94,7 @@
       <img src="imagens/banner6.jpg" alt="Banner 6">
     </div>
   </section>
+
   <!-- FILTROS -->
   <main class="container mx-auto p-4 flex-grow">
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
@@ -127,6 +129,7 @@
         <input type="number" id="max-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="100">
       </div>
     </div>
+
     <!-- TABELA DE SUREBETS -->
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-700">
@@ -153,6 +156,7 @@
       </table>
     </div>
   </main>
+
   <!-- SCRIPT PRINCIPAL -->
   <script>
     // Slider de banners
@@ -166,10 +170,9 @@
       current = (current + 1) % slides.length;
       showSlide(current);
     }
-    // Inicial
     showSlide(current);
-    // Troca a cada 5 segundos
     setInterval(nextSlide, 5000);
+
     // Função para buscar surebets
     async function loadSurebets() {
       const tbody = document.getElementById('surebet-table-body');
@@ -205,6 +208,7 @@
         tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-sm text-red-400">Erro ao carregar surebets.</td></tr>`;
       }
     }
+
     function openBookmakers(bm1, bm2) {
       const urls = {
         bet365: 'https://www.bet365.com/',
@@ -219,6 +223,7 @@
       window.open(urls[bm1] || 'https://google.com', '_blank');
       window.open(urls[bm2] || 'https://google.com', '_blank');
     }
+
     document.addEventListener('DOMContentLoaded', () => {
       loadSurebets();
       setInterval(loadSurebets, 60000);
