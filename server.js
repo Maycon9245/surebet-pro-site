@@ -1,14 +1,12 @@
-// server.js — versão SEM dependência da Odds API
 const express = require('express');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Servir arquivos estáticos da pasta 'public'
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rota de API com dados fake (não depende da Odds API)
+// Rota de API com dados fake
 app.get('/api/surebets', (req, res) => {
   const fakeSurebets = [
     {
@@ -33,12 +31,10 @@ app.get('/api/surebets', (req, res) => {
   res.json(fakeSurebets);
 });
 
-// Fallback para SPA (serve index.html para qualquer rota)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ⚠️ OBRIGATÓRIO no Render: escutar em 0.0.0.0
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 SUREBET PRO rodando na porta ${PORT}`);
 });
