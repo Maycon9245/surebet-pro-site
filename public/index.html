@@ -26,11 +26,11 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    /* Carrossel de Banners Full Width — REDUZIDO EM 40% */
+    /* Carrossel de Banners Full Width */
     .banner-carousel {
       position: relative;
       width: 100%;
-      height: 180px; /* ← 300px → 180px (-40%) */
+      height: 180px; /* -40% de 300px */
       overflow: hidden;
     }
     .banner-slide {
@@ -63,15 +63,15 @@
         Clique aqui
       </a>
     </div>
-    <!-- Logo centralizado com foguete -->
+    <!-- Logo centralizado com foguete (como na 3ª imagem) -->
     <div class="flex items-center justify-between px-4 py-3">
       <div class="flex items-center space-x-2 mx-auto">
-        <img src="https://img.icons8.com/fluency/48/rocket.png" alt="Foguete" class="w-5 h-5">
-        <span class="text-lg sm:text-xl font-bold text-green-400">Surebet PRO</span>
+        <img src="https://img.icons8.com/fluency/48/rocket.png" alt="Foguete" class="w-6 h-6">
+        <span class="text-lg sm:text-2xl font-bold text-green-400">Surebet PRO</span>
       </div>
       <button 
         onclick="openLoginModal()"
-        class="px-3 py-1.5 bg-green-500 text-gray-900 font-bold text-sm rounded-md hover:bg-green-600 transition-colors"
+        class="px-4 py-2 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-600 transition-colors"
       >
         Login / Assinar
       </button>
@@ -102,22 +102,22 @@
 
   <!-- FILTROS E TABELA -->
   <main class="container mx-auto p-4 flex-grow">
-    <div class="bg-gray-800 p-4 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 mb-4">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
       <div class="relative">
-        <label for="search" class="text-gray-400 text-xs block mb-1">Pesquisar</label>
-        <input type="text" id="search" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm" placeholder="Pesquisar...">
+        <label for="search" class="text-gray-400 text-sm block mb-1">Pesquisar</label>
+        <input type="text" id="search" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" placeholder="Pesquisar...">
       </div>
       <div class="relative">
-        <label for="sports" class="text-gray-400 text-xs block mb-1">Esportes</label>
-        <select id="sports" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm">
+        <label for="sports" class="text-gray-400 text-sm block mb-1">Esportes</label>
+        <select id="sports" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors">
           <option value="">Todos</option>
           <option value="futebol">Futebol</option>
           <option value="basquete">Basquete</option>
         </select>
       </div>
       <div class="relative">
-        <label for="bookmakers" class="text-gray-400 text-xs block mb-1">Casas</label>
-        <select id="bookmakers" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm">
+        <label for="bookmakers" class="text-gray-400 text-sm block mb-1">Casas de Apostas</label>
+        <select id="bookmakers" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors">
           <option value="">Todas</option>
           <option value="betano">Betano</option>
           <option value="bet365">Bet365</option>
@@ -126,44 +126,33 @@
         </select>
       </div>
       <div class="relative">
-        <label for="min-profit" class="text-gray-400 text-xs block mb-1">Lucro Mínimo %</label>
-        <input type="number" id="min-profit" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm" value="0">
+        <label for="min-profit" class="text-gray-400 text-sm block mb-1">Lucro Mínimo %</label>
+        <input type="number" id="min-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="0">
       </div>
       <div class="relative">
-        <label for="max-profit" class="text-gray-400 text-xs block mb-1">Lucro Máximo %</label>
-        <input type="number" id="max-profit" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm" value="100">
+        <label for="max-profit" class="text-gray-400 text-sm block mb-1">Lucro Máximo %</label>
+        <input type="number" id="max-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="100">
       </div>
     </div>
-
-    <!-- Tabela com dados fake -->
-    <div class="bg-gray-800 p-4 rounded-lg shadow-lg overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-700 text-sm">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-700">
         <thead class="bg-gray-700">
           <tr>
-            <th class="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase">Lucro %</th>
-            <th class="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase">Esporte</th>
-            <th class="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase">Evento</th>
-            <th class="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase">Casas</th>
-            <th class="px-3 py-2 text-right text-xs font-medium text-gray-300 uppercase">Ação</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tl-lg">Lucro %</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Esporte</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Evento</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Casas</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Lucro %</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tr-lg">Ação</th>
           </tr>
         </thead>
-        <tbody class="bg-gray-800 divide-y divide-gray-700">
-          <tr class="hover:bg-gray-700">
-            <td class="px-3 py-2 font-medium text-green-400">12.50%</td>
-            <td class="px-3 py-2">Futebol</td>
-            <td class="px-3 py-2">Flamengo vs Palmeiras</td>
-            <td class="px-3 py-2">Stake, Betano</td>
-            <td class="px-3 py-2 text-right">
-              <button class="text-blue-400 hover:text-blue-600">🖥️ Abrir</button>
-            </td>
-          </tr>
-          <tr class="hover:bg-gray-700">
-            <td class="px-3 py-2 font-medium text-green-400">8.75%</td>
-            <td class="px-3 py-2">Basquete</td>
-            <td class="px-3 py-2">Lakers vs Celtics</td>
-            <td class="px-3 py-2">Pinnacle, Bet365</td>
-            <td class="px-3 py-2 text-right">
-              <button class="text-blue-400 hover:text-blue-600">🖥️ Abrir</button>
+        <tbody id="surebet-table-body" class="bg-gray-800 divide-y divide-gray-700">
+          <tr id="loading-row">
+            <td colspan="6" class="px-6 py-4 text-center text-sm font-medium text-gray-400">
+              <div class="flex items-center justify-center">
+                <div class="spinner"></div>
+                <span class="ml-2">Carregando surebets...</span>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -182,8 +171,8 @@
         📌 Assinar Plano
       </button>
       <button 
-        onclick="alert('Login com Google será implementado em breve!')"
-        class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+        onclick="loginWithGoogle()"
+        class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
           <path d="M15.545 6.558a9.42 9.42 0 0 0-9.42-9.42 9.42 9.42 0 0 0-9.42 9.42 9.42 9.42 0 0 0 9.42 9.42 9.42 9.42 0 0 0 9.42-9.42Zm-9.42-3.286a2.888 2.888 0 0 1-2.888-2.888 2.888 2.888 0 0 1 2.888-2.888 2.888 2.888 0 0 1 2.888 2.888 2.888 2.888 0 0 1-2.888 2.888Z"/>
@@ -207,7 +196,7 @@
       <div class="space-y-3">
         <div class="border border-gray-700 rounded-lg p-3">
           <h3 class="text-green-400 font-bold">Plano Semanal</h3>
-          <p class="text-gray-400 text-sm">R$ 9,90 / semana</p>
+          <p class="text-gray-400 text-sm">R$ 59,90 / semana</p>
           <ul class="mt-2 text-xs text-gray-400 list-disc pl-4">
             <li>Acesso a todas as surebets</li>
             <li>Alertas em tempo real</li>
@@ -218,7 +207,7 @@
         </div>
         <div class="border border-gray-700 rounded-lg p-3">
           <h3 class="text-green-400 font-bold">Plano Mensal</h3>
-          <p class="text-gray-400 text-sm">R$ 29,90 / mês</p>
+          <p class="text-gray-400 text-sm">R$ 129,90 / mês</p>
           <ul class="mt-2 text-xs text-gray-400 list-disc pl-4">
             <li>Tudo do plano semanal</li>
             <li>Relatórios personalizados</li>
@@ -230,7 +219,7 @@
         </div>
         <div class="border border-gray-700 rounded-lg p-3">
           <h3 class="text-green-400 font-bold">Plano Trimestral</h3>
-          <p class="text-gray-400 text-sm">R$ 79,90 / trimestre</p>
+          <p class="text-gray-400 text-sm">R$ 329,90 / trimestre</p>
           <ul class="mt-2 text-xs text-gray-400 list-disc pl-4">
             <li>Tudo do plano mensal</li>
             <li>Acesso antecipado a novas features</li>
@@ -279,6 +268,9 @@
     function closePlansModal() {
       document.getElementById('plansModal').classList.add('hidden');
       document.getElementById('loginModal').classList.remove('hidden');
+    }
+    function loginWithGoogle() {
+      alert('Login com Google será implementado em breve!');
     }
   </script>
 </body>
