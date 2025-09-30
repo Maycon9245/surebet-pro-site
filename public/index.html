@@ -26,7 +26,7 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    /* Carrossel de Banners Full Width */
+    /* Carrossel */
     .banner-carousel {
       position: relative;
       width: 100%;
@@ -51,7 +51,6 @@
       opacity: 1;
       z-index: 1;
     }
-    /* Botão "Clique aqui!" fixo no canto do banner */
     .banner-cta {
       position: absolute;
       top: 12px;
@@ -70,26 +69,20 @@
     .banner-cta a:hover {
       background: rgba(0, 0, 0, 0.8);
     }
-    /* Garantir que os selects abram para baixo */
-    select {
-      appearance: auto;
-    }
   </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col">
   <!-- CABEÇALHO -->
   <header class="bg-gray-800 shadow-lg">
     <div class="flex items-center justify-between px-4 py-3">
-      <div class="flex items-center space-x-2">
-        <span class="text-lg sm:text-2xl font-bold text-green-400">🚀 Surebet PRO</span>
-      </div>
+      <span class="text-lg sm:text-2xl font-bold text-green-400">🚀 Surebet PRO</span>
       <button class="px-4 py-2 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-600 transition-colors">
         Login / Assinar
       </button>
     </div>
   </header>
 
-  <!-- Carrossel de banners full width -->
+  <!-- BANNERS -->
   <section class="banner-carousel">
     <div class="banner-slide active">
       <img src="imagens/banner1.jpg" alt="Banner 1">
@@ -109,7 +102,6 @@
     <div class="banner-slide">
       <img src="imagens/banner6.jpg" alt="Banner 6">
     </div>
-    <!-- Botão "Clique aqui!" fixo no canto do banner -->
     <div class="banner-cta">
       <a href="https://stake.com/" target="_blank">Clique aqui!</a>
     </div>
@@ -118,74 +110,72 @@
   <!-- FILTROS -->
   <main class="container mx-auto p-4 flex-grow">
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
-      <div class="relative">
+      
+      <!-- PESQUISAR -->
+      <div>
         <label for="search" class="text-gray-400 text-sm block mb-1">Pesquisar</label>
-        <input type="text" id="search" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" placeholder="Pesquisar...">
+        <input type="text" id="search" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:ring focus:ring-green-500" placeholder="Pesquisar...">
       </div>
-      <div class="relative">
-        <label for="sports" class="text-gray-400 text-sm block mb-1">Esportes</label>
-        <select id="sports" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors">
-          <option value="">Todos</option>
-          <option value="soccer_brazil_campeonato_br">Futebol Brasileiro</option>
-          <option value="basketball_nba">NBA</option>
-          <option value="tennis_atp">ATP</option>
-          <option value="esports_lol">League of Legends</option>
-        </select>
+
+      <!-- ESPORTES -->
+      <div>
+        <label class="text-gray-400 text-sm block mb-1">Esportes</label>
+        <div class="space-y-2 bg-gray-700 p-3 rounded-md">
+          <label class="flex items-center space-x-2"><input type="checkbox" value="soccer" class="form-checkbox text-green-500"><span>Futebol Brasileiro</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" value="nba" class="form-checkbox text-green-500"><span>NBA</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" value="atp" class="form-checkbox text-green-500"><span>ATP</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" value="lol" class="form-checkbox text-green-500"><span>League of Legends</span></label>
+        </div>
       </div>
-      <div class="relative">
-        <label for="bookmakers" class="text-gray-400 text-sm block mb-1">Casas de Apostas</label>
-        <select id="bookmakers" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors">
-          <option value="">Todas</option>
-          <option value="stake">Stake (BR)</option>
-          <option value="betano">Betano (BR)</option>
-          <option value="bet365">Bet365 (BR)</option>
-          <option value="pinnacle">Pinnacle (BR)</option>
-        </select>
+
+      <!-- CASAS -->
+      <div>
+        <label class="text-gray-400 text-sm block mb-1">Casas de Apostas</label>
+        <div class="space-y-2 bg-gray-700 p-3 rounded-md">
+          <label class="flex items-center space-x-2"><input type="checkbox" value="stake" class="form-checkbox text-green-500"><span>Stake (BR)</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" value="betano" class="form-checkbox text-green-500"><span>Betano (BR)</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" value="bet365" class="form-checkbox text-green-500"><span>Bet365 (BR)</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" value="pinnacle" class="form-checkbox text-green-500"><span>Pinnacle (BR)</span></label>
+        </div>
       </div>
-      <div class="relative">
+
+      <!-- LUCRO -->
+      <div>
         <label for="min-profit" class="text-gray-400 text-sm block mb-1">Lucro Mínimo %</label>
-        <input type="number" id="min-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="0">
+        <input type="number" id="min-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:ring focus:ring-green-500" value="0">
       </div>
-      <div class="relative">
+      <div>
         <label for="max-profit" class="text-gray-400 text-sm block mb-1">Lucro Máximo %</label>
-        <input type="number" id="max-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="100">
+        <input type="number" id="max-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:ring focus:ring-green-500" value="100">
       </div>
     </div>
 
-    <!-- TABELA COM DADOS FAKE -->
+    <!-- TABELA -->
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-700">
         <thead class="bg-gray-700">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Lucro %</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Esporte</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Evento</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Casas</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Ação</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Lucro %</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Esporte</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Evento</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Casas</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase">Ação</th>
           </tr>
         </thead>
         <tbody class="bg-gray-800 divide-y divide-gray-700">
           <tr class="hover:bg-gray-700">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-400">12.50%</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Futebol</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Flamengo vs Palmeiras</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Stake, Betano</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <button class="text-blue-400 hover:text-blue-600" onclick="openBookmakers('stake', 'betano')">
-                🖥️ Abrir
-              </button>
-            </td>
+            <td class="px-6 py-4 text-sm font-medium text-green-400">12.50%</td>
+            <td class="px-6 py-4 text-sm">Futebol</td>
+            <td class="px-6 py-4 text-sm">Flamengo vs Palmeiras</td>
+            <td class="px-6 py-4 text-sm">Stake, Betano</td>
+            <td class="px-6 py-4 text-right text-sm"><button class="text-blue-400 hover:text-blue-600" onclick="openBookmakers('stake','betano')">🖥️ Abrir</button></td>
           </tr>
           <tr class="hover:bg-gray-700">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-400">8.75%</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Basquete</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Lakers vs Celtics</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Pinnacle, Bet365</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <button class="text-blue-400 hover:text-blue-600" onclick="openBookmakers('pinnacle', 'bet365')">
-                🖥️ Abrir
-              </button>
-            </td>
+            <td class="px-6 py-4 text-sm font-medium text-green-400">8.75%</td>
+            <td class="px-6 py-4 text-sm">Basquete</td>
+            <td class="px-6 py-4 text-sm">Lakers vs Celtics</td>
+            <td class="px-6 py-4 text-sm">Pinnacle, Bet365</td>
+            <td class="px-6 py-4 text-right text-sm"><button class="text-blue-400 hover:text-blue-600" onclick="openBookmakers('pinnacle','bet365')">🖥️ Abrir</button></td>
           </tr>
         </tbody>
       </table>
@@ -193,21 +183,14 @@
   </main>
 
   <script>
-    // Slider de banners
+    // Banner slider
     const slides = document.querySelectorAll('.banner-slide');
     let current = 0;
-    function showSlide(index) {
-      slides.forEach(slide => slide.classList.remove('active'));
-      slides[index].classList.add('active');
-    }
-    function nextSlide() {
-      current = (current + 1) % slides.length;
-      showSlide(current);
-    }
-    showSlide(current);
-    setInterval(nextSlide, 5000);
+    function showSlide(i){slides.forEach(s=>s.classList.remove('active'));slides[i].classList.add('active');}
+    function nextSlide(){current=(current+1)%slides.length;showSlide(current);}
+    showSlide(current);setInterval(nextSlide,5000);
 
-    // Função para abrir casas de aposta
+    // Abrir casas
     function openBookmakers(bm1, bm2) {
       const urls = {
         bet365: 'https://www.bet365.com/',
@@ -215,8 +198,8 @@
         pinnacle: 'https://www.pinnacle.com/',
         stake: 'https://stake.com/'
       };
-      window.open(urls[bm1] || 'https://google.com', '_blank');
-      window.open(urls[bm2] || 'https://google.com', '_blank');
+      window.open(urls[bm1] || 'https://google.com','_blank');
+      window.open(urls[bm2] || 'https://google.com','_blank');
     }
   </script>
 </body>
