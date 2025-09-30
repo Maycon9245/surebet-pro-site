@@ -26,11 +26,11 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    /* Carrossel de Banners Full Width — REDUZIDO EM 40% */
+    /* Carrossel de Banners Full Width */
     .banner-carousel {
       position: relative;
       width: 100%;
-      height: 180px; /* ← 300px → 180px */
+      height: 300px;
       overflow: hidden;
     }
     .banner-slide {
@@ -56,21 +56,18 @@
 <body class="bg-gray-900 text-white min-h-screen flex flex-col">
   <!-- CABEÇALHO -->
   <header class="bg-gray-800 shadow-lg">
-    <!-- Barra discreta -->
+    <!-- Barra discreta com botão "Clique aqui!" -->
     <div class="w-full text-center py-2 bg-gray-700 text-gray-300 text-sm">
       Seu espaço de propaganda aqui!
-      <a href="#" class="ml-2 px-3 py-1 rounded bg-green-500 text-gray-900 hover:bg-green-600 text-sm font-medium">
+      <a href="https://stake.com/" target="_blank" class="ml-2 px-3 py-1 rounded bg-green-500 text-gray-900 hover:bg-green-600 text-sm font-medium">
         Clique aqui
       </a>
     </div>
     <div class="flex items-center justify-between px-4 py-3">
       <div class="flex items-center space-x-2">
-        <span class="text-lg sm:text-xl font-bold text-green-400">🚀 Surebet PRO</span>
+        <span class="text-lg sm:text-2xl font-bold text-green-400">🚀 Surebet PRO</span>
       </div>
-      <button 
-        onclick="openLoginModal()"
-        class="px-3 py-1.5 bg-green-500 text-gray-900 font-bold text-sm rounded-md hover:bg-green-600 transition-colors"
-      >
+      <button class="px-4 py-2 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-600 transition-colors">
         Login / Assinar
       </button>
     </div>
@@ -98,70 +95,74 @@
     </div>
   </section>
 
-  <!-- FILTROS E TABELA -->
+  <!-- FILTROS -->
   <main class="container mx-auto p-4 flex-grow">
-    <div class="bg-gray-800 p-4 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 mb-4">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
       <div class="relative">
-        <label for="search" class="text-gray-400 text-xs block mb-1">Pesquisar</label>
-        <input type="text" id="search" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm" placeholder="Pesquisar...">
+        <label for="search" class="text-gray-400 text-sm block mb-1">Pesquisar</label>
+        <input type="text" id="search" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" placeholder="Pesquisar...">
       </div>
       <div class="relative">
-        <label for="sports" class="text-gray-400 text-xs block mb-1">Esportes</label>
-        <select id="sports" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm">
+        <label for="sports" class="text-gray-400 text-sm block mb-1">Esportes</label>
+        <select id="sports" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors">
           <option value="">Todos</option>
-          <option value="futebol">Futebol</option>
-          <option value="basquete">Basquete</option>
+          <option value="soccer_brazil_campeonato_br">Futebol Brasileiro</option>
+          <option value="soccer_epl">Premier League</option>
+          <option value="soccer_la_liga">La Liga</option>
+          <option value="soccer_bundesliga">Bundesliga</option>
+          <option value="soccer_serie_a">Serie A</option>
+          <option value="basketball_nba">NBA</option>
+          <option value="tennis_wta">WTA</option>
+          <option value="tennis_atp">ATP</option>
+          <option value="esports_dota2">Dota 2</option>
+          <option value="esports_csgo">CS:GO</option>
+          <option value="esports_lol">League of Legends</option>
         </select>
       </div>
       <div class="relative">
-        <label for="bookmakers" class="text-gray-400 text-xs block mb-1">Casas de Apostas</label>
-        <select id="bookmakers" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm">
+        <label for="bookmakers" class="text-gray-400 text-sm block mb-1">Casas de Apostas</label>
+        <select id="bookmakers" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors">
           <option value="">Todas</option>
-          <option value="betano">Betano</option>
-          <option value="bet365">Bet365</option>
-          <option value="pinnacle">Pinnacle</option>
-          <option value="stake">Stake</option>
+          <option value="betano">Betano (BR)</option>
+          <option value="bet365">Bet365 (BR)</option>
+          <option value="pinnacle">Pinnacle (BR)</option>
+          <option value="stake">Stake (BR)</option>
+          <option value="1xbet">1xBet (BR)</option>
+          <option value="22bet">22Bet (BR)</option>
+          <option value="sportingbet">Sportingbet (BR)</option>
+          <option value="betway">Betway (BR)</option>
         </select>
       </div>
       <div class="relative">
-        <label for="min-profit" class="text-gray-400 text-xs block mb-1">Lucro Mínimo %</label>
-        <input type="number" id="min-profit" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm" value="0">
+        <label for="min-profit" class="text-gray-400 text-sm block mb-1">Lucro Mínimo %</label>
+        <input type="number" id="min-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="0">
       </div>
       <div class="relative">
-        <label for="max-profit" class="text-gray-400 text-xs block mb-1">Lucro Máximo %</label>
-        <input type="number" id="max-profit" class="w-full p-1.5 rounded-md bg-gray-700 border border-gray-600 text-sm" value="100">
+        <label for="max-profit" class="text-gray-400 text-sm block mb-1">Lucro Máximo %</label>
+        <input type="number" id="max-profit" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-green-500 transition-colors" value="100">
       </div>
     </div>
 
-    <!-- Tabela com dados fake -->
-    <div class="bg-gray-800 p-4 rounded-lg shadow-lg overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-700 text-sm">
+    <!-- TABELA DE SUREBETS -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-700">
         <thead class="bg-gray-700">
           <tr>
-            <th class="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase">Lucro %</th>
-            <th class="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase">Esporte</th>
-            <th class="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase">Evento</th>
-            <th class="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase">Casas</th>
-            <th class="px-3 py-2 text-right text-xs font-medium text-gray-300 uppercase">Ação</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tl-lg">Lucro %</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Esporte</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Evento</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Casas</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Lucro %</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tr-lg">Ação</th>
           </tr>
         </thead>
-        <tbody class="bg-gray-800 divide-y divide-gray-700">
-          <tr class="hover:bg-gray-700">
-            <td class="px-3 py-2 font-medium text-green-400">12.50%</td>
-            <td class="px-3 py-2">Futebol</td>
-            <td class="px-3 py-2">Flamengo vs Palmeiras</td>
-            <td class="px-3 py-2">Stake, Betano</td>
-            <td class="px-3 py-2 text-right">
-              <button class="text-blue-400 hover:text-blue-600">🖥️ Abrir</button>
-            </td>
-          </tr>
-          <tr class="hover:bg-gray-700">
-            <td class="px-3 py-2 font-medium text-green-400">8.75%</td>
-            <td class="px-3 py-2">Basquete</td>
-            <td class="px-3 py-2">Lakers vs Celtics</td>
-            <td class="px-3 py-2">Pinnacle, Bet365</td>
-            <td class="px-3 py-2 text-right">
-              <button class="text-blue-400 hover:text-blue-600">🖥️ Abrir</button>
+        <tbody id="surebet-table-body" class="bg-gray-800 divide-y divide-gray-700">
+          <tr id="loading-row">
+            <td colspan="6" class="px-6 py-4 text-center text-sm font-medium text-gray-400">
+              <div class="flex items-center justify-center">
+                <div class="spinner"></div>
+                <span class="ml-2">Carregando surebets...</span>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -169,85 +170,7 @@
     </div>
   </main>
 
-  <!-- Modal de Login/Assinar -->
-  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
-    <div class="bg-gray-900 p-5 rounded-lg w-full max-w-sm mx-4">
-      <h2 class="text-lg font-bold text-white mb-3">Login / Assinar</h2>
-      <button 
-        onclick="openPlansModal()"
-        class="w-full mb-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
-      >
-        📌 Assinar Plano
-      </button>
-      <button 
-        onclick="alert('Login com Google em breve!')"
-        class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M15.545 6.558a9.42 9.42 0 0 0-9.42-9.42 9.42 9.42 0 0 0-9.42 9.42 9.42 9.42 0 0 0 9.42 9.42 9.42 9.42 0 0 0 9.42-9.42Zm-9.42-3.286a2.888 2.888 0 0 1-2.888-2.888 2.888 2.888 0 0 1 2.888-2.888 2.888 2.888 0 0 1 2.888 2.888 2.888 2.888 0 0 1-2.888 2.888Z"/>
-          <path d="M13.288 10.888a2.888 2.888 0 0 1-2.888-2.888 2.888 2.888 0 0 1 2.888-2.888 2.888 2.888 0 0 1 2.888 2.888 2.888 2.888 0 0 1-2.888 2.888Z"/>
-        </svg>
-        Entrar com Google
-      </button>
-      <button 
-        onclick="closeLoginModal()"
-        class="mt-4 w-full px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800"
-      >
-        Fechar
-      </button>
-    </div>
-  </div>
-
-  <!-- Modal de Planos -->
-  <div id="plansModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
-    <div class="bg-gray-900 p-5 rounded-lg w-full max-w-md mx-4">
-      <h2 class="text-lg font-bold text-white mb-4 text-center">Escolha seu Plano</h2>
-      <div class="space-y-3">
-        <div class="border border-gray-700 rounded-lg p-3">
-          <h3 class="text-green-400 font-bold">Plano Semanal</h3>
-          <p class="text-gray-400 text-sm">R$ 59,90 / semana</p>
-          <ul class="mt-2 text-xs text-gray-400 list-disc pl-4">
-            <li>Acesso a todas as surebets</li>
-            <li>Alertas em tempo real</li>
-          </ul>
-          <button class="mt-2 w-full px-3 py-1.5 bg-green-600 text-white rounded text-sm hover:bg-green-700">
-            Assinar Agora
-          </button>
-        </div>
-        <div class="border border-gray-700 rounded-lg p-3">
-          <h3 class="text-green-400 font-bold">Plano Mensal</h3>
-          <p class="text-gray-400 text-sm">R$ 129,90 / mês</p>
-          <ul class="mt-2 text-xs text-gray-400 list-disc pl-4">
-            <li>Tudo do plano semanal</li>
-            <li>Relatórios personalizados</li>
-            <li>Suporte prioritário</li>
-          </ul>
-          <button class="mt-2 w-full px-3 py-1.5 bg-green-600 text-white rounded text-sm hover:bg-green-700">
-            Assinar Agora
-          </button>
-        </div>
-        <div class="border border-gray-700 rounded-lg p-3">
-          <h3 class="text-green-400 font-bold">Plano Trimestral</h3>
-          <p class="text-gray-400 text-sm">R$ 329,90 / trimestre</p>
-          <ul class="mt-2 text-xs text-gray-400 list-disc pl-4">
-            <li>Tudo do plano mensal</li>
-            <li>Acesso antecipado a novas features</li>
-            <li>Suporte VIP</li>
-          </ul>
-          <button class="mt-2 w-full px-3 py-1.5 bg-green-600 text-white rounded text-sm hover:bg-green-700">
-            Assinar Agora
-          </button>
-        </div>
-      </div>
-      <button 
-        onclick="closePlansModal()"
-        class="mt-4 w-full px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800"
-      >
-        Voltar
-      </button>
-    </div>
-  </div>
-
+  <!-- SCRIPT PRINCIPAL -->
   <script>
     // Slider de banners
     const slides = document.querySelectorAll('.banner-slide');
@@ -263,21 +186,61 @@
     showSlide(current);
     setInterval(nextSlide, 5000);
 
-    // Modais
-    function openLoginModal() {
-      document.getElementById('loginModal').classList.remove('hidden');
+    // Função para buscar surebets
+    async function loadSurebets() {
+      const tbody = document.getElementById('surebet-table-body');
+      const loadingRow = document.getElementById('loading-row');
+      try {
+        loadingRow.style.display = 'table-row';
+        const res = await fetch('/api/surebets');
+        const surebets = await res.json();
+        loadingRow.style.display = 'none';
+        if (surebets.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-sm text-gray-400">Nenhuma surebet encontrada.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = surebets.map(s => `
+          <tr class="hover:bg-gray-700 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-400">${s.profitPercentage}%</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${s.sport}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${s.homeTeam} vs ${s.awayTeam}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${s.bookmaker1.name}, ${s.bookmaker2.name}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${s.profitPercentage}%</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <button class="text-blue-400 hover:text-blue-600 open-btn" 
+                      onclick="openBookmakers('${s.bookmaker1.id}', '${s.bookmaker2.id}')">
+                🖥️ Abrir
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+        loadingRow.style.display = 'none';
+        tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-sm text-red-400">Erro ao carregar surebets.</td></tr>`;
+      }
     }
-    function closeLoginModal() {
-      document.getElementById('loginModal').classList.add('hidden');
+
+    // Função para abrir casas de aposta
+    function openBookmakers(bm1, bm2) {
+      const urls = {
+        bet365: 'https://www.bet365.com/',
+        betano: 'https://www.betano.com/',
+        sportingbet: 'https://www.sportingbet.com/',
+        pinnacle: 'https://www.pinnacle.com/',
+        '1xbet': 'https://1xbet.com/',
+        '22bet': 'https://22bet.com/',
+        betway: 'https://betway.com/',
+        stake: 'https://stake.com/'
+      };
+      window.open(urls[bm1] || 'https://google.com', '_blank');
+      window.open(urls[bm2] || 'https://google.com', '_blank');
     }
-    function openPlansModal() {
-      document.getElementById('loginModal').classList.add('hidden');
-      document.getElementById('plansModal').classList.remove('hidden');
-    }
-    function closePlansModal() {
-      document.getElementById('plansModal').classList.add('hidden');
-      document.getElementById('loginModal').classList.remove('hidden');
-    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSurebets();
+      setInterval(loadSurebets, 60000);
+    });
   </script>
 </body>
 </html>
